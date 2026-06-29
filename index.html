@@ -262,6 +262,8 @@ h1 {
       <button class="mode-btn" data-mode="bolum5">Bölüm 5: Bölüm 2 Soruları Sıralı (Şıklar Karışık)</button>
       <button class="mode-btn" data-mode="exam">Exam Mode: Rastgele 50 Soru</button>
 
+      <button class="mode-btn" data-mode="bolum6">Bölüm 6: "All / None of the Above" Soruları</button>
+
       <!-- Bölüm 7 -->
       <div class="bolum7-block">
         <button class="mode-btn bolum7-toggle" id="btn-bolum7-toggle">Bölüm 7: Pratik Takip ▼</button>
@@ -913,7 +915,14 @@ const QUESTIONS = [
 
   function getQuestionsForMode(mode) {
     var pool;
-    if (mode === "exam") {
+    var allAbovePattern = /\b(all of the above|none of the above)\b/i;
+    if (mode === "bolum6") {
+      pool = shuffleArray(QUESTIONS.filter(function (q) {
+        return q.correct.some(function (letter) {
+          return allAbovePattern.test(q.options[letter] || "");
+        });
+      }));
+    } else if (mode === "exam") {
       pool = shuffleArray(QUESTIONS.slice()).slice(0, 50);
     } else if (mode === "bolum7_all") {
       pool = shuffleArray(QUESTIONS.slice());
