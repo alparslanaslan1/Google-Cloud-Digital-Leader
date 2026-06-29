@@ -167,6 +167,21 @@ h1 {
   color: #f9a825;
   margin-bottom: 4px;
 }
+.learn-tip {
+  display: block;
+  margin-bottom: 8px;
+}
+.learn-answer {
+  display: block;
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #3e2700;
+}
 .correct-tag {
   margin-left: auto;
   font-size: 12px;
@@ -1108,7 +1123,8 @@ const QUESTIONS = [
         var learnBox = document.createElement("div");
         learnBox.id = "learn-box";
         learnBox.className = "learn-box";
-        learnBox.innerHTML = "<strong>💡 Öğrenim</strong>" + q.learn;
+        var correctTexts = q.correct.map(function(l) { return q.options[l]; }).join(' + ');
+        learnBox.innerHTML = "<strong>💡 Öğrenim</strong><span class='learn-tip'>" + q.learn + "</span><span class='learn-answer'>" + correctTexts + "</span>";
         optionsContainer.parentNode.insertBefore(learnBox, optionsContainer.nextSibling);
       }
     } else {
