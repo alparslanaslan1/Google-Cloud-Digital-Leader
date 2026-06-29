@@ -915,11 +915,11 @@ const QUESTIONS = [
 
   function getQuestionsForMode(mode) {
     var pool;
-    var allAbovePattern = /\b(all of the above|none of the above)\b/i;
+    var allAbovePattern = /\b(all of the above|none of the above|all of these|all of the above are correct|both a.{0,5}b)\b/i;
     if (mode === "bolum6") {
       pool = shuffleArray(QUESTIONS.filter(function (q) {
-        return q.correct.some(function (letter) {
-          return allAbovePattern.test(q.options[letter] || "");
+        return Object.values(q.options).some(function (txt) {
+          return allAbovePattern.test(txt || "");
         });
       }));
     } else if (mode === "exam") {
