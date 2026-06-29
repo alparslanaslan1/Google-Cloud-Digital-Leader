@@ -206,6 +206,7 @@ h1 {
       <button class="mode-btn" data-mode="bolum3">Bölüm 3: Kategoriler Soruları</button>
       <button class="mode-btn" data-mode="bolum4">Bölüm 4: Sıralı Sorular (Şıklar Karışık)</button>
       <button class="mode-btn" data-mode="bolum5">Bölüm 5: Bölüm 2 Soruları Sıralı (Şıklar Karışık)</button>
+      <button class="mode-btn" data-mode="exam">Exam Mode: Rastgele 50 Soru</button>
     </div>
   </div>
 
@@ -806,7 +807,9 @@ const QUESTIONS = [
 
   function getQuestionsForMode(mode) {
     var pool;
-    if (mode === "all") {
+    if (mode === "exam") {
+      pool = shuffleArray(QUESTIONS.slice()).slice(0, 50);
+    } else if (mode === "all") {
       pool = shuffleArray(QUESTIONS.slice());
     } else if (mode === "bolum4") {
       pool = QUESTIONS.slice(); // sıralı, karıştırılmaz
