@@ -811,9 +811,39 @@ const QUESTIONS = [
     } else if (mode === "bolum4") {
       pool = QUESTIONS.slice(); // sıralı, karıştırılmaz
     } else if (mode === "bolum5") {
+      // bolum2 soruları sıralı; ancak tüm sorulardaki doğru cevaplar arasında
+      // son-3-kelime imzası farklı sorularla çakışanlar hariç tutulur
+      var sigMap = {};
+      QUESTIONS.forEach(function (q) {
+        q.correct.forEach(function (letter) {
+          var txt = q.options[letter];
+          if (!txt) return;
+          var words = txt.trim().split(/\s+/);
+          var sig = words.length <= 3
+            ? txt.trim().toLowerCase()
+            : words.slice(-3).join(" ").toLowerCase();
+          if (!sigMap[sig]) sigMap[sig] = [];
+          if (sigMap[sig].indexOf(q.id) === -1) sigMap[sig].push(q.id);
+        });
+      });
+      var dupSigs = {};
+      Object.keys(sigMap).forEach(function (sig) {
+        if (sigMap[sig].length > 1) dupSigs[sig] = true;
+      });
+      function hasDupSig(q) {
+        return q.correct.some(function (letter) {
+          var txt = q.options[letter];
+          if (!txt) return false;
+          var words = txt.trim().split(/\s+/);
+          var sig = words.length <= 3
+            ? txt.trim().toLowerCase()
+            : words.slice(-3).join(" ").toLowerCase();
+          return dupSigs[sig];
+        });
+      }
       pool = QUESTIONS.filter(function (q) {
-        return q.groups.indexOf("bolum2") !== -1;
-      }); // bolum2 soruları, sıralı, karıştırılmaz
+        return q.groups.indexOf("bolum2") !== -1 && !hasDupSig(q);
+      }); // bolum2 soruları, sıralı, karıştırılmaz, benzersiz cevaplılar
     } else {
       pool = shuffleArray(QUESTIONS.filter(function (q) {
         return q.groups.indexOf(mode) !== -1;
