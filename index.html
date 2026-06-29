@@ -189,7 +189,61 @@ h1 {
 .action-btn.secondary {
   background: #ffffff;
   color: #1a73e8;
-  border: 2px solid #1a73e8;</style>
+  border: 2px solid #1a73e8;
+}
+
+.bolum7-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.bolum7-toggle {
+  text-align: left;
+}
+
+.bolum7-submenu {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 12px 14px;
+  border-left: 3px solid #1a73e8;
+  background: #f8fbff;
+  border-radius: 0 8px 8px 0;
+}
+
+.bolum7-submenu .mode-btn {
+  font-size: 15px;
+  padding: 13px 16px;
+}
+
+.bolum7-submenu .mode-btn.danger {
+  border-color: #c62828;
+  color: #c62828;
+}
+
+.bolum7-submenu .mode-btn.danger:hover {
+  background: #c62828;
+  color: #ffffff;
+}
+
+.badge {
+  display: inline-block;
+  background: #1a73e8;
+  color: #fff;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 1px 8px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.mode-btn:hover .badge {
+  background: #fff;
+  color: #1a73e8;
+}</style>
 </head>
 <body>
 
@@ -206,6 +260,22 @@ h1 {
       <button class="mode-btn" data-mode="bolum3">Bölüm 3: Kategoriler Soruları</button>
       <button class="mode-btn" data-mode="bolum4">Bölüm 4: Sıralı Sorular (Şıklar Karışık)</button>
       <button class="mode-btn" data-mode="bolum5">Bölüm 5: Bölüm 2 Soruları Sıralı (Şıklar Karışık)</button>
+      <button class="mode-btn" data-mode="exam">Exam Mode: Rastgele 50 Soru</button>
+
+      <!-- Bölüm 7 -->
+      <div class="bolum7-block">
+        <button class="mode-btn bolum7-toggle" id="btn-bolum7-toggle">Bölüm 7: Pratik Takip ▼</button>
+        <div class="bolum7-submenu" id="bolum7-submenu">
+          <button class="mode-btn" data-mode="bolum7_all">Tüm Sorular (Karışık)</button>
+          <button class="mode-btn" data-mode="bolum7_correct" id="btn-b7-correct">
+            ✓ Doğrular <span class="badge" id="b7-correct-count">0</span>
+          </button>
+          <button class="mode-btn" data-mode="bolum7_wrong" id="btn-b7-wrong">
+            ✗ Yanlışlar <span class="badge" id="b7-wrong-count">0</span>
+          </button>
+          <button class="mode-btn danger" id="btn-b7-clear">Sıfırla</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -768,6 +838,43 @@ const QUESTIONS = [
     qStates: [] // per-question: { shuffledLetters, answered, selected }
   };
 
+  // Bölüm 7: localStorage ile doğru/yanlış takibi
+  var b7State = { correct: [], wrong: [] };
+
+  function loadB7State() {
+    try {
+      b7State.correct = JSON.parse(localStorage.getItem("b7_correct") || "[]");
+      b7State.wrong   = JSON.parse(localStorage.getItem("b7_wrong")   || "[]");
+    } catch (e) {
+      b7State.correct = [];
+      b7State.wrong   = [];
+    }
+    updateB7Counts();
+  }
+
+  function saveB7State() {
+    localStorage.setItem("b7_correct", JSON.stringify(b7State.correct));
+    localStorage.setItem("b7_wrong",   JSON.stringify(b7State.wrong));
+    updateB7Counts();
+  }
+
+  function updateB7Counts() {
+    document.getElementById("b7-correct-count").textContent = b7State.correct.length;
+    document.getElementById("b7-wrong-count").textContent   = b7State.wrong.length;
+  }
+
+  function recordB7Answer(qId, isCorrect) {
+    if (state.mode !== "bolum7_all") return;
+    b7State.correct = b7State.correct.filter(function (id) { return id !== qId; });
+    b7State.wrong   = b7State.wrong.filter(function (id)   { return id !== qId; });
+    if (isCorrect) {
+      b7State.correct.push(qId);
+    } else {
+      b7State.wrong.push(qId);
+    }
+    saveB7State();
+  }
+
   var screenMenu = document.getElementById("screen-menu");
   var screenQuiz = document.getElementById("screen-quiz");
   var screenResults = document.getElementById("screen-results");
@@ -806,14 +913,56 @@ const QUESTIONS = [
 
   function getQuestionsForMode(mode) {
     var pool;
-    if (mode === "all") {
+    if (mode === "exam") {
+      pool = shuffleArray(QUESTIONS.slice()).slice(0, 50);
+    } else if (mode === "bolum7_all") {
+      pool = shuffleArray(QUESTIONS.slice());
+    } else if (mode === "bolum7_correct") {
+      pool = shuffleArray(QUESTIONS.filter(function (q) {
+        return b7State.correct.indexOf(q.id) !== -1;
+      }));
+    } else if (mode === "bolum7_wrong") {
+      pool = shuffleArray(QUESTIONS.filter(function (q) {
+        return b7State.wrong.indexOf(q.id) !== -1;
+      }));
+    } else if (mode === "all") {
       pool = shuffleArray(QUESTIONS.slice());
     } else if (mode === "bolum4") {
       pool = QUESTIONS.slice(); // sıralı, karıştırılmaz
     } else if (mode === "bolum5") {
+      // bolum2 soruları sıralı; ancak tüm sorulardaki doğru cevaplar arasında
+      // son-3-kelime imzası farklı sorularla çakışanlar hariç tutulur
+      var sigMap = {};
+      QUESTIONS.forEach(function (q) {
+        q.correct.forEach(function (letter) {
+          var txt = q.options[letter];
+          if (!txt) return;
+          var words = txt.trim().split(/\s+/);
+          var sig = words.length <= 3
+            ? txt.trim().toLowerCase()
+            : words.slice(-3).join(" ").toLowerCase();
+          if (!sigMap[sig]) sigMap[sig] = [];
+          if (sigMap[sig].indexOf(q.id) === -1) sigMap[sig].push(q.id);
+        });
+      });
+      var dupSigs = {};
+      Object.keys(sigMap).forEach(function (sig) {
+        if (sigMap[sig].length > 1) dupSigs[sig] = true;
+      });
+      function hasDupSig(q) {
+        return q.correct.some(function (letter) {
+          var txt = q.options[letter];
+          if (!txt) return false;
+          var words = txt.trim().split(/\s+/);
+          var sig = words.length <= 3
+            ? txt.trim().toLowerCase()
+            : words.slice(-3).join(" ").toLowerCase();
+          return dupSigs[sig];
+        });
+      }
       pool = QUESTIONS.filter(function (q) {
-        return q.groups.indexOf("bolum2") !== -1;
-      }); // bolum2 soruları, sıralı, karıştırılmaz
+        return q.groups.indexOf("bolum2") !== -1 && !hasDupSig(q);
+      }); // bolum2 soruları, sıralı, karıştırılmaz, benzersiz cevaplılar
     } else {
       pool = shuffleArray(QUESTIONS.filter(function (q) {
         return q.groups.indexOf(mode) !== -1;
@@ -964,9 +1113,9 @@ const QUESTIONS = [
     qs.answered = true;
     qs.selected = [clickedLetter];
 
-    if (clickedLetter === q.correct[0]) {
-      state.correctCount++;
-    }
+    var isCorrect = clickedLetter === q.correct[0];
+    if (isCorrect) state.correctCount++;
+    recordB7Answer(q.id, isCorrect);
 
     renderQuestion();
   }
@@ -990,9 +1139,8 @@ const QUESTIONS = [
       correctSet.length === checkedSet.length &&
       correctSet.every(function (l, i) { return l === checkedSet[i]; });
 
-    if (isFullyCorrect) {
-      state.correctCount++;
-    }
+    if (isFullyCorrect) state.correctCount++;
+    recordB7Answer(q.id, isFullyCorrect);
 
     renderQuestion();
   }
@@ -1024,11 +1172,30 @@ const QUESTIONS = [
   }
 
   // Event wiring
-  document.querySelectorAll(".mode-btn").forEach(function (btn) {
+  document.querySelectorAll(".mode-btn[data-mode]").forEach(function (btn) {
     btn.addEventListener("click", function () {
       startQuiz(btn.dataset.mode);
     });
   });
+
+  // Bölüm 7 toggle
+  document.getElementById("btn-bolum7-toggle").addEventListener("click", function () {
+    var sub = document.getElementById("bolum7-submenu");
+    var open = sub.style.display === "flex";
+    sub.style.display = open ? "none" : "flex";
+    this.textContent = open ? "Bölüm 7: Pratik Takip ▼" : "Bölüm 7: Pratik Takip ▲";
+  });
+
+  // Sıfırla
+  document.getElementById("btn-b7-clear").addEventListener("click", function () {
+    if (confirm("Doğru ve yanlış listelerini sıfırlamak istediğinizden emin misiniz?")) {
+      b7State.correct = [];
+      b7State.wrong   = [];
+      saveB7State();
+    }
+  });
+
+  loadB7State();
 
   btnNext.addEventListener("click", nextQuestion);
   btnPrev.addEventListener("click", prevQuestion);
@@ -1048,6 +1215,7 @@ const QUESTIONS = [
 
   btnMenu.addEventListener("click", function () {
     showScreen(screenMenu);
+    updateB7Counts();
   });
 
 })();
