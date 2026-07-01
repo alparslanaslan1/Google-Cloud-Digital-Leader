@@ -332,6 +332,7 @@ h1 {
 
       <!-- Benzersiz Son Kelime (Çeldiricisiz) -->
       <button class="mode-btn" data-mode="benzersiz">Benzersiz Son Kelime (Çeldiricisiz) <span class="badge" id="benzersiz-count">139</span></button>
+      <button class="mode-btn" data-mode="benzersiz_sirali">Benzersiz Son Kelime (Sıralı) <span class="badge" id="benzersiz-sirali-count">139</span></button>
     </div>
   </div>
 
@@ -997,6 +998,10 @@ const QUESTIONS = [
       }));
     } else if (mode === "all") {
       pool = shuffleArray(QUESTIONS.slice());
+    } else if (mode === "benzersiz_sirali") {
+      pool = QUESTIONS.filter(function (q) {
+        return q.groups.indexOf("benzersiz") !== -1;
+      }); // benzersiz son kelimeli sorular, sıralı, karıştırılmaz
     } else if (mode === "bolum4") {
       pool = QUESTIONS.slice(); // sıralı, karıştırılmaz
     } else if (mode === "bolum5") {
