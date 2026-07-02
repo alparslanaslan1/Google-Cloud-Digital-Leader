@@ -1160,19 +1160,39 @@ const QUESTIONS = [
     renderQuestion();
   }
 
+  // Kapalı kelimeler localStorage'da tutulur (varsayılan: hepsi açık)
+  function loadBzClosedWords() {
+    try {
+      return JSON.parse(localStorage.getItem("bz_closed_words") || "[]");
+    } catch (e) {
+      return [];
+    }
+  }
+  function saveBzClosedWords(arr) {
+    localStorage.setItem("bz_closed_words", JSON.stringify(arr));
+  }
+
   function updateBenzersizWordsPanel(mode) {
     var panel = document.getElementById("benzersiz-words");
     if (!panel) return;
-    // Sadece doğru/yanlış bilinenlerde göster; karışık ve sıralıda gösterme
-    if (mode === "benzersiz_correct" || mode === "benzersiz_wrong") {
+    // Sıralı ve doğru/yanlış bilinenlerde göster; karışık modda gösterme
+    if (mode === "benzersiz_sirali" || mode === "benzersiz_correct" || mode === "benzersiz_wrong") {
       var list = document.getElementById("benzersiz-words-list");
       if (list && !list.hasChildNodes()) {
+        var closed = loadBzClosedWords();
         BENZERSIZ_WORDS.forEach(function (w) {
           var s = document.createElement("span");
           s.textContent = w;
-          s.className = "closed"; // varsayılan kapalı kutu
+          if (closed.indexOf(w) !== -1) s.className = "closed"; // hafızadaki kapalılar
           s.addEventListener("click", function () {
             this.classList.toggle("closed");
+            var cur = loadBzClosedWords();
+            if (this.classList.contains("closed")) {
+              if (cur.indexOf(w) === -1) cur.push(w);
+            } else {
+              cur = cur.filter(function (x) { return x !== w; });
+            }
+            saveBzClosedWords(cur);
           });
           list.appendChild(s);
         });
