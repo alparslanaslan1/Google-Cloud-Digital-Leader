@@ -169,6 +169,11 @@ h1 {
 .bz10-left { background: #c62828; }
 .bz10-right { background: #2e7d32; }
 .bz10-btn:disabled { opacity: 0.5; cursor: default; }
+.bz11-h { font-size: 14px; color: #444; margin: 18px 0 8px; }
+#bz11-list span { cursor: pointer; }
+#bz11-list span.selected {
+  background: #1a73e8; color: #fff; border-color: #1a73e8;
+}
 .bzgame-bar {
   display: flex; justify-content: space-between; align-items: center;
   flex-wrap: wrap; gap: 10px; margin-bottom: 16px;
@@ -413,6 +418,7 @@ h1 {
       <button class="mode-btn" data-mode="benzersiz_wrong" id="btn-bz-wrong">Benzersiz: Yanlış Bilinenler <span class="badge" id="bz-wrong-count">0</span></button>
       <button class="mode-btn" id="btn-bz-game">🎯 Benzersiz Kelime Bulma Oyunu</button>
       <button class="mode-btn" id="btn-bz9">Bölüm 9: Benzersizleri Bul (10'ar 10'ar)</button>
+      <button class="mode-btn" id="btn-bz11">Bölüm 11: Seçtiğim Kelimelerle Oyun</button>
 
       <!-- Bölüm 10 -->
       <div class="bolum7-block">
@@ -504,6 +510,24 @@ h1 {
       <button id="btn-bz10-left" class="bz10-btn bz10-left">◀ Benzersiz Değil</button>
       <button id="btn-bz10-right" class="bz10-btn bz10-right">Benzersiz Son ▶</button>
     </div>
+  </div>
+
+  <!-- BÖLÜM 11: Seçtiğim Kelimelerle Oyun -->
+  <div id="screen-bz11" class="screen" style="display:none;">
+    <h1>Bölüm 11: Seçtiğim Kelimelerle Oyun</h1>
+    <p class="bzgame-desc">Aşağıdaki listeden istediğin benzersiz son kelimeleri seç, sonra "Seçilenlerle Oyna"ya bas. Oyunda seçtiğin kelimeler çeldiricilerle karışır; benzersizleri bulmaya çalış (doğru <b style="color:#2e7d32">yeşil</b>, yanlış <b style="color:#c62828">kırmızı</b>). Seçimin kaydedilir; tekrar girdiğinde ekleyip çıkarabilirsin.</p>
+    <div class="bzgame-bar">
+      <span id="bz11-score" class="bzgame-score"></span>
+      <div>
+        <button id="btn-bz11-play" class="action-btn">Seçilenlerle Oyna</button>
+        <button id="btn-bz11-clear" class="action-btn danger">Sıfırla</button>
+        <button id="btn-bz11-menu" class="action-btn secondary">Menüye Dön</button>
+      </div>
+    </div>
+    <h3 class="bz11-h">Kelime Listesi (seçmek için tıkla)</h3>
+    <div id="bz11-list" class="benzersiz-words-list"></div>
+    <h3 class="bz11-h" id="bz11-game-h" style="display:none;">Oyun</h3>
+    <div id="bz11-grid" class="bzgame-grid"></div>
   </div>
 
 </div>
@@ -1152,6 +1176,7 @@ const QUESTIONS = [
   var screenBzGame = document.getElementById("screen-bzgame");
   var screenBz9 = document.getElementById("screen-bz9");
   var screenBz10 = document.getElementById("screen-bz10");
+  var screenBz11 = document.getElementById("screen-bz11");
 
   function showScreen(screen) {
     screenMenu.style.display = "none";
@@ -1160,7 +1185,74 @@ const QUESTIONS = [
     if (screenBzGame) screenBzGame.style.display = "none";
     if (screenBz9) screenBz9.style.display = "none";
     if (screenBz10) screenBz10.style.display = "none";
+    if (screenBz11) screenBz11.style.display = "none";
     screen.style.display = "block";
+  }
+
+  // Bölüm 11: kendi seçtiğim kelimelerle bulma oyunu
+  function loadBz11Sel() {
+    try { return JSON.parse(localStorage.getItem("bz11_selected") || "[]"); }
+    catch (e) { return []; }
+  }
+  function saveBz11Sel(arr) {
+    localStorage.setItem("bz11_selected", JSON.stringify(arr));
+  }
+
+  function startBz11() {
+    // liste her girişte yeniden çıkar; kayıtlı seçim işaretli gelir
+    var list = document.getElementById("bz11-list");
+    list.innerHTML = "";
+    var selected = loadBz11Sel();
+    BENZERSIZ_WORDS.forEach(function (w) {
+      var s = document.createElement("span");
+      s.textContent = w;
+      if (selected.indexOf(w) !== -1) s.className = "selected";
+      s.addEventListener("click", function () {
+        this.classList.toggle("selected");
+        var cur = loadBz11Sel();
+        if (this.classList.contains("selected")) {
+          if (cur.indexOf(w) === -1) cur.push(w);
+        } else {
+          cur = cur.filter(function (x) { return x !== w; });
+        }
+        saveBz11Sel(cur);
+        document.getElementById("bz11-score").textContent = "Seçilen: " + cur.length;
+      });
+      list.appendChild(s);
+    });
+    document.getElementById("bz11-grid").innerHTML = "";
+    document.getElementById("bz11-game-h").style.display = "none";
+    document.getElementById("bz11-score").textContent = "Seçilen: " + selected.length;
+    showScreen(screenBz11);
+  }
+
+  function playBz11() {
+    var selected = loadBz11Sel();
+    if (selected.length === 0) { alert("Önce listeden kelime seç."); return; }
+    var grid = document.getElementById("bz11-grid");
+    grid.innerHTML = "";
+    document.getElementById("bz11-game-h").style.display = "block";
+    // seçilenler + çeldirici (seçilen sayısının ~2 katı, min 15)
+    var nd = Math.max(15, selected.length * 2);
+    var distract = shuffleArray(BENZERSIZ_DISTRACT.slice()).slice(0, nd);
+    var round = shuffleArray(selected.slice().concat(distract));
+    var total = selected.length;
+    var found = 0;
+    var scoreEl = document.getElementById("bz11-score");
+    function upd() { scoreEl.textContent = "Bulunan: " + found + " / " + total; }
+    upd();
+    round.forEach(function (w) {
+      var btn = document.createElement("button");
+      btn.textContent = w;
+      var isTarget = selected.indexOf(w) !== -1;
+      btn.addEventListener("click", function () {
+        if (btn.classList.contains("correct") || btn.classList.contains("wrong")) return;
+        if (isTarget) { btn.classList.add("correct"); found++; upd(); }
+        else { btn.classList.add("wrong"); }
+      });
+      grid.appendChild(btn);
+    });
+    grid.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   // Bölüm 10: kaydırma oyunu (sağ = benzersiz, sol = değil)
@@ -1771,6 +1863,19 @@ const QUESTIONS = [
     showScreen(screenMenu);
   });
   updateBz10WrongCount();
+
+  // Bölüm 11
+  document.getElementById("btn-bz11").addEventListener("click", startBz11);
+  document.getElementById("btn-bz11-play").addEventListener("click", playBz11);
+  document.getElementById("btn-bz11-clear").addEventListener("click", function () {
+    if (confirm("Seçtiğin kelimeleri sıfırlamak istediğine emin misin?")) {
+      saveBz11Sel([]);
+      startBz11();
+    }
+  });
+  document.getElementById("btn-bz11-menu").addEventListener("click", function () {
+    showScreen(screenMenu);
+  });
 
 })();
 </script>
