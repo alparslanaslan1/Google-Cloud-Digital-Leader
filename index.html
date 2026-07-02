@@ -177,6 +177,24 @@ h1 {
   border-radius: 12px;
   font-size: 12px;
   color: #1b5e20;
+  cursor: pointer;
+  user-select: none;
+}
+/* Kapalı kutu: kelime gizli */
+.benzersiz-words-list span.closed {
+  background: #c8e6c9;
+  color: transparent;
+  min-width: 42px;
+  text-align: center;
+  position: relative;
+}
+.benzersiz-words-list span.closed::after {
+  content: "•••";
+  position: absolute;
+  left: 0;
+  right: 0;
+  color: #4c8c4a;
+  letter-spacing: 1px;
 }
 .learn-box {
   margin-top: 16px;
@@ -1152,6 +1170,10 @@ const QUESTIONS = [
         BENZERSIZ_WORDS.forEach(function (w) {
           var s = document.createElement("span");
           s.textContent = w;
+          s.className = "closed"; // varsayılan kapalı kutu
+          s.addEventListener("click", function () {
+            this.classList.toggle("closed");
+          });
           list.appendChild(s);
         });
       }
