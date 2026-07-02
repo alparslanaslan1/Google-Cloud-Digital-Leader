@@ -387,16 +387,6 @@ h1 {
         </div>
       </div>
 
-      <!-- Sonlar -->
-      <div class="bolum7-block">
-        <button class="mode-btn bolum7-toggle" id="btn-sonlar-toggle">Sonlar ▼</button>
-        <div class="bolum7-submenu" id="sonlar-submenu">
-          <button class="mode-btn" data-mode="son1">Son 1: Benzersiz Son Kelime <span class="badge" id="son1-count">44</span></button>
-          <button class="mode-btn" data-mode="son2">Son 2: Benzersiz Son 2 Kelime <span class="badge" id="son2-count">163</span></button>
-          <button class="mode-btn" data-mode="son3">Son 3: Benzersiz Son 3 Kelime <span class="badge" id="son3-count">193</span></button>
-        </div>
-      </div>
-
       <!-- Benzersiz Son Kelime (Çeldiricisiz) -->
       <button class="mode-btn" data-mode="benzersiz">Benzersiz Son Kelime (Çeldiricisiz) <span class="badge" id="benzersiz-count">139</span></button>
       <button class="mode-btn" data-mode="benzersiz_sirali">Benzersiz Son Kelime (Sıralı) <span class="badge" id="benzersiz-sirali-count">139</span></button>
@@ -1501,14 +1491,6 @@ const QUESTIONS = [
     var open = sub.style.display === "flex";
     sub.style.display = open ? "none" : "flex";
     this.textContent = open ? "Bölüm 7: Pratik Takip ▼" : "Bölüm 7: Pratik Takip ▲";
-  });
-
-  // Sonlar toggle
-  document.getElementById("btn-sonlar-toggle").addEventListener("click", function () {
-    var sub = document.getElementById("sonlar-submenu");
-    var open = sub.style.display === "flex";
-    sub.style.display = open ? "none" : "flex";
-    this.textContent = open ? "Sonlar ▼" : "Sonlar ▲";
   });
 
   // Sıfırla
