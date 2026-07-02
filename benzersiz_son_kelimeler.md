@@ -1,31 +1,21 @@
-# Benzersiz Son Kelimeli Doğru Şıklar
+# Benzersiz Son Kelimeli Doğru Şıklar (Tek Cevaplı)
 
-Bu listedeki her doğru şıkkın **son kelimesi**, hiçbir sorunun yanlış şıkkında son kelime olarak geçmez.
-Yani bir şıkkın son kelimesi bu listede ise, cevap her zaman o şıktır.
+Sadece tek doğru cevabı olan sorular. Doğru şıkkın son kelimesi hiçbir yanlış şıkta son kelime değil.
 
-Toplam: **143** doğru şık
+Toplam: **125** doğru şık
 
 | Soru | Şık | Doğru Cevap | Son Kelime |
 |---|---|---|---|
 | 1 | A | Assign roles | **roles** |
-| 2 | C | Datalab | **datalab** |
-| 6 | A | Queries retrieving results from the cache | **cache** |
 | 10 | A | IoT Core | **core** |
 | 16 | A | Cold | **cold** |
-| 28 | A | The ability to predict API traffic patterns | **patterns** |
-| 28 | C | The ability to modernize legacy services via RESTful interfaces | **interfaces** |
-| 28 | D | The ability to record and analyze business metrics | **metrics** |
 | 30 | B | Internet Communication | **communication** |
 | 36 | C | Coldline | **coldline** |
 | 44 | D | Organizational transformation | **transformation** |
 | 51 | B | Firebase | **firebase** |
-| 56 | A | Web Client protection | **protection** |
-| 56 | B | Data protection | **protection** |
 | 65 | A | Google Kubernetes Engine cluster | **cluster** |
-| 68 | C | A family history website with only a few visitors annually | **annually** |
 | 83 | B | Define your resource hierarchy with an organization node on top | **top** |
 | 84 | C | Turn on committed use discount sharing, and create a commitment for the combined usage | **usage** |
-| 90 | A | Billing dashboards | **dashboards** |
 | 92 | B | Create a folder per department, and create a project per environment in each folder. | **folder** |
 | 98 | C | Review cloud resource costs frequently because costs depend on usage. | **usage** |
 | 99 | B | Increased risk of inaccuracy | **inaccuracy** |
@@ -38,7 +28,6 @@ Toplam: **143** doğru şık
 | 132 | C | Profile picture | **picture** |
 | 137 | A | Use a Cloud Storage bucket and enable 'Requester Pays'. | **pays** |
 | 146 | A | Use Local SSDs | **ssds** |
-| 151 | A | Devices (Mobile and PCs) | **pcs** |
 | 153 | C | Scale the systems horizontally | **horizontally** |
 | 156 | A | roles | **roles** |
 | 157 | B | composite | **composite** |
@@ -75,7 +64,6 @@ Toplam: **143** doğru şık
 | 255 | B | Google Cloud Virtual Desktop | **desktop** |
 | 256 | B | Agile storage scalability. | **scalability** |
 | 257 | D | Multi-Tenancy | **tenancy** |
-| 266 | D | Deprecated, but ensure that the SLA support period is still valid. | **valid** |
 | 267 | D | Product ratings score | **score** |
 | 268 | B | Use AutoML Image - upload the images and let it create a working model for you. | **you** |
 | 270 | C | Flex Slots | **slots** |
@@ -90,7 +78,6 @@ Toplam: **143** doğru şık
 | 305 | D | Use Cloud Trace to collect latency data and track how requests propagate and why there is a delay. | **delay** |
 | 307 | D | Attach GPUs to the virtual machine for number crunching. | **crunching** |
 | 311 | D | All of the above are correct. | **correct** |
-| 313 | C | CMEK can only be configured at the cluster level. | **level** |
 | 315 | B | Setup Cloud Armor and add the malicious IPs to the deny list. | **list** |
 | 316 | A | On Google Cloud, create a folder corresponding to each team. Under that, there could be projects or further sub folders as the team decides. | **decides** |
 | 319 | A | Retain on-premise itself those portions of data and compute which are under regulation. Take advantage of all the other cloud capabilities for remaining work-loads. | **loads** |
@@ -102,18 +89,12 @@ Toplam: **143** doğru şık
 | 349 | C | Crashlytics | **crashlytics** |
 | 352 | A | Compute Engine with VMs with either Linux or Windows OS. | **os** |
 | 353 | C | Increasing conversion for user-to-user sharing | **sharing** |
-| 354 | A | Yes, that could be possible. If yes, there will be a significantly higher charge because the effort is significantly higher too. | **too** |
-| 360 | A | Cloud DataStore and Cloud SQL have Terabytes + and Terabytes Capacity respectively. | **respectively** |
 | 361 | B | Bots are creating accounts and then using them. Use Google Cloud's Web App and API Protection (WAAP). | **waap** |
 | 369 | D | Allocate sole-tenant nodes | **nodes** |
 | 372 | A | Machine learning examples include chatbots and automated virtual assistants to automate routine customer service tasks and speed up issue resolution. | **resolution** |
 | 385 | B | We can deploy a Pub/Sub to ingest data which will grow to absorb demand and pass it on to other stages. | **stages** |
-| 391 | B | De-identification | **identification** |
-| 391 | D | Inspection | **inspection** |
 | 399 | B | Cloud Security Scanner | **scanner** |
-| 400 | C | Compliance Offerings | **offerings** |
 | 401 | B | Community | **community** |
-| 406 | D | Discounted Significantly | **significantly** |
 | 411 | C | They are optimized for specific tasks making them more efficient. | **efficient** |
 | 413 | A | By ensuring data is reliable and accessible | **accessible** |
 | 414 | C | GKE Autopilot | **autopilot** |
