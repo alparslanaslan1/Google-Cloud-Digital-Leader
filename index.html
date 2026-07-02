@@ -149,6 +149,35 @@ h1 {
 }
 
 
+.benzersiz-words {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: #e8f5e9;
+  border: 1px solid #a5d6a7;
+  border-radius: 8px;
+}
+.benzersiz-words strong {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #2e7d32;
+  margin-bottom: 8px;
+}
+.benzersiz-words-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.benzersiz-words-list span {
+  display: inline-block;
+  padding: 3px 8px;
+  background: #ffffff;
+  border: 1px solid #c8e6c9;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #1b5e20;
+}
 .learn-box {
   margin-top: 16px;
   padding: 12px 16px;
@@ -333,6 +362,8 @@ h1 {
       <!-- Benzersiz Son Kelime (Çeldiricisiz) -->
       <button class="mode-btn" data-mode="benzersiz">Benzersiz Son Kelime (Çeldiricisiz) <span class="badge" id="benzersiz-count">139</span></button>
       <button class="mode-btn" data-mode="benzersiz_sirali">Benzersiz Son Kelime (Sıralı) <span class="badge" id="benzersiz-sirali-count">139</span></button>
+      <button class="mode-btn" data-mode="benzersiz_correct" id="btn-bz-correct">Benzersiz: Doğru Bilinenler <span class="badge" id="bz-correct-count">0</span></button>
+      <button class="mode-btn" data-mode="benzersiz_wrong" id="btn-bz-wrong">Benzersiz: Yanlış Bilinenler <span class="badge" id="bz-wrong-count">0</span></button>
     </div>
   </div>
 
@@ -341,6 +372,10 @@ h1 {
     <div class="quiz-header">
       <div id="real-qno" class="real-qno"></div>
       <div id="progress-text" class="progress-text"></div>
+    </div>
+    <div id="benzersiz-words" class="benzersiz-words" style="display:none;">
+      <strong>🔑 Benzersiz Son Kelimeler</strong>
+      <div id="benzersiz-words-list" class="benzersiz-words-list"></div>
     </div>
     <div class="question-card">
       <h2 id="question-text"></h2>
@@ -902,6 +937,9 @@ const QUESTIONS = [
     qStates: [] // per-question: { shuffledLetters, answered, selected }
   };
 
+  // Benzersiz son kelimeler (çeldiricisiz doğru cevapların son kelimeleri)
+  var BENZERSIZ_WORDS = ["accessible", "accountability", "alert", "annually", "are", "autopilot", "blamelessness", "cache", "caching", "calculator", "car", "centers", "cluster", "cognition", "cold", "coldline", "communication", "community", "completeness", "composite", "compute", "continuously", "core", "correct", "costly", "crashlytics", "crunching", "dashboards", "datalab", "decides", "delay", "desktop", "ease", "efficient", "electronically", "emails", "exited", "firebase", "folder", "greenfield", "horizontally", "hypervisor", "identification", "impacts", "inaccuracy", "information", "inspection", "interface", "interfaces", "interruption", "investment", "job", "later", "level", "list", "loads", "loss", "metrics", "nodes", "normal", "offerings", "opex", "organizations", "os", "other", "out", "outcomes", "patterns", "pays", "pcs", "phishing", "picture", "plan", "platforms", "processing", "program", "programmatically", "protection", "purposes", "quired", "redundancy", "regularly", "rehosted", "reliability", "resides", "resolution", "respectively", "result", "roles", "scalability", "scalable", "scanner", "schedules", "score", "sharing", "significantly", "siloed", "slots", "specialists", "ssds", "stages", "tenancy", "text", "too", "top", "tpus", "transactions", "transcripts", "transformation", "transit", "troubleshooting", "ultra", "upgrades", "uptime", "usage", "valid", "vulnerabilities", "waap", "way", "website", "you"];
+
   // Bölüm 7: localStorage ile doğru/yanlış takibi
   var b7State = { correct: [], wrong: [] };
 
@@ -937,6 +975,45 @@ const QUESTIONS = [
       b7State.wrong.push(qId);
     }
     saveB7State();
+  }
+
+  // Benzersiz: localStorage ile doğru/yanlış takibi
+  var bzState = { correct: [], wrong: [] };
+
+  function loadBzState() {
+    try {
+      bzState.correct = JSON.parse(localStorage.getItem("bz_correct") || "[]");
+      bzState.wrong   = JSON.parse(localStorage.getItem("bz_wrong")   || "[]");
+    } catch (e) {
+      bzState.correct = [];
+      bzState.wrong   = [];
+    }
+    updateBzCounts();
+  }
+
+  function saveBzState() {
+    localStorage.setItem("bz_correct", JSON.stringify(bzState.correct));
+    localStorage.setItem("bz_wrong",   JSON.stringify(bzState.wrong));
+    updateBzCounts();
+  }
+
+  function updateBzCounts() {
+    var ce = document.getElementById("bz-correct-count");
+    var we = document.getElementById("bz-wrong-count");
+    if (ce) ce.textContent = bzState.correct.length;
+    if (we) we.textContent = bzState.wrong.length;
+  }
+
+  function recordBzAnswer(qId, isCorrect) {
+    if (state.mode !== "benzersiz" && state.mode !== "benzersiz_sirali") return;
+    bzState.correct = bzState.correct.filter(function (id) { return id !== qId; });
+    bzState.wrong   = bzState.wrong.filter(function (id)   { return id !== qId; });
+    if (isCorrect) {
+      bzState.correct.push(qId);
+    } else {
+      bzState.wrong.push(qId);
+    }
+    saveBzState();
   }
 
   var screenMenu = document.getElementById("screen-menu");
@@ -1002,6 +1079,14 @@ const QUESTIONS = [
       pool = QUESTIONS.filter(function (q) {
         return q.groups.indexOf("benzersiz") !== -1;
       }); // benzersiz son kelimeli sorular, sıralı, karıştırılmaz
+    } else if (mode === "benzersiz_correct") {
+      pool = QUESTIONS.filter(function (q) {
+        return q.groups.indexOf("benzersiz") !== -1 && bzState.correct.indexOf(q.id) !== -1;
+      }); // benzersiz - doğru bilinenler, sıralı
+    } else if (mode === "benzersiz_wrong") {
+      pool = QUESTIONS.filter(function (q) {
+        return q.groups.indexOf("benzersiz") !== -1 && bzState.wrong.indexOf(q.id) !== -1;
+      }); // benzersiz - yanlış bilinenler, sıralı
     } else if (mode === "bolum4") {
       pool = QUESTIONS.slice(); // sıralı, karıştırılmaz
     } else if (mode === "bolum5") {
@@ -1052,8 +1137,28 @@ const QUESTIONS = [
     state.currentIndex = 0;
     state.correctCount = 0;
     state.qStates = [];
+    updateBenzersizWordsPanel(mode);
     showScreen(screenQuiz);
     renderQuestion();
+  }
+
+  function updateBenzersizWordsPanel(mode) {
+    var panel = document.getElementById("benzersiz-words");
+    if (!panel) return;
+    // Sadece doğru/yanlış bilinenlerde göster; karışık ve sıralıda gösterme
+    if (mode === "benzersiz_correct" || mode === "benzersiz_wrong") {
+      var list = document.getElementById("benzersiz-words-list");
+      if (list && !list.hasChildNodes()) {
+        BENZERSIZ_WORDS.forEach(function (w) {
+          var s = document.createElement("span");
+          s.textContent = w;
+          list.appendChild(s);
+        });
+      }
+      panel.style.display = "block";
+    } else {
+      panel.style.display = "none";
+    }
   }
 
   function letterList(count) {
@@ -1208,6 +1313,7 @@ const QUESTIONS = [
     var isCorrect = clickedLetter === q.correct[0];
     if (isCorrect) state.correctCount++;
     recordB7Answer(q.id, isCorrect);
+    recordBzAnswer(q.id, isCorrect);
 
     renderQuestion();
   }
@@ -1233,6 +1339,7 @@ const QUESTIONS = [
 
     if (isFullyCorrect) state.correctCount++;
     recordB7Answer(q.id, isFullyCorrect);
+    recordBzAnswer(q.id, isFullyCorrect);
 
     renderQuestion();
   }
@@ -1296,6 +1403,7 @@ const QUESTIONS = [
   });
 
   loadB7State();
+  loadBzState();
 
   btnNext.addEventListener("click", nextQuestion);
   btnPrev.addEventListener("click", prevQuestion);
