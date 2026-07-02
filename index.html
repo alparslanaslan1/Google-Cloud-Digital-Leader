@@ -149,6 +149,26 @@ h1 {
 }
 
 
+.bzgame-desc { color: #555; margin: 8px 0 16px; font-size: 14px; }
+.bzgame-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 10px; margin-bottom: 16px;
+}
+.bzgame-score { font-size: 15px; font-weight: 600; color: #333; }
+.bzgame-grid {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.bzgame-grid button {
+  padding: 8px 12px; font-size: 13px; cursor: pointer;
+  background: #f5f5f5; border: 1px solid #ccc; border-radius: 8px;
+  color: #222; transition: background 0.15s, color 0.15s;
+}
+.bzgame-grid button.correct {
+  background: #2e7d32; border-color: #2e7d32; color: #fff;
+}
+.bzgame-grid button.wrong {
+  background: #c62828; border-color: #c62828; color: #fff;
+}
 .benzersiz-words {
   margin-bottom: 16px;
   padding: 12px 16px;
@@ -382,6 +402,7 @@ h1 {
       <button class="mode-btn" data-mode="benzersiz_sirali">Benzersiz Son Kelime (Sıralı) <span class="badge" id="benzersiz-sirali-count">139</span></button>
       <button class="mode-btn" data-mode="benzersiz_correct" id="btn-bz-correct">Benzersiz: Doğru Bilinenler <span class="badge" id="bz-correct-count">0</span></button>
       <button class="mode-btn" data-mode="benzersiz_wrong" id="btn-bz-wrong">Benzersiz: Yanlış Bilinenler <span class="badge" id="bz-wrong-count">0</span></button>
+      <button class="mode-btn" id="btn-bz-game">🎯 Benzersiz Kelime Bulma Oyunu</button>
     </div>
   </div>
 
@@ -419,6 +440,20 @@ h1 {
       <button id="btn-retry" class="action-btn">Tekrar Dene</button>
       <button id="btn-menu" class="action-btn secondary">Menüye Dön</button>
     </div>
+  </div>
+
+  <!-- BENZERSIZ KELIME BULMA OYUNU -->
+  <div id="screen-bzgame" class="screen" style="display:none;">
+    <h1>🎯 Benzersiz Kelime Bulma</h1>
+    <p class="bzgame-desc">Benzersiz son kelimeleri işaretle. Doğruysa <b style="color:#2e7d32">yeşil</b>, yanlışsa <b style="color:#c62828">kırmızı</b> olur.</p>
+    <div class="bzgame-bar">
+      <span id="bzgame-score" class="bzgame-score"></span>
+      <div>
+        <button id="btn-bzgame-new" class="action-btn">Yeni Tur</button>
+        <button id="btn-bzgame-menu" class="action-btn secondary">Menüye Dön</button>
+      </div>
+    </div>
+    <div id="bzgame-grid" class="bzgame-grid"></div>
   </div>
 
 </div>
@@ -957,6 +992,7 @@ const QUESTIONS = [
 
   // Benzersiz son kelimeler (çeldiricisiz doğru cevapların son kelimeleri)
   var BENZERSIZ_WORDS = ["accessible", "accountability", "alert", "annually", "are", "autopilot", "blamelessness", "cache", "caching", "calculator", "car", "centers", "cluster", "cognition", "cold", "coldline", "communication", "community", "completeness", "composite", "compute", "continuously", "core", "correct", "costly", "crashlytics", "crunching", "dashboards", "datalab", "decides", "delay", "desktop", "ease", "efficient", "electronically", "emails", "exited", "firebase", "folder", "greenfield", "horizontally", "hypervisor", "identification", "impacts", "inaccuracy", "information", "inspection", "interface", "interfaces", "interruption", "investment", "job", "later", "level", "list", "loads", "loss", "metrics", "nodes", "normal", "offerings", "opex", "organizations", "os", "other", "out", "outcomes", "patterns", "pays", "pcs", "phishing", "picture", "plan", "platforms", "processing", "program", "programmatically", "protection", "purposes", "quired", "redundancy", "regularly", "rehosted", "reliability", "resides", "resolution", "respectively", "result", "roles", "scalability", "scalable", "scanner", "schedules", "score", "sharing", "significantly", "siloed", "slots", "specialists", "ssds", "stages", "tenancy", "text", "too", "top", "tpus", "transactions", "transcripts", "transformation", "transit", "troubleshooting", "ultra", "upgrades", "uptime", "usage", "valid", "vulnerabilities", "waap", "way", "website", "you"];
+  var BENZERSIZ_DISTRACT = ["above", "acceptable", "access", "account", "accounts", "accuracy", "address", "addresses", "admin", "agement", "ago", "agreement", "agreements", "alerts", "algorithms", "also", "americas", "analysis", "analytics", "anthos", "anywhere", "api", "apigee", "apis", "appear", "appliance", "application", "applications", "applied", "approach", "appsheet", "architecture", "archive", "archiving", "area", "arise", "armor", "assigned", "attacks", "audience", "audit", "auditing", "authentication", "authentications", "authorization", "automation", "automl", "autoscaling", "availability", "aws", "backend", "backfill", "backups", "balancers", "balancing", "bandwidth", "basic", "basis", "batches", "beam", "beta", "bigquary", "bigquery", "bigtable", "billing", "binaries", "borders", "boundaries", "box", "brownfield", "browser", "bucket", "budget", "budgets", "bug", "bugs", "build", "building", "caas", "canada", "capacity", "capex", "capitalization", "card", "cat", "catalog", "cdn", "center", "chain", "change", "changed", "changes", "cheap", "cities", "class", "classification", "cloud", "clouds", "code", "collection", "com", "comments", "company", "compatibility", "compliance", "composer", "computer", "computing", "concerns", "conditions", "config", "connectivity", "consequences", "console", "contact", "containers", "content", "contract", "control", "controls", "coordinates", "costs", "country", "cpus", "credits", "custom", "customer", "customers", "cycles", "daily", "dashboard", "data", "database", "databases", "dataflow", "dataplex", "dataprep", "dataproc", "datasets", "datastore", "datastream", "days", "debugger", "decisions", "default", "deleted", "delivery", "demand", "department", "departments", "deploy", "deployments", "descriptions", "desktops", "destination", "detected", "developers", "development", "dialogflow", "dilemmas", "director", "disabled", "discount", "discounts", "disk", "disks", "disruption", "distribution", "dns", "docker", "documents", "domain", "downtime", "drives", "easily", "edits", "effect", "efforts", "elasticity", "eliminated", "emergency", "employee", "employees", "encrypted", "encrypting", "encryption", "energy", "engine", "engineers", "engines", "enhanced", "enterprise", "enterprises", "environment", "environments", "errors", "estimate", "etc", "europe", "event", "eventarc", "events", "examples", "exceeded", "expansion", "expected", "expenditure", "expenditures", "expensive", "experience", "expertise", "exports", "faas", "facilities", "failure", "false", "family", "fashion", "fast", "faster", "features", "feedback", "fees", "field", "files", "filestore", "firestore", "firewalls", "fixed", "flaws", "flex", "focus", "folders", "for", "format", "forms", "found", "free", "frequently", "functions", "fusion", "future", "games", "gaps", "gcp", "gke", "google", "gpu", "gpus", "group", "groups", "gsutil", "guarantees", "hadoop", "handle", "hardware", "here", "higher", "history", "hot", "hours", "hub", "hybrid", "hypervisors", "iaas", "identity", "images", "impact", "incidents", "indicator", "industry", "infrastructure", "innovation", "insert", "instance", "instances", "institution", "intelligence", "interaction", "interconnect", "interval", "intervention", "intuition", "inventory", "investments", "iot", "ips", "issue", "issues", "key", "keys", "kubernetes", "lab", "labels", "lake", "language", "languages", "latency", "launch", "leaks", "learning", "limit", "limitations", "lists", "live", "load", "location", "logging", "logs", "looker", "lookml", "lost", "lower", "machine", "machines", "maintenance", "making", "manage", "managed", "management", "manager", "manually", "market", "materials", "memorystore", "messages", "metadata", "metal", "mfa", "microservices", "migration", "migrations", "minimal", "minimum", "minor", "minutes", "model", "models", "monitoring", "monitors", "monthly", "move", "name", "nat", "native", "nearline", "necessary", "network", "networks", "node", "not", "notes", "notice", "notifications", "number", "numbers", "objective", "ocr", "only", "operability", "operations", "optimization", "option", "options", "orders", "organization", "others", "output", "overspend", "owner", "ownership", "paas", "page", "partner", "partners", "party", "patchsets", "payments", "peering", "performance", "period", "permission", "permissions", "personalization", "photographs", "planning", "platform", "policies", "policy", "portal", "ports", "possible", "postgresql", "power", "predefined", "predictable", "predictions", "premier", "premise", "premises", "premium", "prevention", "preview", "pricing", "privacy", "private", "privilege", "process", "processors", "profile", "profiler", "project", "projects", "provided", "provider", "providers", "provisioning", "proxy", "public", "purchases", "queries", "quickly", "quirements", "ramp", "ransomware", "rate", "ratings", "ready", "recommendations", "recordings", "records", "recovery", "refactored", "reference", "region", "regions", "registered", "registry", "regression", "regulation", "regulations", "reimagined", "reinspection", "relationships", "released", "reliably", "remotely", "replace", "replatformed", "replication", "reporting", "reports", "repository", "requests", "required", "requirement", "reservations", "resilience", "resources", "responsibilities", "rest", "restore", "results", "retail", "review", "reviews", "risk", "role", "rollouts", "rotate", "router", "rows", "rules", "run", "rust", "saas", "safety", "sales", "sap", "satisfaction", "saturation", "savings", "scale", "scaling", "scheduler", "schema", "sdk", "seamlessly", "sector", "security", "server", "servers", "service", "services", "shift", "shutdown", "sla", "slo", "slos", "snapshot", "software", "solution", "solutions", "source", "sources", "spamming", "spanner", "speech", "speed", "spending", "sql", "sre", "ssd", "ssl", "sso", "stability", "stances", "standard", "standards", "states", "status", "storage", "store", "structured", "studio", "sub", "support", "survey", "system", "systems", "table", "tables", "tag", "tagging", "tags", "tasks", "tco", "team", "teams", "techcentral", "technology", "tensorflow", "testing", "them", "there", "these", "threat", "threats", "throughput", "tier", "time", "timeliness", "times", "tion", "tolerance", "tools", "topic", "tpu", "trace", "tracked", "traffic", "training", "translation", "trends", "trifacta", "troubleshooter", "true", "trust", "trustworthy", "tunnels", "undefined", "unique", "units", "unstructured", "updates", "use", "used", "user", "users", "uses", "using", "utilization", "validation", "validity", "value", "variable", "vcpus", "verification", "versioning", "vertically", "videos", "viewer", "visas", "visibility", "visible", "vision", "visualization", "vizier", "vms", "vpn", "vsphere", "warehouse", "warm", "warranty", "wastage", "words", "work", "workbench", "workflow", "workflows", "workload", "workloads", "workspace", "writes", "year", "years"];
 
   // Bölüm 7: localStorage ile doğru/yanlış takibi
   var b7State = { correct: [], wrong: [] };
@@ -1063,11 +1099,51 @@ const QUESTIONS = [
     return a;
   }
 
+  var screenBzGame = document.getElementById("screen-bzgame");
+
   function showScreen(screen) {
     screenMenu.style.display = "none";
     screenQuiz.style.display = "none";
     screenResults.style.display = "none";
+    if (screenBzGame) screenBzGame.style.display = "none";
     screen.style.display = "block";
+  }
+
+  // Benzersiz kelime bulma oyunu
+  function startBzGame() {
+    newBzRound();
+    showScreen(screenBzGame);
+  }
+
+  function newBzRound() {
+    var grid = document.getElementById("bzgame-grid");
+    grid.innerHTML = "";
+    var uniques = shuffleArray(BENZERSIZ_WORDS.slice()).slice(0, 15);
+    var distract = shuffleArray(BENZERSIZ_DISTRACT.slice()).slice(0, 45);
+    var round = shuffleArray(uniques.concat(distract));
+    var totalUnique = uniques.length;
+    var found = 0;
+    var scoreEl = document.getElementById("bzgame-score");
+    function updateScore() {
+      scoreEl.textContent = "Bulunan benzersiz: " + found + " / " + totalUnique;
+    }
+    updateScore();
+    round.forEach(function (w) {
+      var btn = document.createElement("button");
+      btn.textContent = w;
+      var isUnique = BENZERSIZ_WORDS.indexOf(w) !== -1;
+      btn.addEventListener("click", function () {
+        if (btn.classList.contains("correct") || btn.classList.contains("wrong")) return;
+        if (isUnique) {
+          btn.classList.add("correct");
+          found++;
+          updateScore();
+        } else {
+          btn.classList.add("wrong");
+        }
+      });
+      grid.appendChild(btn);
+    });
   }
 
   function getQuestionsForMode(mode) {
@@ -1466,6 +1542,12 @@ const QUESTIONS = [
   btnMenu.addEventListener("click", function () {
     showScreen(screenMenu);
     updateB7Counts();
+  });
+
+  document.getElementById("btn-bz-game").addEventListener("click", startBzGame);
+  document.getElementById("btn-bzgame-new").addEventListener("click", newBzRound);
+  document.getElementById("btn-bzgame-menu").addEventListener("click", function () {
+    showScreen(screenMenu);
   });
 
 })();
