@@ -393,6 +393,7 @@ h1 {
       <button class="mode-btn" data-mode="benzersiz_correct" id="btn-bz-correct">Benzersiz: Doğru Bilinenler <span class="badge" id="bz-correct-count">0</span></button>
       <button class="mode-btn" data-mode="benzersiz_wrong" id="btn-bz-wrong">Benzersiz: Yanlış Bilinenler <span class="badge" id="bz-wrong-count">0</span></button>
       <button class="mode-btn" id="btn-bz-game">🎯 Benzersiz Kelime Bulma Oyunu</button>
+      <button class="mode-btn" id="btn-bz9">Bölüm 9: Benzersizleri Bul (10'ar 10'ar)</button>
     </div>
   </div>
 
@@ -444,6 +445,20 @@ h1 {
       </div>
     </div>
     <div id="bzgame-grid" class="bzgame-grid"></div>
+  </div>
+
+  <!-- BÖLÜM 9: Benzersizleri Bul (10'ar) -->
+  <div id="screen-bz9" class="screen" style="display:none;">
+    <h1>Bölüm 9: Benzersizleri Bul</h1>
+    <p class="bzgame-desc">Bu grupta <b>10 benzersiz</b> son kelime + <b>30 benzersiz olmayan</b> kelime var. Benzersizleri işaretle: doğru <b style="color:#2e7d32">yeşil</b>, yanlış <b style="color:#c62828">kırmızı</b>. Bitince "Sonraki 10" ile devam et.</p>
+    <div class="bzgame-bar">
+      <span id="bz9-score" class="bzgame-score"></span>
+      <div>
+        <button id="btn-bz9-next" class="action-btn">Sonraki 10 →</button>
+        <button id="btn-bz9-menu" class="action-btn secondary">Menüye Dön</button>
+      </div>
+    </div>
+    <div id="bz9-grid" class="bzgame-grid"></div>
   </div>
 
 </div>
@@ -1090,13 +1105,63 @@ const QUESTIONS = [
   }
 
   var screenBzGame = document.getElementById("screen-bzgame");
+  var screenBz9 = document.getElementById("screen-bz9");
 
   function showScreen(screen) {
     screenMenu.style.display = "none";
     screenQuiz.style.display = "none";
     screenResults.style.display = "none";
     if (screenBzGame) screenBzGame.style.display = "none";
+    if (screenBz9) screenBz9.style.display = "none";
     screen.style.display = "block";
+  }
+
+  // Bölüm 9: benzersizleri 10'ar 10'ar bulma
+  var bz9Index = 0;
+
+  function startBz9() {
+    bz9Index = 0;
+    renderBz9Round();
+    showScreen(screenBz9);
+  }
+
+  function nextBz9Round() {
+    bz9Index += 10;
+    if (bz9Index >= BENZERSIZ_WORDS.length) bz9Index = 0; // başa dön
+    renderBz9Round();
+  }
+
+  function renderBz9Round() {
+    var grid = document.getElementById("bz9-grid");
+    grid.innerHTML = "";
+    var uniques = BENZERSIZ_WORDS.slice(bz9Index, bz9Index + 10);
+    var distract = shuffleArray(BENZERSIZ_DISTRACT.slice()).slice(0, 30);
+    var round = shuffleArray(uniques.concat(distract));
+    var totalGroups = Math.ceil(BENZERSIZ_WORDS.length / 10);
+    var groupNo = Math.floor(bz9Index / 10) + 1;
+    var found = 0;
+    var scoreEl = document.getElementById("bz9-score");
+    function updateScore() {
+      scoreEl.textContent = "Grup " + groupNo + " / " + totalGroups +
+        " — Bulunan: " + found + " / " + uniques.length;
+    }
+    updateScore();
+    round.forEach(function (w) {
+      var btn = document.createElement("button");
+      btn.textContent = w;
+      var isUnique = uniques.indexOf(w) !== -1;
+      btn.addEventListener("click", function () {
+        if (btn.classList.contains("correct") || btn.classList.contains("wrong")) return;
+        if (isUnique) {
+          btn.classList.add("correct");
+          found++;
+          updateScore();
+        } else {
+          btn.classList.add("wrong");
+        }
+      });
+      grid.appendChild(btn);
+    });
   }
 
   // Benzersiz kelime bulma oyunu
@@ -1529,6 +1594,12 @@ const QUESTIONS = [
   document.getElementById("btn-bz-game").addEventListener("click", startBzGame);
   document.getElementById("btn-bzgame-new").addEventListener("click", newBzRound);
   document.getElementById("btn-bzgame-menu").addEventListener("click", function () {
+    showScreen(screenMenu);
+  });
+
+  document.getElementById("btn-bz9").addEventListener("click", startBz9);
+  document.getElementById("btn-bz9-next").addEventListener("click", nextBz9Round);
+  document.getElementById("btn-bz9-menu").addEventListener("click", function () {
     showScreen(screenMenu);
   });
 
