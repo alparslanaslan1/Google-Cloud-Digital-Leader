@@ -170,6 +170,24 @@ h1 {
 .bz10-right { background: #2e7d32; }
 .bz10-btn:disabled { opacity: 0.5; cursor: default; }
 .bz12-wrong-nums { font-size: 12px; color: #c62828; line-height: 1.6; word-break: break-word; padding: 4px 2px; }
+.b13-row {
+  display: flex; gap: 10px; align-items: stretch;
+  padding: 8px 10px; border-radius: 8px; margin-bottom: 6px;
+  background: #f7f9ff; border: 1px solid #e0e6f5;
+}
+.b13-row .b13-tip { flex: 1; font-size: 13px; color: #333; }
+.b13-row .b13-ans { flex: 0 0 42%; font-size: 13px; font-weight: 700; color: #1a5e1a; border-left: 2px solid #cfe6cf; padding-left: 10px; }
+.b13-row .b13-no { font-size: 11px; color: #888; }
+.b13-flash {
+  margin: 18px auto; max-width: 560px; min-height: 150px;
+  background: #fff; border: 2px solid #c5cae9; border-radius: 16px; padding: 22px;
+  display: flex; flex-direction: column; justify-content: center; gap: 10px;
+}
+.b13-flash .b13-q { font-size: 15px; color: #222; }
+.b13-flash .b13-tip2 { font-size: 15px; font-weight: 700; color: #1a237e; }
+.b13-flash .b13-reveal { border-top: 1px dashed #ccc; padding-top: 10px; margin-top: 4px; }
+.b13-flash .b13-reveal .a { font-size: 18px; font-weight: 800; color: #2e7d32; }
+.b13-flash .b13-reveal .en { font-size: 13px; color: #666; font-style: italic; margin-top: 4px; }
 .bz11-h { font-size: 14px; color: #444; margin: 18px 0 8px; }
 #bz11-list span { cursor: pointer; }
 #bz11-list span.selected {
@@ -421,6 +439,7 @@ h1 {
       <button class="mode-btn" id="btn-bz9">Bölüm 9: Benzersizleri Bul (10'ar 10'ar)</button>
       <button class="mode-btn" id="btn-bz11">Bölüm 11: Seçtiğim Kelimelerle Oyun</button>
       <button class="mode-btn" data-mode="bolum13">Bölüm 13: Seçili Sorular <span class="badge" id="bolum13-count">115</span></button>
+      <button class="mode-btn" id="btn-b13study">🧠 Bölüm 13: Hızlı Öğrenme (Ezber)</button>
 
       <!-- Bölüm 10 -->
       <div class="bolum7-block">
@@ -546,6 +565,39 @@ h1 {
     <div id="bz11-list" class="benzersiz-words-list"></div>
     <h3 class="bz11-h" id="bz11-game-h" style="display:none;">Oyun</h3>
     <div id="bz11-grid" class="bzgame-grid"></div>
+  </div>
+
+  <!-- BÖLÜM 13: Hızlı Öğrenme (Ezber) -->
+  <div id="screen-b13study" class="screen" style="display:none;">
+    <h1>🧠 Bölüm 13: Hızlı Öğrenme</h1>
+    <div class="bzgame-bar">
+      <div>
+        <button id="btn-b13-list" class="action-btn">📋 Özet Liste</button>
+        <button id="btn-b13-card" class="action-btn secondary">🃏 Kart Çalışması</button>
+      </div>
+      <button id="btn-b13-menu" class="action-btn secondary">Menüye Dön</button>
+    </div>
+
+    <!-- Özet liste görünümü -->
+    <div id="b13-list-view">
+      <p class="bzgame-desc">Her satır: <b>ipucu → cevap</b>. Önce ipucunu (sol taraf) oku, sağdaki cevabı ezberle. Anahtar kelimeyi cevapla eşleştir.</p>
+      <div id="b13-list"></div>
+    </div>
+
+    <!-- Flashcard görünümü -->
+    <div id="b13-card-view" style="display:none;">
+      <p class="bzgame-desc">İpucunu oku, cevabı hatırlamaya çalış, sonra "Cevabı Göster". Bildiysen "✓ Biliyordum", bilemediysen "✗ Tekrar". Bilemediklerin tekrar karışıma girer.</p>
+      <div class="bzgame-bar">
+        <span id="b13-progress" class="bzgame-score"></span>
+        <button id="btn-b13-shuffle" class="action-btn secondary">🔀 Baştan Karıştır</button>
+      </div>
+      <div id="b13-flash" class="b13-flash"></div>
+      <div class="bzgame-bar" style="justify-content:center; gap:10px;">
+        <button id="btn-b13-reveal" class="action-btn">Cevabı Göster</button>
+        <button id="btn-b13-knew" class="action-btn" style="display:none; background:#2e7d32;">✓ Biliyordum</button>
+        <button id="btn-b13-again" class="action-btn" style="display:none; background:#c62828;">✗ Tekrar</button>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -1083,6 +1135,8 @@ const QUESTIONS = [
   };
 
   // Benzersiz son kelimeler (çeldiricisiz doğru cevapların son kelimeleri)
+  var BOLUM13_IDS = [8,20,35,38,40,46,55,58,64,65,75,78,85,87,88,93,105,108,111,118,120,123,126,136,145,152,154,162,164,171,175,180,181,185,197,202,209,212,218,223,225,229,231,232,233,234,237,239,243,245,249,250,251,253,271,273,276,281,282,285,287,297,302,310,313,314,318,323,325,332,342,343,348,353,357,360,362,366,374,389,393,396,398,403,406,419,425,426,429,430,437,442,445,453,457,458,459,462,464,465,466,468,470,475,476,478,484,493,498,499,500,501,504,510,511];
+
   var BENZERSIZ_WORDS = ["accessible", "accountability", "alert", "are", "autopilot", "blamelessness", "caching", "calculator", "car", "centers", "cluster", "cognition", "cold", "coldline", "communication", "community", "completeness", "composite", "compute", "continuously", "core", "correct", "costly", "crashlytics", "crunching", "decides", "delay", "desktop", "ease", "efficient", "electronically", "emails", "exited", "firebase", "folder", "greenfield", "horizontally", "hypervisor", "impacts", "inaccuracy", "information", "interface", "interruption", "investment", "job", "later", "list", "loads", "loss", "nodes", "normal", "opex", "organizations", "os", "other", "out", "outcomes", "pays", "phishing", "picture", "plan", "platforms", "processing", "program", "programmatically", "purposes", "quired", "redundancy", "regularly", "rehosted", "reliability", "resides", "resolution", "result", "roles", "scalability", "scalable", "scanner", "schedules", "score", "sharing", "siloed", "slots", "specialists", "ssds", "stages", "tenancy", "text", "top", "tpus", "transactions", "transcripts", "transformation", "transit", "troubleshooting", "ultra", "upgrades", "uptime", "usage", "vulnerabilities", "waap", "way", "website", "you"];
   var BENZERSIZ_DISTRACT = ["above", "acceptable", "access", "account", "accounts", "accuracy", "address", "addresses", "admin", "agement", "ago", "agreement", "agreements", "alerts", "algorithms", "also", "americas", "analysis", "analytics", "annually", "anthos", "anywhere", "api", "apigee", "apis", "appear", "appliance", "application", "applications", "applied", "approach", "appsheet", "architecture", "archive", "archiving", "area", "arise", "armor", "assigned", "attacks", "audience", "audit", "auditing", "authentication", "authentications", "authorization", "automation", "automl", "autoscaling", "availability", "aws", "backend", "backfill", "backups", "balancers", "balancing", "bandwidth", "basic", "basis", "batches", "beam", "beta", "bigquary", "bigquery", "bigtable", "billing", "binaries", "borders", "boundaries", "box", "brownfield", "browser", "bucket", "budget", "budgets", "bug", "bugs", "build", "building", "caas", "cache", "canada", "capacity", "capex", "capitalization", "card", "cat", "catalog", "cdn", "center", "chain", "change", "changed", "changes", "cheap", "cities", "class", "classification", "cloud", "clouds", "code", "collection", "com", "comments", "company", "compatibility", "compliance", "composer", "computer", "computing", "concerns", "conditions", "config", "connectivity", "consequences", "console", "contact", "containers", "content", "contract", "control", "controls", "coordinates", "costs", "country", "cpus", "credits", "custom", "customer", "customers", "cycles", "daily", "dashboard", "dashboards", "data", "database", "databases", "dataflow", "datalab", "dataplex", "dataprep", "dataproc", "datasets", "datastore", "datastream", "days", "debugger", "decisions", "default", "deleted", "delivery", "demand", "department", "departments", "deploy", "deployments", "descriptions", "desktops", "destination", "detected", "developers", "development", "dialogflow", "dilemmas", "director", "disabled", "discount", "discounts", "disk", "disks", "disruption", "distribution", "dns", "docker", "documents", "domain", "downtime", "drives", "easily", "edits", "effect", "efforts", "elasticity", "eliminated", "emergency", "employee", "employees", "encrypted", "encrypting", "encryption", "energy", "engine", "engineers", "engines", "enhanced", "enterprise", "enterprises", "environment", "environments", "errors", "estimate", "etc", "europe", "event", "eventarc", "events", "examples", "exceeded", "expansion", "expected", "expenditure", "expenditures", "expensive", "experience", "expertise", "exports", "faas", "facilities", "failure", "false", "family", "fashion", "fast", "faster", "features", "feedback", "fees", "field", "files", "filestore", "firestore", "firewalls", "fixed", "flaws", "flex", "focus", "folders", "for", "format", "forms", "found", "free", "frequently", "functions", "fusion", "future", "games", "gaps", "gcp", "gke", "google", "gpu", "gpus", "group", "groups", "gsutil", "guarantees", "hadoop", "handle", "hardware", "here", "higher", "history", "hot", "hours", "hub", "hybrid", "hypervisors", "iaas", "identification", "identity", "images", "impact", "incidents", "indicator", "industry", "infrastructure", "innovation", "insert", "inspection", "instance", "instances", "institution", "intelligence", "interaction", "interconnect", "interfaces", "interval", "intervention", "intuition", "inventory", "investments", "iot", "ips", "issue", "issues", "key", "keys", "kubernetes", "lab", "labels", "lake", "language", "languages", "latency", "launch", "leaks", "learning", "level", "limit", "limitations", "lists", "live", "load", "location", "logging", "logs", "looker", "lookml", "lost", "lower", "machine", "machines", "maintenance", "making", "manage", "managed", "management", "manager", "manually", "market", "materials", "memorystore", "messages", "metadata", "metal", "metrics", "mfa", "microservices", "migration", "migrations", "minimal", "minimum", "minor", "minutes", "model", "models", "monitoring", "monitors", "monthly", "move", "name", "nat", "native", "nearline", "necessary", "network", "networks", "node", "not", "notes", "notice", "notifications", "number", "numbers", "objective", "ocr", "offerings", "only", "operability", "operations", "optimization", "option", "options", "orders", "organization", "others", "output", "overspend", "owner", "ownership", "paas", "page", "partner", "partners", "party", "patchsets", "patterns", "payments", "pcs", "peering", "performance", "period", "permission", "permissions", "personalization", "photographs", "planning", "platform", "policies", "policy", "portal", "ports", "possible", "postgresql", "power", "predefined", "predictable", "predictions", "premier", "premise", "premises", "premium", "prevention", "preview", "pricing", "privacy", "private", "privilege", "process", "processors", "profile", "profiler", "project", "projects", "protection", "provided", "provider", "providers", "provisioning", "proxy", "public", "purchases", "queries", "quickly", "quirements", "ramp", "ransomware", "rate", "ratings", "ready", "recommendations", "recordings", "records", "recovery", "refactored", "reference", "region", "regions", "registered", "registry", "regression", "regulation", "regulations", "reimagined", "reinspection", "relationships", "released", "reliably", "remotely", "replace", "replatformed", "replication", "reporting", "reports", "repository", "requests", "required", "requirement", "reservations", "resilience", "resources", "respectively", "responsibilities", "rest", "restore", "results", "retail", "review", "reviews", "risk", "role", "rollouts", "rotate", "router", "rows", "rules", "run", "rust", "saas", "safety", "sales", "sap", "satisfaction", "saturation", "savings", "scale", "scaling", "scheduler", "schema", "sdk", "seamlessly", "sector", "security", "server", "servers", "service", "services", "shift", "shutdown", "significantly", "sla", "slo", "slos", "snapshot", "software", "solution", "solutions", "source", "sources", "spamming", "spanner", "speech", "speed", "spending", "sql", "sre", "ssd", "ssl", "sso", "stability", "stances", "standard", "standards", "states", "status", "storage", "store", "structured", "studio", "sub", "support", "survey", "system", "systems", "table", "tables", "tag", "tagging", "tags", "tasks", "tco", "team", "teams", "techcentral", "technology", "tensorflow", "testing", "them", "there", "these", "threat", "threats", "throughput", "tier", "time", "timeliness", "times", "tion", "tolerance", "too", "tools", "topic", "tpu", "trace", "tracked", "traffic", "training", "translation", "trends", "trifacta", "troubleshooter", "true", "trust", "trustworthy", "tunnels", "undefined", "unique", "units", "unstructured", "updates", "use", "used", "user", "users", "uses", "using", "utilization", "valid", "validation", "validity", "value", "variable", "vcpus", "verification", "versioning", "vertically", "videos", "viewer", "visas", "visibility", "visible", "vision", "visualization", "vizier", "vms", "vpn", "vsphere", "warehouse", "warm", "warranty", "wastage", "words", "work", "workbench", "workflow", "workflows", "workload", "workloads", "workspace", "writes", "year", "years"];
 
@@ -1236,6 +1290,7 @@ const QUESTIONS = [
     if (screenBz9) screenBz9.style.display = "none";
     if (screenBz10) screenBz10.style.display = "none";
     if (screenBz11) screenBz11.style.display = "none";
+    if (screenB13Study) screenB13Study.style.display = "none";
     screen.style.display = "block";
   }
 
@@ -1303,6 +1358,109 @@ const QUESTIONS = [
       grid.appendChild(btn);
     });
     grid.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  // Bölüm 13: Hızlı Öğrenme (ezber)
+  var screenB13Study = document.getElementById("screen-b13study");
+  var b13cards = { pool: [], idx: 0 };
+
+  function getB13Questions() {
+    return QUESTIONS.filter(function (q) { return BOLUM13_IDS.indexOf(q.id) !== -1; });
+  }
+  function b13AnswerText(q) {
+    return q.correct.map(function (l) { return q.options[l]; }).join(" + ");
+  }
+  function b13Clue(q) {
+    // learn ipucu "ipucu → cevap" formatında; sol taraf ipucu olarak kullanılır
+    if (q.learn && q.learn.indexOf("→") !== -1) return q.learn.split("→")[0].trim();
+    return q.learn || q.text;
+  }
+
+  function startB13Study() {
+    showB13View("list");
+    renderB13List();
+    showScreen(screenB13Study);
+  }
+
+  function showB13View(which) {
+    document.getElementById("b13-list-view").style.display = which === "list" ? "block" : "none";
+    document.getElementById("b13-card-view").style.display = which === "card" ? "block" : "none";
+    var lb = document.getElementById("btn-b13-list");
+    var cb = document.getElementById("btn-b13-card");
+    lb.className = which === "list" ? "action-btn" : "action-btn secondary";
+    cb.className = which === "card" ? "action-btn" : "action-btn secondary";
+  }
+
+  function renderB13List() {
+    var box = document.getElementById("b13-list");
+    box.innerHTML = "";
+    getB13Questions().forEach(function (q) {
+      var row = document.createElement("div");
+      row.className = "b13-row";
+      var tip = document.createElement("div");
+      tip.className = "b13-tip";
+      tip.innerHTML = "<span class='b13-no'>#" + q.id + "</span> " + b13Clue(q);
+      var ans = document.createElement("div");
+      ans.className = "b13-ans";
+      ans.textContent = b13AnswerText(q);
+      row.appendChild(tip); row.appendChild(ans);
+      box.appendChild(row);
+    });
+  }
+
+  function startB13Cards() {
+    b13cards.pool = shuffleArray(getB13Questions());
+    b13cards.idx = 0;
+    showB13View("card");
+    renderB13Card();
+  }
+
+  function renderB13Card() {
+    var flash = document.getElementById("b13-flash");
+    var reveal = document.getElementById("btn-b13-reveal");
+    var knew = document.getElementById("btn-b13-knew");
+    var again = document.getElementById("btn-b13-again");
+    var prog = document.getElementById("b13-progress");
+    reveal.style.display = "inline-block";
+    knew.style.display = "none";
+    again.style.display = "none";
+    if (b13cards.idx >= b13cards.pool.length) {
+      flash.innerHTML = "<div class='b13-tip2'>🏆 Bitti! Tüm kartları geçtin.</div>";
+      reveal.style.display = "none";
+      prog.textContent = "";
+      return;
+    }
+    var q = b13cards.pool[b13cards.idx];
+    prog.textContent = "Kart " + (b13cards.idx + 1) + " / " + b13cards.pool.length;
+    flash.innerHTML =
+      "<div class='b13-q'>#" + q.id + " — " + q.text + "</div>" +
+      "<div class='b13-tip2'>💡 " + b13Clue(q) + " → ?</div>";
+  }
+
+  function revealB13Card() {
+    var q = b13cards.pool[b13cards.idx];
+    if (!q) return;
+    var flash = document.getElementById("b13-flash");
+    var en = q.learnEn ? "<div class='en'>" + q.learnEn + "</div>" : "";
+    flash.innerHTML =
+      "<div class='b13-q'>#" + q.id + " — " + q.text + "</div>" +
+      "<div class='b13-tip2'>💡 " + b13Clue(q) + "</div>" +
+      "<div class='b13-reveal'><span class='a'>" + b13AnswerText(q) + "</span>" + en + "</div>";
+    document.getElementById("btn-b13-reveal").style.display = "none";
+    document.getElementById("btn-b13-knew").style.display = "inline-block";
+    document.getElementById("btn-b13-again").style.display = "inline-block";
+  }
+
+  function b13Knew() {
+    b13cards.idx++;
+    renderB13Card();
+  }
+  function b13Again() {
+    // bilemediğini sona ekle, tekrar çıksın
+    var q = b13cards.pool[b13cards.idx];
+    b13cards.pool.push(q);
+    b13cards.idx++;
+    renderB13Card();
   }
 
   // Bölüm 10: kaydırma oyunu (sağ = benzersiz, sol = değil)
@@ -1566,9 +1724,8 @@ const QUESTIONS = [
         return b7State.wrong.indexOf(q.id) !== -1;
       }));
     } else if (mode === "bolum13") {
-      var b13 = [8,20,35,38,40,46,55,58,64,65,75,78,85,87,88,93,105,108,111,118,120,123,126,136,145,152,154,162,164,171,175,180,181,185,197,202,209,212,218,223,225,229,231,232,233,234,237,239,243,245,249,250,251,253,271,273,276,281,282,285,287,297,302,310,313,314,318,323,325,332,342,343,348,353,357,360,362,366,374,389,393,396,398,403,406,419,425,426,429,430,437,442,445,453,457,458,459,462,464,465,466,468,470,475,476,478,484,493,498,499,500,501,504,510,511];
       pool = shuffleArray(QUESTIONS.filter(function (q) {
-        return b13.indexOf(q.id) !== -1;
+        return BOLUM13_IDS.indexOf(q.id) !== -1;
       }));
     } else if (mode === "bolum12_all") {
       pool = shuffleArray(QUESTIONS.slice());
@@ -2034,6 +2191,20 @@ const QUESTIONS = [
     }
   });
   loadBz12State();
+
+  // Bölüm 13: Hızlı Öğrenme
+  document.getElementById("btn-b13study").addEventListener("click", startB13Study);
+  document.getElementById("btn-b13-list").addEventListener("click", function () {
+    showB13View("list"); renderB13List();
+  });
+  document.getElementById("btn-b13-card").addEventListener("click", startB13Cards);
+  document.getElementById("btn-b13-shuffle").addEventListener("click", startB13Cards);
+  document.getElementById("btn-b13-reveal").addEventListener("click", revealB13Card);
+  document.getElementById("btn-b13-knew").addEventListener("click", b13Knew);
+  document.getElementById("btn-b13-again").addEventListener("click", b13Again);
+  document.getElementById("btn-b13-menu").addEventListener("click", function () {
+    showScreen(screenMenu);
+  });
 
 })();
 </script>
