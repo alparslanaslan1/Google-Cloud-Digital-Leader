@@ -440,6 +440,7 @@ h1 {
       <button class="mode-btn" id="btn-bz11">Bölüm 11: Seçtiğim Kelimelerle Oyun</button>
       <button class="mode-btn" data-mode="bolum13">Bölüm 13: Seçili Sorular <span class="badge" id="bolum13-count">115</span></button>
       <button class="mode-btn" id="btn-b13study">🧠 Bölüm 13: Hızlı Öğrenme (Ezber)</button>
+      <button class="mode-btn" data-mode="coklu">Çoklu Cevaplı Sorular <span class="badge" id="coklu-count">22</span></button>
 
       <!-- Bölüm 10 -->
       <div class="bolum7-block">
@@ -1727,6 +1728,10 @@ const QUESTIONS = [
     } else if (mode === "bolum13") {
       pool = shuffleArray(QUESTIONS.filter(function (q) {
         return BOLUM13_IDS.indexOf(q.id) !== -1;
+      }));
+    } else if (mode === "coklu") {
+      pool = shuffleArray(QUESTIONS.filter(function (q) {
+        return q.correct.length > 1;
       }));
     } else if (mode === "bolum12_all") {
       pool = shuffleArray(QUESTIONS.slice());
