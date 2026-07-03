@@ -420,6 +420,7 @@ h1 {
       <button class="mode-btn" id="btn-bz-game">🎯 Benzersiz Kelime Bulma Oyunu</button>
       <button class="mode-btn" id="btn-bz9">Bölüm 9: Benzersizleri Bul (10'ar 10'ar)</button>
       <button class="mode-btn" id="btn-bz11">Bölüm 11: Seçtiğim Kelimelerle Oyun</button>
+      <button class="mode-btn" data-mode="bolum13">Bölüm 13: Seçili Sorular <span class="badge" id="bolum13-count">115</span></button>
 
       <!-- Bölüm 10 -->
       <div class="bolum7-block">
@@ -1563,6 +1564,11 @@ const QUESTIONS = [
     } else if (mode === "bolum7_wrong") {
       pool = shuffleArray(QUESTIONS.filter(function (q) {
         return b7State.wrong.indexOf(q.id) !== -1;
+      }));
+    } else if (mode === "bolum13") {
+      var b13 = [8,20,35,38,40,46,55,58,64,65,75,78,85,87,88,93,105,108,111,118,120,123,126,136,145,152,154,162,164,171,175,180,181,185,197,202,209,212,218,223,225,229,231,232,233,234,237,239,243,245,249,250,251,253,271,273,276,281,282,285,287,297,302,310,313,314,318,323,325,332,342,343,348,353,357,360,362,366,374,389,393,396,398,403,406,419,425,426,429,430,437,442,445,453,457,458,459,462,464,465,466,468,470,475,476,478,484,493,498,499,500,501,504,510,511];
+      pool = shuffleArray(QUESTIONS.filter(function (q) {
+        return b13.indexOf(q.id) !== -1;
       }));
     } else if (mode === "bolum12_all") {
       pool = shuffleArray(QUESTIONS.slice());
