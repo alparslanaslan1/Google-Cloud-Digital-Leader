@@ -463,6 +463,7 @@ h1 {
     </div>
     <div class="quiz-footer">
       <button id="btn-prev" class="action-btn secondary" style="display:none;">&larr; Önceki Soru</button>
+      <button id="btn-skip" class="action-btn secondary" style="display:none;">Boş Bırak</button>
       <button id="btn-next" class="action-btn" style="display:none;">Sonraki Soru &rarr;</button>
     </div>
   </div>
@@ -1203,6 +1204,7 @@ const QUESTIONS = [
   var btnSubmitMulti = document.getElementById("btn-submit-multi");
   var btnNext = document.getElementById("btn-next");
   var btnPrev = document.getElementById("btn-prev");
+  var btnSkip = document.getElementById("btn-skip");
 
   var resultsScore = document.getElementById("results-score");
   var resultsPercent = document.getElementById("results-percent");
@@ -1712,6 +1714,20 @@ const QUESTIONS = [
     btnNext.textContent = (state.currentIndex === state.questions.length - 1)
       ? "Sonuçları Gör"
       : "Sonraki Soru →";
+    // Boş Bırak: sadece Bölüm 12'de ve henüz cevaplanmamış soruda
+    var qsCur = getQState(state.currentIndex);
+    btnSkip.style.display = (state.mode === "bolum12_all" && !qsCur.answered)
+      ? "inline-block" : "none";
+  }
+
+  function handleSkip() {
+    var q = state.questions[state.currentIndex];
+    var qs = getQState(state.currentIndex);
+    if (qs.answered) return;
+    qs.answered = true;
+    qs.selected = []; // boş bırakıldı
+    recordBz12Answer(q.id, false); // yanlış sayılır
+    renderQuestion();
   }
 
   function renderQuestion() {
@@ -1920,6 +1936,7 @@ const QUESTIONS = [
 
   btnNext.addEventListener("click", nextQuestion);
   btnPrev.addEventListener("click", prevQuestion);
+  btnSkip.addEventListener("click", handleSkip);
 
   document.addEventListener("keydown", function (e) {
     if (screenQuiz.style.display !== "block") return;
