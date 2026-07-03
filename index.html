@@ -1371,9 +1371,10 @@ const QUESTIONS = [
     return q.correct.map(function (l) { return q.options[l]; }).join(" + ");
   }
   function b13Clue(q) {
-    // learn ipucu "ipucu → cevap" formatında; sol taraf ipucu olarak kullanılır
-    if (q.learn && q.learn.indexOf("→") !== -1) return q.learn.split("→")[0].trim();
-    return q.learn || q.text;
+    // İngilizce ipucu "clue → answer" formatında; sol taraf ipucu olarak kullanılır
+    var tip = q.learnEn || q.learn || "";
+    if (tip.indexOf("→") !== -1) return tip.split("→")[0].trim();
+    return tip || q.text;
   }
 
   function startB13Study() {
