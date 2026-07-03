@@ -510,6 +510,10 @@ h1 {
       <button id="btn-bz10-left" class="bz10-btn bz10-left">◀ Benzersiz Değil</button>
       <button id="btn-bz10-right" class="bz10-btn bz10-right">Benzersiz Son ▶</button>
     </div>
+    <div class="bzgame-bar" style="justify-content:center; margin-top:14px;">
+      <button id="btn-bz10-next" class="action-btn" style="display:none;">İlerle →</button>
+      <button id="btn-bz10-retry" class="action-btn secondary" style="display:none;">Tekrar Dene</button>
+    </div>
   </div>
 
   <!-- BÖLÜM 11: Seçtiğim Kelimelerle Oyun -->
@@ -1256,7 +1260,8 @@ const QUESTIONS = [
   }
 
   // Bölüm 10: kaydırma oyunu (sağ = benzersiz, sol = değil)
-  var bz10 = { pool: [], idx: 0, correct: 0, total: 0, mode: "play", locked: false };
+  var BZ10_PART_SIZE = 40;
+  var bz10 = { parts: [], partIdx: 0, pool: [], idx: 0, correct: 0, total: 0, wrongInPart: 0, mode: "play", locked: false };
 
   function loadBz10Wrong() {
     try { return JSON.parse(localStorage.getItem("bz10_wrong") || "[]"); }
@@ -1273,22 +1278,37 @@ const QUESTIONS = [
 
   function startBz10(mode) {
     bz10.mode = mode;
+    bz10.partIdx = 0;
+    if (mode === "wrong") {
+      var w = loadBz10Wrong();
+      bz10.parts = w.length ? [w.slice()] : [];
+    } else {
+      // TÜM kelimeler: bütün benzersizler + eşit sayıda çeldirici, parçalara bölünür
+      var uniq = shuffleArray(BENZERSIZ_WORDS.slice());
+      var dist = shuffleArray(BENZERSIZ_DISTRACT.slice()).slice(0, uniq.length);
+      var master = shuffleArray(uniq.concat(dist));
+      bz10.parts = [];
+      for (var i = 0; i < master.length; i += BZ10_PART_SIZE) {
+        bz10.parts.push(master.slice(i, i + BZ10_PART_SIZE));
+      }
+    }
+    loadBz10Part();
+    showScreen(screenBz10);
+  }
+
+  function loadBz10Part() {
+    bz10.idx = 0;
     bz10.correct = 0;
     bz10.total = 0;
-    bz10.idx = 0;
+    bz10.wrongInPart = 0;
     bz10.locked = false;
-    if (mode === "wrong") {
-      bz10.pool = shuffleArray(loadBz10Wrong());
-      document.getElementById("bz10-title").textContent = "Bölüm 10: Bilemediklerim (Tekrar)";
-    } else {
-      // 20 benzersiz + 20 çeldirici karışık
-      var u = shuffleArray(BENZERSIZ_WORDS.slice()).slice(0, 20);
-      var d = shuffleArray(BENZERSIZ_DISTRACT.slice()).slice(0, 20);
-      bz10.pool = shuffleArray(u.concat(d));
-      document.getElementById("bz10-title").textContent = "Bölüm 10: Kaydırma Oyunu";
-    }
+    document.getElementById("btn-bz10-next").style.display = "none";
+    document.getElementById("btn-bz10-retry").style.display = "none";
+    // kelimeler aynı, sıralama rastgele
+    bz10.pool = bz10.parts.length ? shuffleArray(bz10.parts[bz10.partIdx].slice()) : [];
+    var title = bz10.mode === "wrong" ? "Bölüm 10: Bilemediklerim (Tekrar)" : "Bölüm 10: Kaydırma Oyunu";
+    document.getElementById("bz10-title").textContent = title;
     renderBz10Card();
-    showScreen(screenBz10);
   }
 
   function renderBz10Card() {
@@ -1296,22 +1316,59 @@ const QUESTIONS = [
     var fb = document.getElementById("bz10-feedback");
     var left = document.getElementById("btn-bz10-left");
     var right = document.getElementById("btn-bz10-right");
+    var nextBtn = document.getElementById("btn-bz10-next");
+    var retryBtn = document.getElementById("btn-bz10-retry");
     card.className = "bz10-card";
     fb.textContent = "";
     fb.style.color = "";
     bz10.locked = false;
-    if (bz10.idx >= bz10.pool.length) {
-      card.textContent = bz10.pool.length ? "Bitti! 🎉" : "Kelime yok.";
-      var msg = "Skor: " + bz10.correct + " / " + bz10.total;
-      if (bz10.mode === "wrong") msg += " — kalan bilemediğin: " + loadBz10Wrong().length;
-      fb.textContent = msg;
+    nextBtn.style.display = "none";
+    retryBtn.style.display = "none";
+
+    if (bz10.pool.length === 0) {
+      card.textContent = "Kelime yok.";
       left.disabled = true; right.disabled = true;
+      document.getElementById("bz10-score").textContent = "";
       return;
     }
+
+    if (bz10.idx >= bz10.pool.length) {
+      // parça bitti
+      left.disabled = true; right.disabled = true;
+      var totalParts = bz10.parts.length;
+      var isLast = bz10.partIdx >= totalParts - 1;
+      if (bz10.wrongInPart === 0) {
+        if (bz10.mode === "play" && !isLast) {
+          card.className = "bz10-card ok";
+          card.textContent = "Hatasız! 🎉";
+          fb.style.color = "#2e7d32";
+          fb.textContent = "Parça " + (bz10.partIdx + 1) + "/" + totalParts + " hatasız bitti. İlerle.";
+          nextBtn.style.display = "inline-block";
+        } else {
+          card.className = "bz10-card ok";
+          card.textContent = "Tebrikler! 🏆";
+          fb.style.color = "#2e7d32";
+          fb.textContent = bz10.mode === "wrong"
+            ? "Hatasız bitti. Kalan bilemediğin: " + loadBz10Wrong().length
+            : "Tüm parçaları hatasız tamamladın!";
+        }
+      } else {
+        card.className = "bz10-card no";
+        card.textContent = "Bu parçada " + bz10.wrongInPart + " hata";
+        fb.style.color = "#c62828";
+        fb.textContent = "İlerlemek için parçayı hatasız bitirmen gerek. Tekrar dene.";
+        retryBtn.style.display = "inline-block";
+      }
+      document.getElementById("bz10-score").textContent =
+        "Parça " + (bz10.partIdx + 1) + "/" + totalParts + " — Doğru: " + bz10.correct + " / " + bz10.total;
+      return;
+    }
+
     left.disabled = false; right.disabled = false;
     card.textContent = bz10.pool[bz10.idx];
     document.getElementById("bz10-score").textContent =
-      "Kelime " + (bz10.idx + 1) + " / " + bz10.pool.length + " — Doğru: " + bz10.correct;
+      "Parça " + (bz10.partIdx + 1) + "/" + bz10.parts.length +
+      " — Kelime " + (bz10.idx + 1) + " / " + bz10.pool.length + " — Doğru: " + bz10.correct;
   }
 
   function answerBz10(saidUnique) {
@@ -1322,22 +1379,21 @@ const QUESTIONS = [
     var card = document.getElementById("bz10-card");
     var fb = document.getElementById("bz10-feedback");
     bz10.total++;
-    var right = (saidUnique === isUnique);
-    if (right) {
+    var correct = (saidUnique === isUnique);
+    if (correct) {
       bz10.correct++;
       card.classList.add("ok");
       fb.style.color = "#2e7d32";
       fb.textContent = "Doğru! (" + word + (isUnique ? " → benzersiz" : " → benzersiz değil") + ")";
-      // doğru bilindiyse yanlış listesinden çıkar
       if (bz10.mode === "wrong") {
         var w = loadBz10Wrong().filter(function (x) { return x !== word; });
         saveBz10Wrong(w);
       }
     } else {
+      bz10.wrongInPart++;
       card.classList.add("no");
       fb.style.color = "#c62828";
       fb.textContent = "Yanlış! " + word + (isUnique ? " → benzersiz" : " → benzersiz değil");
-      // bilemedikleri stackle (tekrar oynanır)
       var cur = loadBz10Wrong();
       if (cur.indexOf(word) === -1) { cur.push(word); saveBz10Wrong(cur); }
     }
@@ -1345,6 +1401,16 @@ const QUESTIONS = [
       bz10.idx++;
       renderBz10Card();
     }, 850);
+  }
+
+  function nextBz10Part() {
+    if (bz10.partIdx < bz10.parts.length - 1) {
+      bz10.partIdx++;
+      loadBz10Part();
+    }
+  }
+  function retryBz10Part() {
+    loadBz10Part();
   }
 
   // Bölüm 9: benzersizleri 10'ar 10'ar bulma
@@ -1862,6 +1928,8 @@ const QUESTIONS = [
   document.getElementById("btn-bz10-menu").addEventListener("click", function () {
     showScreen(screenMenu);
   });
+  document.getElementById("btn-bz10-next").addEventListener("click", nextBz10Part);
+  document.getElementById("btn-bz10-retry").addEventListener("click", retryBz10Part);
   updateBz10WrongCount();
 
   // Bölüm 11
