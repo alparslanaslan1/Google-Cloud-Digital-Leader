@@ -411,26 +411,6 @@ h1 {
 
       <button class="mode-btn" data-mode="bolum6">Bölüm 6: "All / None of the Above" Soruları</button>
 
-      <!-- Bölüm 7 -->
-      <div class="bolum7-block">
-        <button class="mode-btn bolum7-toggle" id="btn-bolum7-toggle">Bölüm 7: Pratik Takip ▼</button>
-        <div class="bolum7-submenu" id="bolum7-submenu">
-          <button class="mode-btn" data-mode="bolum7_all">Tüm Sorular (Karışık)</button>
-          <button class="mode-btn" data-mode="bolum7_correct" id="btn-b7-correct">
-            ✓ Doğrular <span class="badge" id="b7-correct-count">0</span>
-          </button>
-          <button class="mode-btn" data-mode="bolum7_wrong" id="btn-b7-wrong">
-            ✗ Yanlışlar <span class="badge" id="b7-wrong-count">0</span>
-          </button>
-          <button class="mode-btn danger" id="btn-b7-clear">Sıfırla</button>
-        </div>
-      </div>
-
-      <!-- Benzersiz Son Kelime (Çeldiricisiz) -->
-      <button class="mode-btn" data-mode="benzersiz">Benzersiz Son Kelime (Çeldiricisiz) <span class="badge" id="benzersiz-count">125</span></button>
-      <button class="mode-btn" data-mode="benzersiz_sirali">Benzersiz Son Kelime (Sıralı) <span class="badge" id="benzersiz-sirali-count">125</span></button>
-      <button class="mode-btn" data-mode="benzersiz_correct" id="btn-bz-correct">Benzersiz: Doğru Bilinenler <span class="badge" id="bz-correct-count">0</span></button>
-      <button class="mode-btn" data-mode="benzersiz_wrong" id="btn-bz-wrong">Benzersiz: Yanlış Bilinenler <span class="badge" id="bz-wrong-count">0</span></button>
       <button class="mode-btn" id="btn-bz-game">🎯 Benzersiz Kelime Bulma Oyunu</button>
       <button class="mode-btn" id="btn-bz9">Bölüm 9: Benzersizleri Bul (10'ar 10'ar)</button>
       <button class="mode-btn" id="btn-bz11">Bölüm 11: Seçtiğim Kelimelerle Oyun</button>
@@ -1186,8 +1166,10 @@ const QUESTIONS = [
   }
 
   function updateB7Counts() {
-    document.getElementById("b7-correct-count").textContent = b7State.correct.length;
-    document.getElementById("b7-wrong-count").textContent   = b7State.wrong.length;
+    var ce = document.getElementById("b7-correct-count");
+    var we = document.getElementById("b7-wrong-count");
+    if (ce) ce.textContent = b7State.correct.length;
+    if (we) we.textContent = b7State.wrong.length;
   }
 
   function recordB7Answer(qId, isCorrect) {
@@ -2113,23 +2095,6 @@ const QUESTIONS = [
     btn.addEventListener("click", function () {
       startQuiz(btn.dataset.mode);
     });
-  });
-
-  // Bölüm 7 toggle
-  document.getElementById("btn-bolum7-toggle").addEventListener("click", function () {
-    var sub = document.getElementById("bolum7-submenu");
-    var open = sub.style.display === "flex";
-    sub.style.display = open ? "none" : "flex";
-    this.textContent = open ? "Bölüm 7: Pratik Takip ▼" : "Bölüm 7: Pratik Takip ▲";
-  });
-
-  // Sıfırla
-  document.getElementById("btn-b7-clear").addEventListener("click", function () {
-    if (confirm("Doğru ve yanlış listelerini sıfırlamak istediğinizden emin misiniz?")) {
-      b7State.correct = [];
-      b7State.wrong   = [];
-      saveB7State();
-    }
   });
 
   loadB7State();
