@@ -423,7 +423,14 @@ h1 {
           <button class="mode-btn" id="btn-b13study">🧠 Hızlı Öğrenme (Ezber)</button>
         </div>
       </div>
-      <button class="mode-btn" data-mode="coklu">Çoklu Cevaplı Sorular <span class="badge" id="coklu-count">22</span></button>
+      <!-- Çoklu Cevaplı Sorular -->
+      <div class="bolum7-block">
+        <button class="mode-btn bolum7-toggle" id="btn-coklu-toggle">Çoklu Cevaplı Sorular ▼</button>
+        <div class="bolum7-submenu" id="coklu-submenu">
+          <button class="mode-btn" data-mode="coklu">Karışık <span class="badge" id="coklu-count">22</span></button>
+          <button class="mode-btn" data-mode="coklu_sirali">Sıralı <span class="badge">22</span></button>
+        </div>
+      </div>
       <button class="mode-btn" data-mode="benzersizilk">Benzersiz İlk Kelime <span class="badge" id="benzersizilk-count">47</span></button>
 
       <!-- Benzersiz Son 2 Kelime -->
@@ -1747,6 +1754,10 @@ const QUESTIONS = [
       pool = shuffleArray(QUESTIONS.filter(function (q) {
         return q.correct.length > 1;
       }));
+    } else if (mode === "coklu_sirali") {
+      pool = QUESTIONS.filter(function (q) {
+        return q.correct.length > 1;
+      }); // id sırasında, karıştırılmaz
     } else if (mode === "bolum12_all") {
       pool = shuffleArray(QUESTIONS.slice());
     } else if (mode === "bolum12_wrong") {
@@ -2209,6 +2220,14 @@ const QUESTIONS = [
     var open = sub.style.display === "flex";
     sub.style.display = open ? "none" : "flex";
     this.textContent = open ? "Benzersiz Son 2 Kelime ▼" : "Benzersiz Son 2 Kelime ▲";
+  });
+
+  // Çoklu Cevaplı toggle
+  document.getElementById("btn-coklu-toggle").addEventListener("click", function () {
+    var sub = document.getElementById("coklu-submenu");
+    var open = sub.style.display === "flex";
+    sub.style.display = open ? "none" : "flex";
+    this.textContent = open ? "Çoklu Cevaplı Sorular ▼" : "Çoklu Cevaplı Sorular ▲";
   });
 
   // Bölüm 15 toggle
