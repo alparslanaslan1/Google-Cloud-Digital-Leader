@@ -451,6 +451,17 @@ h1 {
         </div>
       </div>
 
+      <!-- Bölüm 16 -->
+      <div class="bolum7-block">
+        <button class="mode-btn bolum7-toggle" id="btn-bolum16-toggle">Bölüm 16: Seçili Sorular ▼</button>
+        <div class="bolum7-submenu" id="bolum16-submenu">
+          <button class="mode-btn" data-mode="bolum16_karisik">Karışık <span class="badge">116</span></button>
+          <button class="mode-btn" data-mode="bolum16_sirali">Sıralı <span class="badge">116</span></button>
+          <button class="mode-btn" data-mode="bolum16_wrong">✗ Yanlışlar <span class="badge" id="bz16-wrong-count">0</span></button>
+          <button class="mode-btn danger" id="btn-bz16-clear">Sıfırla</button>
+        </div>
+      </div>
+
       <!-- Bölüm 10 -->
       <div class="bolum7-block">
         <button class="mode-btn bolum7-toggle" id="btn-bolum10-toggle">Bölüm 10: Kaydırma Oyunu ▼</button>
@@ -1149,6 +1160,8 @@ const QUESTIONS = [
 
   var SON2_IDS = [7,8,9,17,22,23,29,32,35,38,40,46,48,70,76,80,85,93,94,95,101,102,105,106,118,128,129,130,131,133,134,142,144,145,149,150,158,159,161,164,166,171,175,185,186,197,198,201,205,207,208,209,211,212,219,221,229,240,241,242,246,249,253,258,259,260,261,264,271,272,281,282,283,297,303,304,306,308,317,323,325,328,332,334,336,341,342,343,344,348,358,362,375,378,388,389,390,397,410,423,424,432,433,435,437,442,445,449,452,463,466,471,474,475,482,493,508];
 
+  var BOLUM16_IDS = [13,17,20,22,27,31,45,47,49,55,60,64,66,75,87,94,105,111,114,121,122,124,126,127,130,135,138,141,143,148,152,159,160,162,168,171,181,182,183,186,187,191,194,197,202,205,206,212,214,218,229,230,234,237,238,242,250,251,252,263,264,269,277,288,299,301,302,317,318,324,325,333,356,359,363,369,376,387,393,395,398,402,403,405,419,421,423,425,426,432,435,436,443,451,454,456,463,465,466,468,469,475,481,482,484,485,488,490,492,501,504,506,509,510,511,513];
+
   var BENZERSIZ_WORDS = ["accessible", "accountability", "alert", "are", "autopilot", "blamelessness", "caching", "calculator", "car", "centers", "cluster", "cognition", "cold", "coldline", "communication", "community", "completeness", "composite", "compute", "continuously", "core", "correct", "costly", "crashlytics", "crunching", "decides", "delay", "desktop", "ease", "efficient", "electronically", "emails", "exited", "firebase", "folder", "greenfield", "horizontally", "hypervisor", "impacts", "inaccuracy", "information", "interface", "interruption", "investment", "job", "later", "list", "loads", "loss", "nodes", "normal", "opex", "organizations", "os", "other", "out", "outcomes", "pays", "phishing", "picture", "plan", "platforms", "processing", "program", "programmatically", "purposes", "quired", "redundancy", "regularly", "rehosted", "reliability", "resides", "resolution", "result", "roles", "scalability", "scalable", "scanner", "schedules", "score", "sharing", "siloed", "slots", "specialists", "ssds", "stages", "tenancy", "text", "top", "tpus", "transactions", "transcripts", "transformation", "transit", "troubleshooting", "ultra", "upgrades", "uptime", "usage", "vulnerabilities", "waap", "way", "website", "you"];
   var BENZERSIZ_DISTRACT = ["above", "acceptable", "access", "account", "accounts", "accuracy", "address", "addresses", "admin", "agement", "ago", "agreement", "agreements", "alerts", "algorithms", "also", "americas", "analysis", "analytics", "annually", "anthos", "anywhere", "api", "apigee", "apis", "appear", "appliance", "application", "applications", "applied", "approach", "appsheet", "architecture", "archive", "archiving", "area", "arise", "armor", "assigned", "attacks", "audience", "audit", "auditing", "authentication", "authentications", "authorization", "automation", "automl", "autoscaling", "availability", "aws", "backend", "backfill", "backups", "balancers", "balancing", "bandwidth", "basic", "basis", "batches", "beam", "beta", "bigquary", "bigquery", "bigtable", "billing", "binaries", "borders", "boundaries", "box", "brownfield", "browser", "bucket", "budget", "budgets", "bug", "bugs", "build", "building", "caas", "cache", "canada", "capacity", "capex", "capitalization", "card", "cat", "catalog", "cdn", "center", "chain", "change", "changed", "changes", "cheap", "cities", "class", "classification", "cloud", "clouds", "code", "collection", "com", "comments", "company", "compatibility", "compliance", "composer", "computer", "computing", "concerns", "conditions", "config", "connectivity", "consequences", "console", "contact", "containers", "content", "contract", "control", "controls", "coordinates", "costs", "country", "cpus", "credits", "custom", "customer", "customers", "cycles", "daily", "dashboard", "dashboards", "data", "database", "databases", "dataflow", "datalab", "dataplex", "dataprep", "dataproc", "datasets", "datastore", "datastream", "days", "debugger", "decisions", "default", "deleted", "delivery", "demand", "department", "departments", "deploy", "deployments", "descriptions", "desktops", "destination", "detected", "developers", "development", "dialogflow", "dilemmas", "director", "disabled", "discount", "discounts", "disk", "disks", "disruption", "distribution", "dns", "docker", "documents", "domain", "downtime", "drives", "easily", "edits", "effect", "efforts", "elasticity", "eliminated", "emergency", "employee", "employees", "encrypted", "encrypting", "encryption", "energy", "engine", "engineers", "engines", "enhanced", "enterprise", "enterprises", "environment", "environments", "errors", "estimate", "etc", "europe", "event", "eventarc", "events", "examples", "exceeded", "expansion", "expected", "expenditure", "expenditures", "expensive", "experience", "expertise", "exports", "faas", "facilities", "failure", "false", "family", "fashion", "fast", "faster", "features", "feedback", "fees", "field", "files", "filestore", "firestore", "firewalls", "fixed", "flaws", "flex", "focus", "folders", "for", "format", "forms", "found", "free", "frequently", "functions", "fusion", "future", "games", "gaps", "gcp", "gke", "google", "gpu", "gpus", "group", "groups", "gsutil", "guarantees", "hadoop", "handle", "hardware", "here", "higher", "history", "hot", "hours", "hub", "hybrid", "hypervisors", "iaas", "identification", "identity", "images", "impact", "incidents", "indicator", "industry", "infrastructure", "innovation", "insert", "inspection", "instance", "instances", "institution", "intelligence", "interaction", "interconnect", "interfaces", "interval", "intervention", "intuition", "inventory", "investments", "iot", "ips", "issue", "issues", "key", "keys", "kubernetes", "lab", "labels", "lake", "language", "languages", "latency", "launch", "leaks", "learning", "level", "limit", "limitations", "lists", "live", "load", "location", "logging", "logs", "looker", "lookml", "lost", "lower", "machine", "machines", "maintenance", "making", "manage", "managed", "management", "manager", "manually", "market", "materials", "memorystore", "messages", "metadata", "metal", "metrics", "mfa", "microservices", "migration", "migrations", "minimal", "minimum", "minor", "minutes", "model", "models", "monitoring", "monitors", "monthly", "move", "name", "nat", "native", "nearline", "necessary", "network", "networks", "node", "not", "notes", "notice", "notifications", "number", "numbers", "objective", "ocr", "offerings", "only", "operability", "operations", "optimization", "option", "options", "orders", "organization", "others", "output", "overspend", "owner", "ownership", "paas", "page", "partner", "partners", "party", "patchsets", "patterns", "payments", "pcs", "peering", "performance", "period", "permission", "permissions", "personalization", "photographs", "planning", "platform", "policies", "policy", "portal", "ports", "possible", "postgresql", "power", "predefined", "predictable", "predictions", "premier", "premise", "premises", "premium", "prevention", "preview", "pricing", "privacy", "private", "privilege", "process", "processors", "profile", "profiler", "project", "projects", "protection", "provided", "provider", "providers", "provisioning", "proxy", "public", "purchases", "queries", "quickly", "quirements", "ramp", "ransomware", "rate", "ratings", "ready", "recommendations", "recordings", "records", "recovery", "refactored", "reference", "region", "regions", "registered", "registry", "regression", "regulation", "regulations", "reimagined", "reinspection", "relationships", "released", "reliably", "remotely", "replace", "replatformed", "replication", "reporting", "reports", "repository", "requests", "required", "requirement", "reservations", "resilience", "resources", "respectively", "responsibilities", "rest", "restore", "results", "retail", "review", "reviews", "risk", "role", "rollouts", "rotate", "router", "rows", "rules", "run", "rust", "saas", "safety", "sales", "sap", "satisfaction", "saturation", "savings", "scale", "scaling", "scheduler", "schema", "sdk", "seamlessly", "sector", "security", "server", "servers", "service", "services", "shift", "shutdown", "significantly", "sla", "slo", "slos", "snapshot", "software", "solution", "solutions", "source", "sources", "spamming", "spanner", "speech", "speed", "spending", "sql", "sre", "ssd", "ssl", "sso", "stability", "stances", "standard", "standards", "states", "status", "storage", "store", "structured", "studio", "sub", "support", "survey", "system", "systems", "table", "tables", "tag", "tagging", "tags", "tasks", "tco", "team", "teams", "techcentral", "technology", "tensorflow", "testing", "them", "there", "these", "threat", "threats", "throughput", "tier", "time", "timeliness", "times", "tion", "tolerance", "too", "tools", "topic", "tpu", "trace", "tracked", "traffic", "training", "translation", "trends", "trifacta", "troubleshooter", "true", "trust", "trustworthy", "tunnels", "undefined", "unique", "units", "unstructured", "updates", "use", "used", "user", "users", "uses", "using", "utilization", "valid", "validation", "validity", "value", "variable", "vcpus", "verification", "versioning", "vertically", "videos", "viewer", "visas", "visibility", "visible", "vision", "visualization", "vizier", "vms", "vpn", "vsphere", "warehouse", "warm", "warranty", "wastage", "words", "work", "workbench", "workflow", "workflows", "workload", "workloads", "workspace", "writes", "year", "years"];
 
@@ -1259,6 +1272,31 @@ const QUESTIONS = [
     bz12State.wrong   = bz12State.wrong.filter(function (id)   { return id !== qId; });
     if (isCorrect) { bz12State.correct.push(qId); } else { bz12State.wrong.push(qId); }
     saveBz12State();
+  }
+
+  // Bölüm 16: seçili sorular + yanlış takibi
+  var bz16State = { wrong: [] };
+  function loadBz16State() {
+    try { bz16State.wrong = JSON.parse(localStorage.getItem("bz16_wrong") || "[]"); }
+    catch (e) { bz16State.wrong = []; }
+    updateBz16Count();
+  }
+  function saveBz16State() {
+    localStorage.setItem("bz16_wrong", JSON.stringify(bz16State.wrong));
+    updateBz16Count();
+  }
+  function updateBz16Count() {
+    var el = document.getElementById("bz16-wrong-count");
+    if (el) el.textContent = bz16State.wrong.length;
+  }
+  function recordBz16Answer(qId, isCorrect) {
+    if (state.mode !== "bolum16_karisik" && state.mode !== "bolum16_sirali") return;
+    if (isCorrect) {
+      bz16State.wrong = bz16State.wrong.filter(function (id) { return id !== qId; });
+    } else if (bz16State.wrong.indexOf(qId) === -1) {
+      bz16State.wrong.push(qId);
+    }
+    saveBz16State();
   }
 
   var screenMenu = document.getElementById("screen-menu");
@@ -1758,6 +1796,18 @@ const QUESTIONS = [
       pool = QUESTIONS.filter(function (q) {
         return q.correct.length > 1;
       }); // id sırasında, karıştırılmaz
+    } else if (mode === "bolum16_karisik") {
+      pool = shuffleArray(QUESTIONS.filter(function (q) {
+        return BOLUM16_IDS.indexOf(q.id) !== -1;
+      }));
+    } else if (mode === "bolum16_sirali") {
+      pool = BOLUM16_IDS.map(function (id) {
+        return QUESTIONS.filter(function (q) { return q.id === id; })[0];
+      }).filter(Boolean);
+    } else if (mode === "bolum16_wrong") {
+      pool = QUESTIONS.filter(function (q) {
+        return BOLUM16_IDS.indexOf(q.id) !== -1 && bz16State.wrong.indexOf(q.id) !== -1;
+      });
     } else if (mode === "bolum12_all") {
       pool = shuffleArray(QUESTIONS.slice());
     } else if (mode === "bolum12_wrong") {
@@ -2044,6 +2094,7 @@ const QUESTIONS = [
     recordB7Answer(q.id, isCorrect);
     recordBzAnswer(q.id, isCorrect);
     recordBz12Answer(q.id, isCorrect);
+    recordBz16Answer(q.id, isCorrect);
 
     renderQuestion();
   }
@@ -2071,6 +2122,7 @@ const QUESTIONS = [
     recordB7Answer(q.id, isFullyCorrect);
     recordBzAnswer(q.id, isFullyCorrect);
     recordBz12Answer(q.id, isFullyCorrect);
+    recordBz16Answer(q.id, isFullyCorrect);
 
     renderQuestion();
   }
@@ -2221,6 +2273,21 @@ const QUESTIONS = [
     sub.style.display = open ? "none" : "flex";
     this.textContent = open ? "Benzersiz Son 2 Kelime ▼" : "Benzersiz Son 2 Kelime ▲";
   });
+
+  // Bölüm 16 toggle + sıfırla
+  document.getElementById("btn-bolum16-toggle").addEventListener("click", function () {
+    var sub = document.getElementById("bolum16-submenu");
+    var open = sub.style.display === "flex";
+    sub.style.display = open ? "none" : "flex";
+    this.textContent = open ? "Bölüm 16: Seçili Sorular ▼" : "Bölüm 16: Seçili Sorular ▲";
+  });
+  document.getElementById("btn-bz16-clear").addEventListener("click", function () {
+    if (confirm("Bölüm 16 yanlışlar listesini sıfırlamak istediğine emin misin?")) {
+      bz16State.wrong = [];
+      saveBz16State();
+    }
+  });
+  loadBz16State();
 
   // Çoklu Cevaplı toggle
   document.getElementById("btn-coklu-toggle").addEventListener("click", function () {
