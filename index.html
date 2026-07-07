@@ -170,6 +170,50 @@ h1 {
 .bz10-right { background: #2e7d32; }
 .bz10-btn:disabled { opacity: 0.5; cursor: default; }
 .bz12-wrong-nums { font-size: 12px; color: #c62828; line-height: 1.6; word-break: break-word; padding: 4px 2px; }
+/* SRS */
+.srs-hero {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+  background: linear-gradient(135deg, #1a237e 0%, #1a73e8 100%) !important;
+  border: none !important; padding: 16px 18px !important;
+}
+.srs-hero-title { font-size: 17px; font-weight: 800; color: #fff; }
+.srs-hero-sub { font-size: 12px; color: #cfe0ff; }
+.srs-hero-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+.srs-pill {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  background: rgba(255,255,255,0.18); color: #fff; font-size: 11px; font-weight: 600;
+}
+.srs-pill.green { background: #2e7d32; }
+#screen-srs .srs-pill { background: #e8eaf6; color: #1a237e; }
+.srs-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 14px 0; }
+.srs-stat {
+  background: #fff; border: 1px solid #e0e6f5; border-radius: 12px;
+  padding: 14px 12px; text-align: center;
+}
+.srs-stat .v { font-size: 26px; font-weight: 800; color: #1a237e; display: block; }
+.srs-stat .l { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.4px; }
+.srs-stat.green .v { color: #2e7d32; }
+.srs-stat.red .v { color: #c62828; }
+.srs-stat.amber .v { color: #b26a00; }
+.srs-info {
+  background: #e8f0fe; border: 1px solid #c6dafc; border-radius: 10px;
+  padding: 12px 14px; font-size: 13px; color: #1a3c6e; line-height: 1.6;
+}
+.srs-weak-row {
+  background: #fff; border: 1px solid #f0d0d0; border-left: 4px solid #c62828;
+  border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+}
+.srs-weak-row .wq { font-size: 13px; color: #333; margin-bottom: 6px; }
+.srs-weak-row .wa { font-size: 13px; font-weight: 700; color: #1a5e1a; }
+.srs-weak-row .wt { font-size: 12px; color: #7a5c00; margin-top: 4px; }
+.srs-weak-row .wm { font-size: 11px; color: #999; margin-top: 4px; }
+.srs-know {
+  margin-top: 14px; padding: 12px 14px; border-radius: 10px;
+  background: #fff3e0; border: 1px solid #ffcc80;
+}
+.srs-know strong { display: block; font-size: 11px; color: #b26a00; text-transform: uppercase; margin-bottom: 6px; }
+.srs-know .ka { font-size: 15px; font-weight: 800; color: #2e7d32; }
+.srs-know .kt { font-size: 13px; color: #5f4300; margin-top: 4px; display: block; }
 .b13-row {
   display: flex; gap: 10px; align-items: stretch;
   padding: 8px 10px; border-radius: 8px; margin-bottom: 6px;
@@ -337,6 +381,7 @@ h1 {
   background: #1558b0;
 }
 
+.action-btn.danger { background: #c62828; }
 .action-btn.secondary {
   background: #ffffff;
   color: #1a73e8;
@@ -405,6 +450,15 @@ h1 {
     <h1>Google Cloud Sertifika Pratik Quiz</h1>
     <p class="subtitle">Bir mod seçerek başla</p>
     <div class="menu-buttons">
+      <button class="mode-btn srs-hero" id="btn-srs">
+        <span class="srs-hero-title">🎓 Akıllı Öğrenme</span>
+        <span class="srs-hero-sub">Aralıklı tekrar · Eksik analizi · Kalıcı ilerleme</span>
+        <span class="srs-hero-badges">
+          <span class="srs-pill" id="srs-due-pill">Vadesi gelen: –</span>
+          <span class="srs-pill" id="srs-new-pill">Yeni: –</span>
+          <span class="srs-pill green" id="srs-mastered-pill">Öğrenilen: –</span>
+        </span>
+      </button>
       <button class="mode-btn" data-mode="all">Tüm Sorular (Karışık)</button>
       <button class="mode-btn" data-mode="bolum1">Bölüm 1: Anahtar Kelime Soruları</button>
       <button class="mode-btn" data-mode="exam">Exam Mode: Rastgele 50 Soru</button>
@@ -618,6 +672,57 @@ h1 {
         <button id="btn-b13-knew" class="action-btn" style="display:none; background:#2e7d32;">✓ Biliyordum</button>
         <button id="btn-b13-again" class="action-btn" style="display:none; background:#c62828;">✗ Tekrar</button>
       </div>
+    </div>
+  </div>
+
+  <!-- AKILLI ÖĞRENME (SRS) -->
+  <div id="screen-srs" class="screen" style="display:none;">
+    <h1>🎓 Akıllı Öğrenme</h1>
+    <div class="bzgame-bar">
+      <div>
+        <button id="btn-srs-dash" class="action-btn">📊 Panel</button>
+        <button id="btn-srs-study" class="action-btn secondary">▶ Çalış</button>
+        <button id="btn-srs-weak" class="action-btn secondary">🔍 Eksik Analizi</button>
+      </div>
+      <div>
+        <button id="btn-srs-reset" class="action-btn danger">Sıfırla</button>
+        <button id="btn-srs-menu" class="action-btn secondary">Menüye Dön</button>
+      </div>
+    </div>
+
+    <!-- Panel -->
+    <div id="srs-dash-view">
+      <div class="srs-stats" id="srs-stats"></div>
+      <div class="srs-info">
+        <strong>Nasıl çalışır?</strong> Aralıklı tekrar (spaced repetition) öğrenme psikolojisine dayanır:
+        yanlış bildiğin soru <b>5 dakika</b> sonra, doğru bildiğin <b>1 saat</b> sonra, tekrar doğru bildiğin
+        <b>1 gün</b> sonra, sonra <b>3 gün → 1 hafta → 2 hafta → 1 ay</b> aralıklarla karşına çıkar.
+        Tüm ilerlemen tarayıcında <b>IndexedDB</b>'de kalıcı olarak saklanır.
+      </div>
+      <h3 class="bz11-h">📅 Bugünkü Durum</h3>
+      <div id="srs-today"></div>
+    </div>
+
+    <!-- Çalışma -->
+    <div id="srs-study-view" style="display:none;">
+      <div class="bzgame-bar">
+        <span id="srs-study-progress" class="bzgame-score"></span>
+        <span id="srs-study-stage" class="srs-pill"></span>
+      </div>
+      <div class="question-card">
+        <h2 id="srs-q-text" style="font-size:16px;"></h2>
+        <div id="srs-options" class="options-container"></div>
+        <div id="srs-learnbox"></div>
+      </div>
+      <div class="bzgame-bar" style="justify-content:center; margin-top:12px;">
+        <button id="btn-srs-next" class="action-btn" style="display:none;">Sonraki →</button>
+      </div>
+    </div>
+
+    <!-- Eksik Analizi -->
+    <div id="srs-weak-view" style="display:none;">
+      <p class="bzgame-desc">En çok yanlış yaptığın sorular ve bilmen gerekenler. Bunlar aynı zamanda aralıklı tekrarda daha sık karşına çıkar.</p>
+      <div id="srs-weak-list"></div>
     </div>
   </div>
 
@@ -1343,6 +1448,7 @@ const QUESTIONS = [
     if (screenBz10) screenBz10.style.display = "none";
     if (screenBz11) screenBz11.style.display = "none";
     if (screenB13Study) screenB13Study.style.display = "none";
+    if (screenSrs) screenSrs.style.display = "none";
     screen.style.display = "block";
   }
 
@@ -1414,6 +1520,298 @@ const QUESTIONS = [
 
   // Bölüm 13: Hızlı Öğrenme (ezber)
   var screenB13Study = document.getElementById("screen-b13study");
+  var screenSrs = document.getElementById("screen-srs");
+
+  // ===================== AKILLI ÖĞRENME (SRS) =====================
+  // Aralıklar: yanlış → 5 dk; doğru serisi → 1 saat → 1 gün → 3 gün → 7 gün → 14 gün → 30 gün
+  var SRS_STEPS = [5*60e3, 60*60e3, 24*3600e3, 3*24*3600e3, 7*24*3600e3, 14*24*3600e3, 30*24*3600e3];
+  var srs = { cards: {}, db: null, ready: false, queue: [], qIdx: 0, answeredThis: false };
+
+  function srsOpenDB() {
+    return new Promise(function (resolve) {
+      if (!window.indexedDB) { resolve(null); return; }
+      var req = indexedDB.open("gcp_quiz_srs", 1);
+      req.onupgradeneeded = function (e) {
+        var db = e.target.result;
+        if (!db.objectStoreNames.contains("cards")) {
+          db.createObjectStore("cards", { keyPath: "qid" });
+        }
+      };
+      req.onsuccess = function (e) { resolve(e.target.result); };
+      req.onerror = function () { resolve(null); };
+    });
+  }
+
+  function srsLoad() {
+    return srsOpenDB().then(function (db) {
+      srs.db = db;
+      if (!db) {
+        // IndexedDB yoksa localStorage yedeği
+        try { srs.cards = JSON.parse(localStorage.getItem("srs_cards") || "{}"); } catch (e) { srs.cards = {}; }
+        srs.ready = true; srsUpdateHero(); return;
+      }
+      return new Promise(function (resolve) {
+        var tx = db.transaction("cards", "readonly");
+        var req = tx.objectStore("cards").getAll();
+        req.onsuccess = function () {
+          (req.result || []).forEach(function (c) { srs.cards[c.qid] = c; });
+          srs.ready = true; srsUpdateHero(); resolve();
+        };
+        req.onerror = function () { srs.ready = true; resolve(); };
+      });
+    });
+  }
+
+  function srsSaveCard(card) {
+    if (srs.db) {
+      try {
+        var tx = srs.db.transaction("cards", "readwrite");
+        tx.objectStore("cards").put(card);
+      } catch (e) {}
+    } else {
+      localStorage.setItem("srs_cards", JSON.stringify(srs.cards));
+    }
+  }
+
+  function srsClearAll() {
+    srs.cards = {};
+    if (srs.db) {
+      try { srs.db.transaction("cards", "readwrite").objectStore("cards").clear(); } catch (e) {}
+    }
+    localStorage.removeItem("srs_cards");
+    srsUpdateHero();
+  }
+
+  function srsGetCard(qid) {
+    if (!srs.cards[qid]) {
+      srs.cards[qid] = { qid: qid, step: -1, due: 0, seen: 0, correct: 0, wrong: 0, lapses: 0, last: 0 };
+    }
+    return srs.cards[qid];
+  }
+
+  // Her cevap (hangi modda olursa olsun) SRS'e işlenir
+  function srsRecord(qid, isCorrect) {
+    if (!srs.ready) return;
+    var c = srsGetCard(qid);
+    var now = Date.now();
+    c.seen++; c.last = now;
+    if (isCorrect) {
+      c.correct++;
+      c.step = Math.min(c.step + 1, SRS_STEPS.length - 1);
+    } else {
+      c.wrong++; c.lapses++;
+      c.step = 0; // yanlış → 5 dk sonra tekrar
+    }
+    c.due = now + SRS_STEPS[Math.max(c.step, 0)];
+    srsSaveCard(c);
+    srsUpdateHero();
+  }
+
+  function srsCounts() {
+    var now = Date.now(), due = 0, learned = 0, seen = 0, totalW = 0, totalC = 0;
+    QUESTIONS.forEach(function (q) {
+      var c = srs.cards[q.id];
+      if (!c || c.seen === 0) return;
+      seen++;
+      totalW += c.wrong; totalC += c.correct;
+      if (c.due <= now) due++;
+      if (c.step >= 2) learned++; // 1 gün ve üzeri aralığa ulaşan = öğrenilmiş
+    });
+    return { due: due, learned: learned, seen: seen, newCount: QUESTIONS.length - seen, totalW: totalW, totalC: totalC };
+  }
+
+  function srsUpdateHero() {
+    var s = srsCounts();
+    var d = document.getElementById("srs-due-pill");
+    var n = document.getElementById("srs-new-pill");
+    var m = document.getElementById("srs-mastered-pill");
+    if (d) d.textContent = "Vadesi gelen: " + s.due;
+    if (n) n.textContent = "Yeni: " + s.newCount;
+    if (m) m.textContent = "Öğrenilen: " + s.learned;
+  }
+
+  function srsShowView(which) {
+    document.getElementById("srs-dash-view").style.display = which === "dash" ? "block" : "none";
+    document.getElementById("srs-study-view").style.display = which === "study" ? "block" : "none";
+    document.getElementById("srs-weak-view").style.display = which === "weak" ? "block" : "none";
+    document.getElementById("btn-srs-dash").className = which === "dash" ? "action-btn" : "action-btn secondary";
+    document.getElementById("btn-srs-study").className = which === "study" ? "action-btn" : "action-btn secondary";
+    document.getElementById("btn-srs-weak").className = which === "weak" ? "action-btn" : "action-btn secondary";
+  }
+
+  function fmtDelta(ms) {
+    var m = Math.round(ms / 60000);
+    if (m < 60) return m + " dk";
+    var h = Math.round(m / 60);
+    if (h < 24) return h + " saat";
+    return Math.round(h / 24) + " gün";
+  }
+
+  function startSrs() {
+    srsRenderDash();
+    srsShowView("dash");
+    showScreen(screenSrs);
+  }
+
+  function srsRenderDash() {
+    var s = srsCounts();
+    var acc = (s.totalC + s.totalW) ? Math.round(100 * s.totalC / (s.totalC + s.totalW)) : 0;
+    document.getElementById("srs-stats").innerHTML =
+      "<div class='srs-stat amber'><span class='v'>" + s.due + "</span><span class='l'>Vadesi Gelen</span></div>" +
+      "<div class='srs-stat'><span class='v'>" + s.newCount + "</span><span class='l'>Hiç Görülmemiş</span></div>" +
+      "<div class='srs-stat green'><span class='v'>" + s.learned + "</span><span class='l'>Öğrenilen (1g+)</span></div>" +
+      "<div class='srs-stat'><span class='v'>" + s.seen + "</span><span class='l'>Çalışılan Soru</span></div>" +
+      "<div class='srs-stat " + (acc >= 70 ? "green" : "red") + "'><span class='v'>%" + acc + "</span><span class='l'>Genel Doğruluk</span></div>";
+    // bugünkü liste özeti
+    var now = Date.now();
+    var soon = [];
+    QUESTIONS.forEach(function (q) {
+      var c = srs.cards[q.id];
+      if (c && c.seen > 0 && c.due > now) soon.push({ id: q.id, in: c.due - now });
+    });
+    soon.sort(function (a, b) { return a.in - b.in; });
+    var el = document.getElementById("srs-today");
+    if (srsCounts().due > 0) {
+      el.innerHTML = "<div class='srs-info' style='background:#fff8e1;border-color:#ffe082;color:#7a5c00;'>⏰ <b>" +
+        srsCounts().due + " sorunun</b> tekrar vakti geldi. \"▶ Çalış\" ile başla.</div>";
+    } else if (soon.length) {
+      el.innerHTML = "<div class='srs-info'>✅ Şu an vadesi gelen soru yok. En yakın tekrar: <b>" +
+        fmtDelta(soon[0].in) + "</b> sonra (#" + soon[0].id + "). \"▶ Çalış\" dersen yeni sorular gelir.</div>";
+    } else {
+      el.innerHTML = "<div class='srs-info'>Henüz çalışma geçmişin yok. \"▶ Çalış\" ile başla — her cevabın kaydedilir ve program sana ne zaman tekrar soracağını bilir.</div>";
+    }
+  }
+
+  function srsBuildQueue() {
+    var now = Date.now();
+    var due = [], fresh = [];
+    QUESTIONS.forEach(function (q) {
+      var c = srs.cards[q.id];
+      if (c && c.seen > 0) {
+        if (c.due <= now) due.push(q);
+      } else {
+        fresh.push(q);
+      }
+    });
+    // önce vadesi gelenler (en çok yanlış yapılan önce), sonra yeni sorulardan 10 tane
+    due.sort(function (a, b) {
+      return (srs.cards[b.id].lapses - srs.cards[a.id].lapses);
+    });
+    srs.queue = due.concat(shuffleArray(fresh).slice(0, 10));
+    srs.qIdx = 0;
+  }
+
+  function srsStartStudy() {
+    srsBuildQueue();
+    srsShowView("study");
+    srsRenderStudyQ();
+  }
+
+  function srsStageLabel(qid) {
+    var c = srs.cards[qid];
+    if (!c || c.seen === 0) return "🆕 Yeni soru";
+    var labels = ["5 dk", "1 saat", "1 gün", "3 gün", "1 hafta", "2 hafta", "1 ay"];
+    return "Seviye: " + labels[Math.max(c.step, 0)] + (c.lapses ? " · " + c.lapses + " hata" : "");
+  }
+
+  function srsRenderStudyQ() {
+    var box = document.getElementById("srs-options");
+    var lb = document.getElementById("srs-learnbox");
+    var nextBtn = document.getElementById("btn-srs-next");
+    lb.innerHTML = "";
+    nextBtn.style.display = "none";
+    srs.answeredThis = false;
+    if (srs.qIdx >= srs.queue.length) {
+      document.getElementById("srs-q-text").textContent = "🏆 Bu oturum bitti!";
+      box.innerHTML = "";
+      document.getElementById("srs-study-progress").textContent = "";
+      document.getElementById("srs-study-stage").textContent = "";
+      lb.innerHTML = "<div class='srs-info'>Vadesi gelen tüm soruları ve yeni soruları bitirdin. Panele dönüp durumunu görebilirsin.</div>";
+      srsUpdateHero();
+      return;
+    }
+    var q = srs.queue[srs.qIdx];
+    document.getElementById("srs-study-progress").textContent = "Soru " + (srs.qIdx + 1) + " / " + srs.queue.length + " (#" + q.id + ")";
+    document.getElementById("srs-study-stage").textContent = srsStageLabel(q.id);
+    document.getElementById("srs-q-text").textContent = q.text;
+    box.innerHTML = "";
+    var isMulti = q.correct.length > 1;
+    var letters = Object.keys(q.options);
+    var selectedSet = [];
+    letters.forEach(function (L) {
+      var d = document.createElement("div");
+      d.className = "option";
+      d.innerHTML = "<span class='option-letter'>" + L + ".</span><span>" + q.options[L] + "</span>";
+      d.addEventListener("click", function () {
+        if (srs.answeredThis) return;
+        if (isMulti) {
+          var i = selectedSet.indexOf(L);
+          if (i === -1) { selectedSet.push(L); d.style.outline = "2px solid #1a73e8"; }
+          else { selectedSet.splice(i, 1); d.style.outline = ""; }
+          if (selectedSet.length === q.correct.length) {
+            srsAnswer(q, selectedSet.slice());
+          }
+        } else {
+          srsAnswer(q, [L]);
+        }
+      });
+      box.appendChild(d);
+    });
+  }
+
+  function srsAnswer(q, selected) {
+    srs.answeredThis = true;
+    var ok = selected.length === q.correct.length &&
+      selected.every(function (l) { return q.correct.indexOf(l) !== -1; });
+    // stil
+    var opts = document.getElementById("srs-options").children;
+    Array.prototype.forEach.call(opts, function (d) {
+      var L = d.querySelector(".option-letter").textContent.replace(".", "");
+      d.classList.add("locked");
+      if (q.correct.indexOf(L) !== -1) d.classList.add("correct");
+      else if (selected.indexOf(L) !== -1) d.classList.add("wrong");
+    });
+    srsRecord(q.id, ok);
+    // bilmen gerekenler kutusu
+    var lb = document.getElementById("srs-learnbox");
+    var ansText = q.correct.map(function (l) { return q.options[l]; }).join(" + ");
+    var tip = q.learnEn || q.learn || "";
+    var c = srs.cards[q.id];
+    var nextIn = fmtDelta(SRS_STEPS[Math.max(c.step, 0)]);
+    lb.innerHTML =
+      "<div class='srs-know'><strong>" + (ok ? "✅ Doğru — tekrar: " + nextIn + " sonra" : "❌ Yanlış — bilmen gereken (tekrar: " + nextIn + " sonra)") + "</strong>" +
+      "<span class='ka'>" + ansText + "</span>" +
+      (tip ? "<span class='kt'>💡 " + tip + "</span>" : "") + "</div>";
+    document.getElementById("btn-srs-next").style.display = "inline-block";
+  }
+
+  function srsRenderWeak() {
+    var rows = [];
+    QUESTIONS.forEach(function (q) {
+      var c = srs.cards[q.id];
+      if (c && c.wrong > 0) rows.push({ q: q, c: c });
+    });
+    rows.sort(function (a, b) { return b.c.wrong - a.c.wrong; });
+    var el = document.getElementById("srs-weak-list");
+    if (!rows.length) {
+      el.innerHTML = "<div class='srs-info'>Henüz yanlış kaydın yok. Çalıştıkça eksiklerin burada görünecek.</div>";
+      return;
+    }
+    el.innerHTML = "";
+    rows.slice(0, 50).forEach(function (r) {
+      var ans = r.q.correct.map(function (l) { return r.q.options[l]; }).join(" + ");
+      var tip = r.q.learnEn || r.q.learn || "";
+      var div = document.createElement("div");
+      div.className = "srs-weak-row";
+      div.innerHTML =
+        "<div class='wq'>#" + r.q.id + " — " + r.q.text + "</div>" +
+        "<div class='wa'>✔ " + ans + "</div>" +
+        (tip ? "<div class='wt'>💡 " + tip + "</div>" : "") +
+        "<div class='wm'>" + r.c.wrong + " yanlış · " + r.c.correct + " doğru · " + r.c.seen + " deneme</div>";
+      el.appendChild(div);
+    });
+  }
+  // =================== /AKILLI ÖĞRENME (SRS) ======================
   var b13cards = { pool: [], idx: 0 };
 
   function getB13Questions() {
@@ -2095,6 +2493,7 @@ const QUESTIONS = [
     recordBzAnswer(q.id, isCorrect);
     recordBz12Answer(q.id, isCorrect);
     recordBz16Answer(q.id, isCorrect);
+    srsRecord(q.id, isCorrect);
 
     renderQuestion();
   }
@@ -2123,6 +2522,7 @@ const QUESTIONS = [
     recordBzAnswer(q.id, isFullyCorrect);
     recordBz12Answer(q.id, isFullyCorrect);
     recordBz16Answer(q.id, isFullyCorrect);
+    srsRecord(q.id, isFullyCorrect);
 
     renderQuestion();
   }
@@ -2162,6 +2562,28 @@ const QUESTIONS = [
 
   loadB7State();
   loadBzState();
+
+  // SRS wiring
+  document.getElementById("btn-srs").addEventListener("click", startSrs);
+  document.getElementById("btn-srs-dash").addEventListener("click", function () {
+    srsRenderDash(); srsShowView("dash");
+  });
+  document.getElementById("btn-srs-study").addEventListener("click", srsStartStudy);
+  document.getElementById("btn-srs-weak").addEventListener("click", function () {
+    srsRenderWeak(); srsShowView("weak");
+  });
+  document.getElementById("btn-srs-next").addEventListener("click", function () {
+    srs.qIdx++; srsRenderStudyQ();
+  });
+  document.getElementById("btn-srs-reset").addEventListener("click", function () {
+    if (confirm("Tüm Akıllı Öğrenme geçmişini (IndexedDB) silmek istediğine emin misin?")) {
+      srsClearAll(); srsRenderDash(); srsShowView("dash");
+    }
+  });
+  document.getElementById("btn-srs-menu").addEventListener("click", function () {
+    showScreen(screenMenu);
+  });
+  srsLoad();
 
   btnNext.addEventListener("click", nextQuestion);
   btnPrev.addEventListener("click", prevQuestion);
