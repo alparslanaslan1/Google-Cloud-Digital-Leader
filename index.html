@@ -439,6 +439,161 @@ h1 {
 .mode-btn:hover .badge {
   background: #fff;
   color: #1a73e8;
+}
+
+/* ============================================================
+   MODERN TEMA KATMANI  (sonraki kurallar öncekileri ezer)
+   ============================================================ */
+:root {
+  --bg1:#0f172a; --bg2:#1e293b;
+  --primary:#4f46e5; --primary2:#6366f1; --primary-ink:#3730a3;
+  --accent:#06b6d4;
+  --ink:#0f172a; --muted:#64748b; --line:#e2e8f0;
+  --card:#ffffff; --soft:#f8fafc;
+  --ok:#059669; --ok-bg:#ecfdf5;
+  --bad:#dc2626; --bad-bg:#fef2f2;
+  --warn:#d97706;
+  --radius:16px; --shadow:0 10px 30px -12px rgba(2,6,23,.18);
+  --font:"Inter","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+}
+body {
+  font-family:var(--font);
+  background:
+    radial-gradient(900px 500px at 15% -10%, #e0e7ff 0%, transparent 55%),
+    radial-gradient(800px 500px at 110% 0%, #cffafe 0%, transparent 45%),
+    #f1f5f9;
+  color:var(--ink);
+  padding:24px 16px 48px;
+  -webkit-font-smoothing:antialiased;
+}
+#app { max-width:760px; }
+.screen {
+  background:var(--card);
+  border:1px solid rgba(15,23,42,.06);
+  border-radius:22px;
+  padding:30px 28px;
+  box-shadow:var(--shadow);
+}
+h1 {
+  font-size:26px; font-weight:800; letter-spacing:-.02em;
+  color:var(--ink); background:none; text-align:center;
+}
+.subtitle { color:var(--muted); font-size:15px; }
+
+/* ---- Menü kart butonları ---- */
+.menu-buttons { gap:12px; }
+.mode-btn {
+  position:relative;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  text-align:left;
+  padding:16px 18px;
+  font-size:15.5px; font-weight:600;
+  color:var(--ink);
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:0 1px 2px rgba(2,6,23,.04);
+  transition:transform .12s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+}
+.mode-btn:hover {
+  background:var(--card);
+  color:var(--primary-ink);
+  border-color:var(--primary2);
+  transform:translateY(-2px);
+  box-shadow:0 12px 24px -14px rgba(79,70,229,.55);
+}
+.mode-btn:active { transform:translateY(0); }
+
+/* ---- Akıllı Öğrenme hero ---- */
+.srs-hero {
+  flex-direction:column; align-items:flex-start; gap:8px;
+  background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 55%,#06b6d4 140%) !important;
+  border:none !important; padding:22px 22px !important; border-radius:20px !important;
+  box-shadow:0 18px 40px -18px rgba(79,70,229,.7) !important;
+}
+.srs-hero:hover { transform:translateY(-2px); color:#fff; }
+.srs-hero-title { font-size:20px; font-weight:800; color:#fff; letter-spacing:-.01em; }
+.srs-hero-sub { font-size:12.5px; color:#e0e7ff; }
+.srs-pill { background:rgba(255,255,255,.18); backdrop-filter:blur(4px); padding:3px 11px; }
+.srs-pill.green { background:rgba(16,185,129,.9); }
+
+/* ---- Açılır bloklar (kategori) ---- */
+.bolum7-toggle {
+  background:var(--soft) !important;
+  border:1px solid var(--line) !important;
+  font-weight:700 !important; color:var(--ink) !important;
+}
+.bolum7-toggle:hover { color:var(--primary-ink) !important; border-color:var(--primary2) !important; }
+.bolum7-submenu {
+  border-left:none; background:transparent; padding:8px 4px 4px 10px;
+  margin-top:8px; gap:10px;
+}
+.bolum7-submenu .mode-btn { background:var(--soft); font-weight:600; }
+
+/* ---- Badge ---- */
+.badge {
+  background:var(--primary); color:#fff; font-weight:700;
+  padding:2px 9px; border-radius:999px; font-size:12px;
+}
+.mode-btn:hover .badge { background:var(--primary); color:#fff; }
+
+/* ---- Aksiyon butonları ---- */
+.action-btn {
+  padding:12px 22px; font-weight:700; font-size:14.5px;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  border-radius:12px; box-shadow:0 8px 18px -10px rgba(79,70,229,.7);
+  transition:transform .12s, box-shadow .18s, opacity .18s;
+}
+.action-btn:hover { background:linear-gradient(135deg,var(--primary),var(--primary2)); transform:translateY(-1px); opacity:.94; }
+.action-btn.secondary {
+  background:#fff; color:var(--primary-ink); border:1px solid var(--line);
+  box-shadow:none;
+}
+.action-btn.secondary:hover { border-color:var(--primary2); background:var(--soft); }
+.action-btn.danger { background:linear-gradient(135deg,#ef4444,#dc2626); }
+
+/* ---- Quiz ---- */
+.quiz-header { margin-bottom:20px; }
+.real-qno {
+  background:#eef2ff; border:1px solid #c7d2fe; color:var(--primary-ink);
+  border-radius:999px; font-weight:700;
+}
+.progress-text { color:var(--muted); }
+.question-card h2 { font-size:19px; font-weight:700; letter-spacing:-.01em; }
+.option {
+  border:1.5px solid var(--line); background:var(--soft); border-radius:13px;
+  padding:15px 16px; font-size:15px; font-weight:500;
+  transition:transform .1s, border-color .15s, background .15s, box-shadow .15s;
+}
+.option:hover:not(.locked) {
+  border-color:var(--primary2); background:#eef2ff;
+  transform:translateY(-1px); box-shadow:0 8px 18px -12px rgba(79,70,229,.5);
+}
+.option .option-letter { color:var(--primary-ink); }
+.option.correct { background:linear-gradient(135deg,#059669,#10b981); border-color:#059669; }
+.option.wrong   { background:linear-gradient(135deg,#dc2626,#ef4444); border-color:#dc2626; }
+.option.correct .option-letter, .option.wrong .option-letter { color:#fff; }
+
+/* ---- Öğrenim kutusu ---- */
+.learn-box {
+  border-left:4px solid var(--warn); background:#fffbeb;
+  border-radius:0 12px 12px 0;
+}
+
+/* ---- SRS panel refinements ---- */
+.srs-stat { border-radius:16px; border:1px solid var(--line); box-shadow:0 1px 2px rgba(2,6,23,.04); }
+.srs-stat .v { color:var(--primary-ink); }
+.srs-info { background:#eef2ff; border-color:#c7d2fe; color:var(--primary-ink); border-radius:14px; }
+
+/* ---- Sonuç ---- */
+.results-card { text-align:center; }
+.results-score { font-size:22px; font-weight:800; }
+.results-percent { font-size:16px; color:var(--muted); }
+
+@media (max-width:560px){
+  .screen{ padding:22px 16px; border-radius:18px; }
+  h1{ font-size:22px; }
+  .quiz-footer{ flex-wrap:wrap; }
 }</style>
 </head>
 <body>
@@ -459,15 +614,9 @@ h1 {
           <span class="srs-pill green" id="srs-mastered-pill">Öğrenilen: –</span>
         </span>
       </button>
-      <button class="mode-btn" data-mode="all">Tüm Sorular (Karışık)</button>
-      <button class="mode-btn" data-mode="bolum1">Bölüm 1: Anahtar Kelime Soruları</button>
       <button class="mode-btn" data-mode="exam">Exam Mode: Rastgele 50 Soru</button>
-
       <button class="mode-btn" data-mode="bolum6">Bölüm 6: "All / None of the Above" Soruları</button>
 
-      <button class="mode-btn" id="btn-bz-game">🎯 Benzersiz Kelime Bulma Oyunu</button>
-      <button class="mode-btn" id="btn-bz9">Bölüm 9: Benzersizleri Bul (10'ar 10'ar)</button>
-      <button class="mode-btn" id="btn-bz11">Bölüm 11: Seçtiğim Kelimelerle Oyun</button>
       <!-- Bölüm 13 -->
       <div class="bolum7-block">
         <button class="mode-btn bolum7-toggle" id="btn-bolum13-toggle">Bölüm 13: Seçili Sorular ▼</button>
@@ -493,36 +642,6 @@ h1 {
         <div class="bolum7-submenu" id="son2-submenu">
           <button class="mode-btn" data-mode="benzersizson2">Karışık <span class="badge" id="son2-count">117</span></button>
           <button class="mode-btn" data-mode="benzersizson2_sirali">Sıralı <span class="badge">117</span></button>
-        </div>
-      </div>
-
-      <!-- Bölüm 15 -->
-      <div class="bolum7-block">
-        <button class="mode-btn bolum7-toggle" id="btn-sec15-toggle">Bölüm 15: Seçili Sorular ▼</button>
-        <div class="bolum7-submenu" id="sec15-submenu">
-          <button class="mode-btn" data-mode="sec15">Tümü (Benzersizler hariç) <span class="badge">125</span></button>
-          <button class="mode-btn" data-mode="sec15ozel">Benzersiz (Son/Son2) Olanlar <span class="badge">69</span></button>
-        </div>
-      </div>
-
-      <!-- Bölüm 16 -->
-      <div class="bolum7-block">
-        <button class="mode-btn bolum7-toggle" id="btn-bolum16-toggle">Bölüm 16: Seçili Sorular ▼</button>
-        <div class="bolum7-submenu" id="bolum16-submenu">
-          <button class="mode-btn" data-mode="bolum16_karisik">Karışık <span class="badge">116</span></button>
-          <button class="mode-btn" data-mode="bolum16_sirali">Sıralı <span class="badge">116</span></button>
-          <button class="mode-btn" data-mode="bolum16_wrong">✗ Yanlışlar <span class="badge" id="bz16-wrong-count">0</span></button>
-          <button class="mode-btn danger" id="btn-bz16-clear">Sıfırla</button>
-        </div>
-      </div>
-
-      <!-- Bölüm 10 -->
-      <div class="bolum7-block">
-        <button class="mode-btn bolum7-toggle" id="btn-bolum10-toggle">Bölüm 10: Kaydırma Oyunu ▼</button>
-        <div class="bolum7-submenu" id="bolum10-submenu">
-          <button class="mode-btn" id="btn-bz10-play">◀ Kaydırma Oyunu ▶</button>
-          <button class="mode-btn" id="btn-bz10-wrong">Bilemediklerim (Tekrar) <span class="badge" id="bz10-wrong-count">0</span></button>
-          <button class="mode-btn danger" id="btn-bz10-clear">Sıfırla</button>
         </div>
       </div>
 
@@ -574,72 +693,6 @@ h1 {
       <button id="btn-retry" class="action-btn">Tekrar Dene</button>
       <button id="btn-menu" class="action-btn secondary">Menüye Dön</button>
     </div>
-  </div>
-
-  <!-- BENZERSIZ KELIME BULMA OYUNU -->
-  <div id="screen-bzgame" class="screen" style="display:none;">
-    <h1>🎯 Benzersiz Kelime Bulma</h1>
-    <p class="bzgame-desc">Benzersiz son kelimeleri işaretle. Doğruysa <b style="color:#2e7d32">yeşil</b>, yanlışsa <b style="color:#c62828">kırmızı</b> olur.</p>
-    <div class="bzgame-bar">
-      <span id="bzgame-score" class="bzgame-score"></span>
-      <div>
-        <button id="btn-bzgame-new" class="action-btn">Yeni Tur</button>
-        <button id="btn-bzgame-menu" class="action-btn secondary">Menüye Dön</button>
-      </div>
-    </div>
-    <div id="bzgame-grid" class="bzgame-grid"></div>
-  </div>
-
-  <!-- BÖLÜM 9: Benzersizleri Bul (10'ar) -->
-  <div id="screen-bz9" class="screen" style="display:none;">
-    <h1>Bölüm 9: Benzersizleri Bul</h1>
-    <p class="bzgame-desc">Bu grupta <b>10 benzersiz</b> son kelime + <b>30 benzersiz olmayan</b> kelime var. Benzersizleri işaretle: doğru <b style="color:#2e7d32">yeşil</b>, yanlış <b style="color:#c62828">kırmızı</b>. Bitince "Sonraki 10" ile devam et.</p>
-    <div class="bzgame-bar">
-      <span id="bz9-score" class="bzgame-score"></span>
-      <div>
-        <button id="btn-bz9-next" class="action-btn">Sonraki 10 →</button>
-        <button id="btn-bz9-menu" class="action-btn secondary">Menüye Dön</button>
-      </div>
-    </div>
-    <div id="bz9-grid" class="bzgame-grid"></div>
-  </div>
-
-  <!-- BÖLÜM 10: Kaydırma Oyunu -->
-  <div id="screen-bz10" class="screen" style="display:none;">
-    <h1 id="bz10-title">Bölüm 10: Kaydırma Oyunu</h1>
-    <p class="bzgame-desc">Gelen kelime <b>benzersiz son kelime</b> mi? Sağ = <b style="color:#2e7d32">Benzersiz ✓</b>, Sol = <b style="color:#c62828">Değil ✗</b>. Yanlış bildiklerin "Bilemediklerim" bölümünde birikir.</p>
-    <div class="bzgame-bar">
-      <span id="bz10-score" class="bzgame-score"></span>
-      <button id="btn-bz10-menu" class="action-btn secondary">Menüye Dön</button>
-    </div>
-    <div id="bz10-card" class="bz10-card"></div>
-    <div id="bz10-feedback" class="bz10-feedback"></div>
-    <div class="bz10-controls">
-      <button id="btn-bz10-left" class="bz10-btn bz10-left">◀ Benzersiz Değil</button>
-      <button id="btn-bz10-right" class="bz10-btn bz10-right">Benzersiz Son ▶</button>
-    </div>
-    <div class="bzgame-bar" style="justify-content:center; margin-top:14px;">
-      <button id="btn-bz10-next" class="action-btn" style="display:none;">İlerle →</button>
-      <button id="btn-bz10-retry" class="action-btn secondary" style="display:none;">Tekrar Dene</button>
-    </div>
-  </div>
-
-  <!-- BÖLÜM 11: Seçtiğim Kelimelerle Oyun -->
-  <div id="screen-bz11" class="screen" style="display:none;">
-    <h1>Bölüm 11: Seçtiğim Kelimelerle Oyun</h1>
-    <p class="bzgame-desc">Aşağıdaki listeden istediğin benzersiz son kelimeleri seç, sonra "Seçilenlerle Oyna"ya bas. Oyunda seçtiğin kelimeler çeldiricilerle karışır; benzersizleri bulmaya çalış (doğru <b style="color:#2e7d32">yeşil</b>, yanlış <b style="color:#c62828">kırmızı</b>). Seçimin kaydedilir; tekrar girdiğinde ekleyip çıkarabilirsin.</p>
-    <div class="bzgame-bar">
-      <span id="bz11-score" class="bzgame-score"></span>
-      <div>
-        <button id="btn-bz11-play" class="action-btn">Seçilenlerle Oyna</button>
-        <button id="btn-bz11-clear" class="action-btn danger">Sıfırla</button>
-        <button id="btn-bz11-menu" class="action-btn secondary">Menüye Dön</button>
-      </div>
-    </div>
-    <h3 class="bz11-h">Kelime Listesi (seçmek için tıkla)</h3>
-    <div id="bz11-list" class="benzersiz-words-list"></div>
-    <h3 class="bz11-h" id="bz11-game-h" style="display:none;">Oyun</h3>
-    <div id="bz11-grid" class="bzgame-grid"></div>
   </div>
 
   <!-- BÖLÜM 13: Hızlı Öğrenme (Ezber) -->
@@ -2607,63 +2660,6 @@ const QUESTIONS = [
     updateB7Counts();
   });
 
-  document.getElementById("btn-bz-game").addEventListener("click", startBzGame);
-  document.getElementById("btn-bzgame-new").addEventListener("click", newBzRound);
-  document.getElementById("btn-bzgame-menu").addEventListener("click", function () {
-    showScreen(screenMenu);
-  });
-
-  document.getElementById("btn-bz9").addEventListener("click", startBz9);
-  document.getElementById("btn-bz9-next").addEventListener("click", nextBz9Round);
-  document.getElementById("btn-bz9-menu").addEventListener("click", function () {
-    showScreen(screenMenu);
-  });
-
-  // Bölüm 10 toggle
-  document.getElementById("btn-bolum10-toggle").addEventListener("click", function () {
-    var sub = document.getElementById("bolum10-submenu");
-    var open = sub.style.display === "flex";
-    sub.style.display = open ? "none" : "flex";
-    this.textContent = open ? "Bölüm 10: Kaydırma Oyunu ▼" : "Bölüm 10: Kaydırma Oyunu ▲";
-  });
-  document.getElementById("btn-bz10-play").addEventListener("click", function () {
-    startBz10("play");
-  });
-  document.getElementById("btn-bz10-wrong").addEventListener("click", function () {
-    if (loadBz10Wrong().length === 0) { alert("Henüz bilemediğin kelime yok."); return; }
-    startBz10("wrong");
-  });
-  document.getElementById("btn-bz10-clear").addEventListener("click", function () {
-    if (confirm("Bilemediklerin listesini sıfırlamak istediğine emin misin?")) {
-      saveBz10Wrong([]);
-    }
-  });
-  document.getElementById("btn-bz10-left").addEventListener("click", function () {
-    answerBz10(false);
-  });
-  document.getElementById("btn-bz10-right").addEventListener("click", function () {
-    answerBz10(true);
-  });
-  document.getElementById("btn-bz10-menu").addEventListener("click", function () {
-    showScreen(screenMenu);
-  });
-  document.getElementById("btn-bz10-next").addEventListener("click", nextBz10Part);
-  document.getElementById("btn-bz10-retry").addEventListener("click", retryBz10Part);
-  updateBz10WrongCount();
-
-  // Bölüm 11
-  document.getElementById("btn-bz11").addEventListener("click", startBz11);
-  document.getElementById("btn-bz11-play").addEventListener("click", playBz11);
-  document.getElementById("btn-bz11-clear").addEventListener("click", function () {
-    if (confirm("Seçtiğin kelimeleri sıfırlamak istediğine emin misin?")) {
-      saveBz11Sel([]);
-      startBz11();
-    }
-  });
-  document.getElementById("btn-bz11-menu").addEventListener("click", function () {
-    showScreen(screenMenu);
-  });
-
   // Bölüm 12
   document.getElementById("btn-bolum12-toggle").addEventListener("click", function () {
     var sub = document.getElementById("bolum12-submenu");
@@ -2696,35 +2692,12 @@ const QUESTIONS = [
     this.textContent = open ? "Benzersiz Son 2 Kelime ▼" : "Benzersiz Son 2 Kelime ▲";
   });
 
-  // Bölüm 16 toggle + sıfırla
-  document.getElementById("btn-bolum16-toggle").addEventListener("click", function () {
-    var sub = document.getElementById("bolum16-submenu");
-    var open = sub.style.display === "flex";
-    sub.style.display = open ? "none" : "flex";
-    this.textContent = open ? "Bölüm 16: Seçili Sorular ▼" : "Bölüm 16: Seçili Sorular ▲";
-  });
-  document.getElementById("btn-bz16-clear").addEventListener("click", function () {
-    if (confirm("Bölüm 16 yanlışlar listesini sıfırlamak istediğine emin misin?")) {
-      bz16State.wrong = [];
-      saveBz16State();
-    }
-  });
-  loadBz16State();
-
   // Çoklu Cevaplı toggle
   document.getElementById("btn-coklu-toggle").addEventListener("click", function () {
     var sub = document.getElementById("coklu-submenu");
     var open = sub.style.display === "flex";
     sub.style.display = open ? "none" : "flex";
     this.textContent = open ? "Çoklu Cevaplı Sorular ▼" : "Çoklu Cevaplı Sorular ▲";
-  });
-
-  // Bölüm 15 toggle
-  document.getElementById("btn-sec15-toggle").addEventListener("click", function () {
-    var sub = document.getElementById("sec15-submenu");
-    var open = sub.style.display === "flex";
-    sub.style.display = open ? "none" : "flex";
-    this.textContent = open ? "Bölüm 15: Seçili Sorular ▼" : "Bölüm 15: Seçili Sorular ▲";
   });
 
   // Bölüm 13: Hızlı Öğrenme
