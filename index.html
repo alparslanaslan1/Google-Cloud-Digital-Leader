@@ -779,45 +779,55 @@ h1 {
         <span class="srs-hero-title">🧭 Sınav Asistanı</span>
         <span class="srs-hero-sub">Soru analizi · Sinyal → cevap · Cheat kütüphanesi</span>
       </button>
-      <button class="mode-btn" data-mode="exam">Exam Mode: Rastgele 50 Soru</button>
-      <button class="mode-btn" data-mode="bolum6">Bölüm 6: "All / None of the Above" Soruları</button>
+      <!-- Pratik Modlar ana toggle -->
+      <div class="bolum7-block">
+        <button class="mode-btn bolum7-toggle" id="btn-pratik-toggle">📋 Pratik Modlar ▼</button>
+        <div class="bolum7-submenu" id="pratik-submenu" style="flex-direction:column;">
 
-      <!-- Bölüm 13 -->
-      <div class="bolum7-block">
-        <button class="mode-btn bolum7-toggle" id="btn-bolum13-toggle">Bölüm 13: Seçili Sorular ▼</button>
-        <div class="bolum7-submenu" id="bolum13-submenu">
-          <button class="mode-btn" data-mode="bolum13">Karışık <span class="badge" id="bolum13-count">115</span></button>
-          <button class="mode-btn" data-mode="bolum13_sirali">Sıralı <span class="badge">115</span></button>
-          <button class="mode-btn" id="btn-b13study">🧠 Hızlı Öğrenme (Ezber)</button>
-        </div>
-      </div>
-      <!-- Çoklu Cevaplı Sorular -->
-      <div class="bolum7-block">
-        <button class="mode-btn bolum7-toggle" id="btn-coklu-toggle">Çoklu Cevaplı Sorular ▼</button>
-        <div class="bolum7-submenu" id="coklu-submenu">
-          <button class="mode-btn" data-mode="coklu">Karışık <span class="badge" id="coklu-count">22</span></button>
-          <button class="mode-btn" data-mode="coklu_sirali">Sıralı <span class="badge">22</span></button>
-        </div>
-      </div>
-      <button class="mode-btn" data-mode="benzersizilk">Benzersiz İlk Kelime <span class="badge" id="benzersizilk-count">47</span></button>
+          <button class="mode-btn" data-mode="exam">Exam Mode: Rastgele 50 Soru</button>
+          <button class="mode-btn" data-mode="bolum6">Bölüm 6: "All / None of the Above" Soruları</button>
 
-      <!-- Benzersiz Son 2 Kelime -->
-      <div class="bolum7-block">
-        <button class="mode-btn bolum7-toggle" id="btn-son2-toggle">Benzersiz Son 2 Kelime ▼</button>
-        <div class="bolum7-submenu" id="son2-submenu">
-          <button class="mode-btn" data-mode="benzersizson2">Karışık <span class="badge" id="son2-count">117</span></button>
-          <button class="mode-btn" data-mode="benzersizson2_sirali">Sıralı <span class="badge">117</span></button>
-        </div>
-      </div>
+          <!-- Bölüm 13 -->
+          <div class="bolum7-block">
+            <button class="mode-btn bolum7-toggle" id="btn-bolum13-toggle">Bölüm 13: Seçili Sorular ▼</button>
+            <div class="bolum7-submenu" id="bolum13-submenu">
+              <button class="mode-btn" data-mode="bolum13">Karışık <span class="badge" id="bolum13-count">115</span></button>
+              <button class="mode-btn" data-mode="bolum13_sirali">Sıralı <span class="badge">115</span></button>
+              <button class="mode-btn" id="btn-b13study">🧠 Hızlı Öğrenme (Ezber)</button>
+            </div>
+          </div>
 
-      <!-- Bölüm 12 -->
-      <div class="bolum7-block">
-        <button class="mode-btn bolum7-toggle" id="btn-bolum12-toggle">Bölüm 12: Tüm Sorular + Yanlışlar ▼</button>
-        <div class="bolum7-submenu" id="bolum12-submenu">
-          <button class="mode-btn" data-mode="bolum12_all">Tüm Sorular (Karışık)</button>
-          <button class="mode-btn" data-mode="bolum12_wrong" id="btn-bz12-wrong">✗ Yanlışlar <span class="badge" id="bz12-wrong-count">0</span></button>
-          <button class="mode-btn danger" id="btn-bz12-clear">Sıfırla</button>
-          <div id="bz12-wrong-nums" class="bz12-wrong-nums"></div>
+          <!-- Çoklu Cevaplı Sorular -->
+          <div class="bolum7-block">
+            <button class="mode-btn bolum7-toggle" id="btn-coklu-toggle">Çoklu Cevaplı Sorular ▼</button>
+            <div class="bolum7-submenu" id="coklu-submenu">
+              <button class="mode-btn" data-mode="coklu">Karışık <span class="badge" id="coklu-count">22</span></button>
+              <button class="mode-btn" data-mode="coklu_sirali">Sıralı <span class="badge">22</span></button>
+            </div>
+          </div>
+
+          <button class="mode-btn" data-mode="benzersizilk">Benzersiz İlk Kelime <span class="badge" id="benzersizilk-count">47</span></button>
+
+          <!-- Benzersiz Son 2 Kelime -->
+          <div class="bolum7-block">
+            <button class="mode-btn bolum7-toggle" id="btn-son2-toggle">Benzersiz Son 2 Kelime ▼</button>
+            <div class="bolum7-submenu" id="son2-submenu">
+              <button class="mode-btn" data-mode="benzersizson2">Karışık <span class="badge" id="son2-count">117</span></button>
+              <button class="mode-btn" data-mode="benzersizson2_sirali">Sıralı <span class="badge">117</span></button>
+            </div>
+          </div>
+
+          <!-- Bölüm 12 -->
+          <div class="bolum7-block">
+            <button class="mode-btn bolum7-toggle" id="btn-bolum12-toggle">Bölüm 12: Tüm Sorular + Yanlışlar ▼</button>
+            <div class="bolum7-submenu" id="bolum12-submenu">
+              <button class="mode-btn" data-mode="bolum12_all">Tüm Sorular (Karışık)</button>
+              <button class="mode-btn" data-mode="bolum12_wrong" id="btn-bz12-wrong">✗ Yanlışlar <span class="badge" id="bz12-wrong-count">0</span></button>
+              <button class="mode-btn danger" id="btn-bz12-clear">Sıfırla</button>
+              <div id="bz12-wrong-nums" class="bz12-wrong-nums"></div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -907,6 +917,7 @@ h1 {
     <div class="cheat-tabs">
       <button class="cheat-tab active" data-view="rules">📚 Kural Kütüphanesi</button>
       <button class="cheat-tab" data-view="search">🔍 Soru Analizi</button>
+      <button class="cheat-tab" data-view="practice">📝 Kategoriye Göre Çalış</button>
       <button class="cheat-tab" data-view="glossary">📖 Sözlük</button>
     </div>
 
@@ -974,6 +985,32 @@ h1 {
 
         <!-- Learn note -->
         <div id="cheat-detail-learn" class="cheat-learn-box" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- KATEGORİYE GÖRE ÇALIŞ -->
+    <div class="cheat-tab-view" id="cheat-view-practice">
+      <div id="practice-cat-grid" class="cheat-cats"></div>
+      <div id="practice-quiz-area" style="display:none;">
+        <div class="bzgame-bar" style="margin-bottom:14px;">
+          <button id="btn-practice-back" class="action-btn secondary" style="font-size:13px;padding:9px 16px;">← Kategoriler</button>
+          <span id="practice-cat-title" style="font-weight:700;font-size:15px;"></span>
+          <span id="practice-progress" class="bzgame-score"></span>
+        </div>
+        <div class="question-card">
+          <h2 id="practice-q-text" style="font-size:16px;"></h2>
+          <div id="practice-options" class="options-container"></div>
+          <div id="practice-learn" class="learn-box" style="display:none;margin-top:12px;"></div>
+        </div>
+        <div style="display:flex;justify-content:center;margin-top:14px;">
+          <button id="btn-practice-next" class="action-btn" style="display:none;">Sonraki →</button>
+        </div>
+        <div id="practice-result" style="display:none;text-align:center;padding:20px 0;">
+          <div style="font-size:22px;font-weight:800;" id="practice-result-score"></div>
+          <div style="color:var(--muted);font-size:15px;margin:6px 0 16px;" id="practice-result-pct"></div>
+          <button id="btn-practice-retry" class="action-btn" style="margin-right:8px;">Tekrar Dene</button>
+          <button id="btn-practice-backmenu" class="action-btn secondary">← Kategoriler</button>
+        </div>
       </div>
     </div>
 
@@ -3704,6 +3741,7 @@ const QUESTIONS = [
     tab.addEventListener("click", function(){
       cheatShowView(tab.dataset.view);
       if (tab.dataset.view === "glossary") renderGlossary(document.getElementById("glossary-search-input").value);
+      if (tab.dataset.view === "practice") renderPracticeCats();
     });
   });
 
@@ -3720,6 +3758,154 @@ const QUESTIONS = [
     var val = this.value;
     glossarySearchTimeout = setTimeout(function(){ renderGlossary(val); }, 200);
   });
+
+  // ---- KATEGORİYE GÖRE ÇALIŞ ----
+  var practiceState = { catId: null, questions: [], idx: 0, correct: 0, answered: false };
+
+  function buildCategoryQuestions(catId) {
+    var cat = CHEAT_CATS.find(function(c){ return c.id === catId; });
+    if (!cat) return [];
+    // Collect answer keywords from this category's rules
+    var ansKeywords = [];
+    cat.rules.forEach(function(r) {
+      r.ans.toLowerCase().replace(/[()]/g,"").split(/\W+/).forEach(function(w) {
+        if (w.length > 3) ansKeywords.push(w);
+      });
+      r.sig.toLowerCase().split(/\W+/).forEach(function(w) {
+        if (w.length > 5) ansKeywords.push(w);
+      });
+    });
+    // Score each question
+    var scored = [];
+    QUESTIONS.forEach(function(q) {
+      var qtext = q.text.toLowerCase();
+      var correctText = q.correct.map(function(l){ return (q.options[l]||"").toLowerCase(); }).join(" ");
+      var combinedText = qtext + " " + correctText + " " + (q.learn||"").toLowerCase();
+      var score = 0;
+      ansKeywords.forEach(function(kw) {
+        if (combinedText.indexOf(kw) !== -1) score++;
+      });
+      // Also use cheatFindRulesForQuestion
+      var found = cheatFindRulesForQuestion(q);
+      found.rules.forEach(function(r) {
+        if (r.cat === catId) score += 5;
+      });
+      if (score > 0) scored.push({ q: q, score: score });
+    });
+    scored.sort(function(a,b){ return b.score - a.score; });
+    // Take top 15, shuffle
+    var top = scored.slice(0, 15).map(function(x){ return x.q; });
+    for (var i = top.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = top[i]; top[i] = top[j]; top[j] = tmp;
+    }
+    return top;
+  }
+
+  function renderPracticeCats() {
+    var grid = document.getElementById("practice-cat-grid");
+    if (!grid) return;
+    var html = "";
+    CHEAT_CATS.forEach(function(cat) {
+      var qs = buildCategoryQuestions(cat.id);
+      html += '<button class="cheat-cat-btn" data-practiceid="'+cat.id+'">'
+        + '<span class="cat-icon">'+cat.icon+'</span>'
+        + '<span>'+esc(cat.name)+'</span>'
+        + '<span class="cat-count">'+qs.length+' soru</span>'
+        + '</button>';
+    });
+    grid.innerHTML = html;
+    grid.querySelectorAll(".cheat-cat-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() { startPracticeQuiz(btn.dataset.practiceid); });
+    });
+  }
+
+  function startPracticeQuiz(catId) {
+    var cat = CHEAT_CATS.find(function(c){ return c.id === catId; });
+    var qs = buildCategoryQuestions(catId);
+    if (qs.length === 0) { alert("Bu kategori için uygun soru bulunamadı."); return; }
+    practiceState = { catId: catId, questions: qs, idx: 0, correct: 0, answered: false };
+    document.getElementById("practice-cat-grid").style.display = "none";
+    document.getElementById("practice-quiz-area").style.display = "block";
+    document.getElementById("practice-result").style.display = "none";
+    document.getElementById("practice-cat-title").textContent = cat.icon + " " + cat.name;
+    renderPracticeQuestion();
+  }
+
+  function renderPracticeQuestion() {
+    var ps = practiceState;
+    var q = ps.questions[ps.idx];
+    document.getElementById("practice-progress").textContent = (ps.idx+1) + " / " + ps.questions.length + "  ✓ " + ps.correct;
+    document.getElementById("practice-q-text").textContent = q.text;
+    document.getElementById("practice-learn").style.display = "none";
+    document.getElementById("btn-practice-next").style.display = "none";
+    ps.answered = false;
+
+    var opts = document.getElementById("practice-options");
+    opts.innerHTML = "";
+    var letters = Object.keys(q.options);
+    // Shuffle
+    for (var i = letters.length-1; i>0; i--) {
+      var j=Math.floor(Math.random()*(i+1)); var t=letters[i]; letters[i]=letters[j]; letters[j]=t;
+    }
+    letters.forEach(function(l) {
+      var div = document.createElement("div");
+      div.className = "option";
+      div.innerHTML = '<span class="option-letter">'+l+'</span> <span>'+esc(q.options[l])+'</span>';
+      div.addEventListener("click", function() {
+        if (ps.answered) return;
+        ps.answered = true;
+        var isCorrect = q.correct.indexOf(l) !== -1;
+        if (isCorrect) { ps.correct++; div.classList.add("correct"); }
+        else { div.classList.add("wrong"); }
+        // Highlight all correct
+        opts.querySelectorAll(".option").forEach(function(o) {
+          var ol = o.querySelector(".option-letter").textContent;
+          if (q.correct.indexOf(ol) !== -1) o.classList.add("correct");
+          o.classList.add("locked");
+        });
+        // Show learn
+        if (q.learnEn || q.learn) {
+          var lb = document.getElementById("practice-learn");
+          lb.style.display = "block";
+          lb.innerHTML = "<strong>💡</strong> " + esc(q.learnEn || q.learn);
+        }
+        document.getElementById("btn-practice-next").style.display = "inline-flex";
+      });
+      opts.appendChild(div);
+    });
+  }
+
+  document.getElementById("btn-practice-next").addEventListener("click", function() {
+    var ps = practiceState;
+    ps.idx++;
+    if (ps.idx >= ps.questions.length) {
+      // Show result
+      var pct = Math.round((ps.correct / ps.questions.length) * 100);
+      document.getElementById("practice-result-score").textContent = "Doğru: " + ps.correct + " / " + ps.questions.length;
+      document.getElementById("practice-result-pct").textContent = "Başarı: %" + pct;
+      document.getElementById("practice-options").innerHTML = "";
+      document.getElementById("practice-q-text").textContent = "";
+      document.getElementById("practice-learn").style.display = "none";
+      document.getElementById("btn-practice-next").style.display = "none";
+      document.getElementById("practice-result").style.display = "block";
+    } else {
+      renderPracticeQuestion();
+    }
+  });
+
+  function closePracticeQuiz() {
+    document.getElementById("practice-quiz-area").style.display = "none";
+    document.getElementById("practice-cat-grid").style.display = "";
+  }
+
+  document.getElementById("btn-practice-back").addEventListener("click", closePracticeQuiz);
+  document.getElementById("btn-practice-backmenu").addEventListener("click", closePracticeQuiz);
+  document.getElementById("btn-practice-retry").addEventListener("click", function() {
+    document.getElementById("practice-result").style.display = "none";
+    startPracticeQuiz(practiceState.catId);
+  });
+
   // ==================== END SINAV ASİSTANI ====================
 
   // Event wiring
@@ -3791,6 +3977,15 @@ const QUESTIONS = [
     }
   });
   loadBz12State();
+
+  // Pratik Modlar ana toggle
+  document.getElementById("btn-pratik-toggle").addEventListener("click", function () {
+    var sub = document.getElementById("pratik-submenu");
+    var open = sub.style.display !== "none" && sub.style.display !== "";
+    sub.style.display = open ? "none" : "flex";
+    this.textContent = open ? "📋 Pratik Modlar ▼" : "📋 Pratik Modlar ▲";
+  });
+  document.getElementById("pratik-submenu").style.display = "none";
 
   // Bölüm 13 toggle
   document.getElementById("btn-bolum13-toggle").addEventListener("click", function () {
