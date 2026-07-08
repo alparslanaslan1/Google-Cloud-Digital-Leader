@@ -594,7 +594,116 @@ h1 {
   .screen{ padding:22px 16px; border-radius:18px; }
   h1{ font-size:22px; }
   .quiz-footer{ flex-wrap:wrap; }
-}</style>
+}
+
+/* ---- Sınav Asistanı hero button ---- */
+.cheat-hero {
+  flex-direction:column; align-items:flex-start; gap:8px;
+  background:linear-gradient(135deg,#0f766e 0%,#0891b2 55%,#7c3aed 140%) !important;
+  border:none !important; padding:22px 22px !important; border-radius:20px !important;
+  box-shadow:0 18px 40px -18px rgba(8,145,178,.6) !important;
+  color:#fff !important;
+}
+.cheat-hero:hover { transform:translateY(-2px); }
+.cheat-hero .srs-hero-title { color:#fff; }
+.cheat-hero .srs-hero-sub { color:#cffafe; }
+
+/* ---- Cheat screen ---- */
+#screen-cheat h1 { text-align:left; font-size:22px; margin-bottom:4px; }
+.cheat-tabs { display:flex; gap:8px; margin:16px 0 20px; border-bottom:2px solid var(--line); padding-bottom:0; }
+.cheat-tab {
+  padding:10px 18px; font-weight:700; font-size:14px;
+  background:none; border:none; border-radius:10px 10px 0 0;
+  color:var(--muted); cursor:pointer; border-bottom:3px solid transparent;
+  margin-bottom:-2px; transition:color .15s;
+}
+.cheat-tab.active { color:var(--primary-ink); border-bottom-color:var(--primary); background:#eef2ff; }
+.cheat-tab-view { display:none; }
+.cheat-tab-view.active { display:block; }
+
+/* Category cards */
+.cheat-cats { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; margin-bottom:18px; }
+.cheat-cat-btn {
+  display:flex; align-items:center; gap:10px;
+  padding:14px 16px; border-radius:14px; border:1.5px solid var(--line);
+  background:var(--soft); font-weight:700; font-size:14px;
+  cursor:pointer; transition:border-color .15s, background .15s, transform .12s;
+  color:var(--ink);
+}
+.cheat-cat-btn:hover { border-color:var(--primary2); background:#eef2ff; transform:translateY(-1px); }
+.cheat-cat-btn .cat-icon { font-size:22px; }
+.cheat-cat-btn .cat-count { margin-left:auto; font-size:12px; background:var(--primary); color:#fff; border-radius:999px; padding:2px 9px; }
+
+/* Rule list */
+.cheat-rules-area { display:none; }
+.cheat-rules-area.open { display:block; }
+.cheat-back { margin-bottom:14px; }
+.cheat-rule {
+  margin-bottom:10px; padding:14px 16px; border-radius:13px;
+  border-left:4px solid var(--primary2); background:var(--soft);
+}
+.cheat-rule .sig { font-weight:700; color:var(--ink); font-size:14.5px; margin-bottom:5px; }
+.cheat-rule .sig span { color:var(--muted); font-weight:400; }
+.cheat-rule .ans { font-size:14px; color:var(--primary-ink); font-weight:700; margin-bottom:4px; }
+.cheat-rule .tip { font-size:13px; color:var(--muted); line-height:1.5; }
+
+/* Question search */
+.cheat-search-bar {
+  display:flex; gap:10px; margin-bottom:16px;
+}
+.cheat-search-bar input {
+  flex:1; padding:12px 16px; border:1.5px solid var(--line);
+  border-radius:12px; font-size:15px; outline:none;
+  transition:border-color .15s;
+}
+.cheat-search-bar input:focus { border-color:var(--primary); }
+.cheat-q-list { display:flex; flex-direction:column; gap:10px; }
+.cheat-q-item {
+  padding:14px 16px; border-radius:13px; border:1.5px solid var(--line);
+  background:var(--soft); cursor:pointer; transition:border-color .15s, background .15s;
+}
+.cheat-q-item:hover { border-color:var(--primary2); background:#eef2ff; }
+.cheat-q-item .q-num { font-size:12px; font-weight:700; color:var(--primary-ink); margin-bottom:4px; }
+.cheat-q-item .q-text { font-size:14px; color:var(--ink); line-height:1.45; }
+.cheat-q-item .q-tags { margin-top:6px; display:flex; flex-wrap:wrap; gap:5px; }
+.cheat-q-item .q-tag { font-size:11px; background:#e0e7ff; color:var(--primary-ink); padding:2px 8px; border-radius:999px; font-weight:600; }
+
+/* Detail panel */
+.cheat-detail { display:none; }
+.cheat-detail.open { display:block; }
+.cheat-detail-q {
+  padding:16px; border-radius:14px; background:#eef2ff; margin-bottom:14px;
+  font-size:15px; line-height:1.5; font-weight:500;
+}
+.cheat-detail-q .q-id { font-size:12px; font-weight:700; color:var(--primary-ink); margin-bottom:6px; }
+.cheat-detail-rules { margin-bottom:16px; }
+.cheat-detail-rules h4 { font-size:13px; font-weight:700; color:var(--muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:.06em; }
+.cheat-no-rules { color:var(--muted); font-size:14px; font-style:italic; }
+.cheat-signal-pill {
+  display:inline-block; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:700;
+  background:#fef3c7; color:#92400e; margin:2px 2px 6px;
+}
+.cheat-detail-correct {
+  padding:12px 16px; border-radius:12px; background:#ecfdf5;
+  border-left:4px solid #059669; font-size:14px; font-weight:600; color:#065f46;
+}
+.cheat-learn-box {
+  margin-top:10px; padding:12px 16px; border-radius:12px;
+  border-left:4px solid #d97706; background:#fffbeb;
+  font-size:14px; color:#78350f; line-height:1.5;
+}
+
+/* Quiz inline tip */
+.quiz-tip-panel {
+  margin-top:12px; padding:12px 16px; border-radius:12px;
+  background:linear-gradient(135deg,#e0f2fe,#ede9fe);
+  border-left:4px solid #0891b2; font-size:13px; line-height:1.5;
+  display:none;
+}
+.quiz-tip-panel .tip-title { font-weight:700; color:#0369a1; margin-bottom:4px; font-size:12px; text-transform:uppercase; letter-spacing:.05em; }
+.quiz-tip-panel .tip-body { color:#1e3a5f; }
+.quiz-tip-panel .tip-rule { margin-top:5px; padding:5px 10px; background:rgba(255,255,255,.6); border-radius:8px; font-size:12.5px; }
+.quiz-tip-panel .tip-rule b { color:#0369a1; }</style>
 </head>
 <body>
 
@@ -613,6 +722,10 @@ h1 {
           <span class="srs-pill" id="srs-new-pill">Yeni: –</span>
           <span class="srs-pill green" id="srs-mastered-pill">Öğrenilen: –</span>
         </span>
+      </button>
+      <button class="mode-btn cheat-hero" id="btn-cheat">
+        <span class="srs-hero-title">🧭 Sınav Asistanı</span>
+        <span class="srs-hero-sub">Soru analizi · Sinyal → cevap · Cheat kütüphanesi</span>
       </button>
       <button class="mode-btn" data-mode="exam">Exam Mode: Rastgele 50 Soru</button>
       <button class="mode-btn" data-mode="bolum6">Bölüm 6: "All / None of the Above" Soruları</button>
@@ -675,6 +788,10 @@ h1 {
         <button id="btn-submit-multi" class="action-btn">Cevapla</button>
       </div>
     </div>
+    <div id="quiz-tip-panel" class="quiz-tip-panel">
+      <div class="tip-title">🧭 Asistan İpucu</div>
+      <div class="tip-body" id="quiz-tip-body"></div>
+    </div>
     <div class="quiz-footer">
       <button id="btn-prev" class="action-btn secondary" style="display:none;">&larr; Önceki Soru</button>
       <button id="btn-skip" class="action-btn secondary" style="display:none;">Boş Bırak</button>
@@ -724,6 +841,53 @@ h1 {
         <button id="btn-b13-reveal" class="action-btn">Cevabı Göster</button>
         <button id="btn-b13-knew" class="action-btn" style="display:none; background:#2e7d32;">✓ Biliyordum</button>
         <button id="btn-b13-again" class="action-btn" style="display:none; background:#c62828;">✗ Tekrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SINAV ASİSTANI -->
+  <div id="screen-cheat" class="screen" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:4px;">
+      <h1 style="margin:0;">🧭 Sınav Asistanı</h1>
+      <button id="btn-cheat-menu" class="action-btn secondary" style="font-size:13px;padding:9px 16px;">← Menü</button>
+    </div>
+    <p style="color:var(--muted);font-size:14px;margin:0 0 4px;">Soru sinyallerini gör · Kural kütüphanesine bak · Doğru cevabı bul</p>
+    <div class="cheat-tabs">
+      <button class="cheat-tab active" data-view="rules">📚 Kural Kütüphanesi</button>
+      <button class="cheat-tab" data-view="search">🔍 Soru Analizi</button>
+    </div>
+
+    <!-- KURALLAR -->
+    <div class="cheat-tab-view active" id="cheat-view-rules">
+      <div id="cheat-cats-grid" class="cheat-cats"></div>
+      <div id="cheat-rules-area" class="cheat-rules-area">
+        <button id="btn-cheat-back" class="action-btn secondary cheat-back" style="font-size:13px;padding:9px 16px;">← Kategoriler</button>
+        <h3 id="cheat-cat-title" style="margin:0 0 14px;font-size:18px;"></h3>
+        <div id="cheat-rules-list"></div>
+      </div>
+    </div>
+
+    <!-- SORU ANALİZİ -->
+    <div class="cheat-tab-view" id="cheat-view-search">
+      <div id="cheat-search-panel">
+        <div class="cheat-search-bar">
+          <input type="text" id="cheat-search-input" placeholder="Soru numarası veya anahtar kelime..." autocomplete="off">
+        </div>
+        <div id="cheat-q-list" class="cheat-q-list"></div>
+      </div>
+      <div id="cheat-detail" class="cheat-detail">
+        <button id="btn-cheat-detail-back" class="action-btn secondary cheat-back" style="font-size:13px;padding:9px 16px;">← Listeye Dön</button>
+        <div class="cheat-detail-q">
+          <div class="q-id" id="cheat-detail-qid"></div>
+          <div id="cheat-detail-qtext"></div>
+        </div>
+        <div class="cheat-detail-rules">
+          <h4>Tespit Edilen Sinyaller ve Kurallar</h4>
+          <div id="cheat-detail-signals"></div>
+          <div id="cheat-detail-matched-rules"></div>
+        </div>
+        <div id="cheat-detail-correct" class="cheat-detail-correct"></div>
+        <div id="cheat-detail-learn" class="cheat-learn-box" style="display:none;"></div>
       </div>
     </div>
   </div>
@@ -2501,6 +2665,8 @@ const QUESTIONS = [
     }
 
 
+    cheatShowQuizTip(q);
+
     if (isMulti && !qs.answered) {
       multiSubmitWrap.style.display = "flex";
       btnSubmitMulti.onclick = function () {
@@ -2605,6 +2771,489 @@ const QUESTIONS = [
     resultsScore.textContent = "Doğru: " + state.correctCount + " / " + total;
     resultsPercent.textContent = "Başarı: %" + pct;
   }
+
+  // ==================== SINAV ASİSTANI ====================
+  var CHEAT_CATS = [
+    {
+      id:"compute", icon:"💻", name:"Compute & Serverless",
+      rules:[
+        { sig:"Event-driven + scales to zero + lightweight code", ans:"Cloud Functions", tip:"Cloud Functions is triggered by events (HTTP, Pub/Sub, Firestore writes, etc.) and automatically scales to zero when idle. Perfect for lightweight, short-running tasks." },
+        { sig:"Container + fine-grained traffic/scaling control", ans:"Google Kubernetes Engine (GKE)", tip:"GKE gives you full control over networking policies, scaling rules, and container orchestration. Choose GKE when you need customization over App Engine or Cloud Run." },
+        { sig:"Container + request/event triggered + no infra management", ans:"Cloud Run", tip:"Cloud Run runs stateless containers on demand. It's fully managed, auto-scales (including to zero), and requires no cluster management unlike GKE." },
+        { sig:"Migrate existing VMs to containers (cloud-native)", ans:"Migrate for Anthos", tip:"Anthos migration converts existing VMs into containers. The goal is modernization, not a lift-and-shift. Contrast with Migrate for Compute Engine which keeps them as VMs." },
+        { sig:"Migrate VMs to cloud with minimal changes", ans:"Migrate for Compute Engine", tip:"Migrate for Compute Engine is a lift-and-shift approach — VMs stay as VMs on GCP. Use this when you want fast migration without code changes." },
+        { sig:"Short-term extra compute (days/weeks), no commitment", ans:"VM without Committed Use Discount", tip:"For temporary workloads, pay-as-you-go VMs are cheapest. Committed Use Discounts (CUDs) make sense only when you need steady usage for 1+ year." },
+        { sig:"Interruptible + cost-optimized + task < 12h", ans:"Preemptible VM instances", tip:"Preemptible VMs are up to 80% cheaper but can be stopped at any time. Best for batch jobs, rendering, and fault-tolerant workloads that can restart." },
+        { sig:"Constant baseline load, long-term", ans:"Sustained Use Discounts (automatic)", tip:"Sustained use discounts apply automatically when you run VMs for a significant portion of the month. No commitment needed — GCP applies them automatically." },
+        { sig:"3-year constant usage → maximize savings", ans:"3-year Committed Use Discount", tip:"Commit to using a specific VM type for 1 or 3 years and get up to 57% discount. Best for predictable, steady workloads. Only commit for your baseline, not spike." },
+        { sig:"Mobile app + full-featured platform", ans:"Firebase", tip:"Firebase is Google's mobile and web app platform. It includes authentication, real-time database, Firestore, hosting, and analytics — all integrated for mobile devs." },
+        { sig:"Zero-config + auto-scale + built-in security", ans:"App Engine", tip:"App Engine is a fully managed PaaS. Developers just deploy code; Google handles scaling, patching, and security. Standard for simple web apps and APIs." },
+        { sig:"Migrate custom Linux/Windows VM images", ans:"Compute Engine", tip:"Compute Engine is the IaaS product for running VMs. Custom OS images (VMDK, etc.) can be imported and run unchanged." },
+        { sig:"CI/CD automated build + test + deploy", ans:"Cloud Build", tip:"Cloud Build is GCP's managed CI/CD service. It builds Docker containers and deploys to GKE, App Engine, or Cloud Functions automatically from source changes." },
+        { sig:"Store container images for CI/CD pipeline", ans:"Container Registry / Artifact Registry", tip:"After Cloud Build builds an image, store it in Container Registry (or Artifact Registry, the newer version). Cloud Run and GKE pull from here at deploy time." },
+        { sig:"IaaS: full control of OS + runtime + middleware", ans:"IaaS (Infrastructure as a Service)", tip:"IaaS gives you VMs where you control the OS, runtime, and middleware. You manage the stack above the hypervisor. GCP's IaaS product is Compute Engine." },
+        { sig:"PaaS: manage runtime/middleware, not hardware", ans:"PaaS (Platform as a Service)", tip:"PaaS abstracts hardware and OS. You manage app + data, the provider manages everything below. App Engine Standard is GCP's PaaS." },
+        { sig:"SaaS: minimize customer management", ans:"SaaS (Software as a Service)", tip:"SaaS delivers the entire application. The customer just uses it. Choose SaaS when you want minimal management. Balance: flexibility decreases as you go IaaS→PaaS→SaaS." }
+      ]
+    },
+    {
+      id:"database", icon:"🗄️", name:"Veritabanları",
+      rules:[
+        { sig:"Global transactions + consistency + unlimited growth", ans:"Cloud Spanner", tip:"Spanner is the only globally distributed, strongly consistent relational database. Use it when you need horizontal scaling AND ACID transactions globally (payments, gaming leaderboards)." },
+        { sig:"IoT sensor + NoSQL + massive data + high speed", ans:"Cloud Bigtable", tip:"Bigtable is a wide-column NoSQL database optimized for billions of rows of time-series or sensor data. It powers Google Search and Maps internally." },
+        { sig:"Serverless document DB + mobile/web app integration", ans:"Firestore", tip:"Firestore (formerly Cloud Datastore) is a serverless, scalable document database. Native SDKs for mobile (iOS/Android) and real-time sync make it ideal for apps." },
+        { sig:"SQL migration with minimal disruption from another cloud/MySQL", ans:"Database Migration Service", tip:"Database Migration Service (DMS) handles schema conversion and live replication to minimize downtime. Supports MySQL, PostgreSQL, SQL Server migrations to Cloud SQL or AlloyDB." },
+        { sig:"Data analytics warehouse — pay per query/storage", ans:"BigQuery", tip:"BigQuery is GCP's serverless data warehouse. You pay only for queries run and data stored. It's optimized for OLAP (analytical) not OLTP (transactional) workloads." },
+        { sig:"SQL skills + machine learning model building", ans:"BigQuery ML", tip:"BigQuery ML lets you build and run ML models using standard SQL directly inside BigQuery. No data export needed; great for analysts with SQL skills but limited ML experience." },
+        { sig:"In-memory cache for low-latency lookups", ans:"Memorystore", tip:"Memorystore is GCP's managed Redis/Memcached service. Use it for session storage, leaderboards, or caching query results where sub-millisecond latency matters." },
+        { sig:"Relational DB for structured tabular data (inventory, transactions)", ans:"Cloud SQL", tip:"Cloud SQL is GCP's managed relational DB (MySQL, PostgreSQL, SQL Server). Good for traditional web apps. Not for global scale — use Cloud Spanner for that." }
+      ]
+    },
+    {
+      id:"storage", icon:"💾", name:"Depolama",
+      rules:[
+        { sig:"Store files / images / videos securely and share", ans:"Cloud Storage", tip:"Cloud Storage is GCP's object storage. It's durable (11 9s), globally accessible, and supports lifecycle policies to auto-move data to cheaper storage classes." },
+        { sig:"Frequently accessed data (websites, apps)", ans:"Standard storage class", tip:"Standard is the default. Best for data accessed frequently. Highest per-GB cost but no retrieval fees." },
+        { sig:"Access ~once per month (30-day minimum)", ans:"Nearline storage class", tip:"Nearline is for data accessed about once a month. 30-day minimum storage duration. Lower per-GB cost than Standard but retrieval fees apply." },
+        { sig:"Access ~once per quarter (90-day minimum)", ans:"Coldline storage class", tip:"Coldline is for data accessed at most once every 90 days. Much cheaper storage but higher retrieval costs. Good for DR backups checked quarterly." },
+        { sig:"DR / compliance archive, rarely accessed (365-day minimum)", ans:"Archive storage class", tip:"Archive is cheapest but has a 365-day minimum and highest retrieval cost. Use for compliance or audit data that almost never needs to be read." },
+        { sig:"Two cities / 15-minute RPO / minimal data loss", ans:"Dual-region with turbo replication", tip:"Turbo replication guarantees data is replicated to both regions within 15 minutes. Standard dual-region has no time guarantee. Use turbo when RPO matters." },
+        { sig:"Global access but no specific RPO requirement", ans:"Multi-region Cloud Storage", tip:"Multi-region stores data redundantly across multiple geographic locations and provides high availability. No turbo replication SLA but good for global CDN-like reads." }
+      ]
+    },
+    {
+      id:"network", icon:"🌐", name:"Ağ & Bağlantı",
+      rules:[
+        { sig:"Quick private on-prem → GCP connection (encrypted, internet)", ans:"Cloud VPN", tip:"Cloud VPN creates an encrypted tunnel over the public internet. Easiest to set up. Bandwidth limited (~3 Gbps per tunnel). Use when you need connectivity fast." },
+        { sig:"High bandwidth + dedicated private line to GCP", ans:"Cloud Interconnect (Dedicated)", tip:"Dedicated Interconnect provides 10 or 100 Gbps direct physical connections. Best for large data transfers. Requires colocation near a Google POP." },
+        { sig:"Private connection via service provider / no colocation", ans:"Partner Interconnect", tip:"Partner Interconnect uses a service provider's network to reach GCP. More flexible geographically. Bandwidths from 50 Mbps to 50 Gbps." },
+        { sig:"Minimize internet egress (outbound) cost", ans:"Standard network service tier", tip:"Standard tier routes traffic over the public internet more (vs Premium which uses Google's backbone). Lower cost but higher latency. Use for non-latency-sensitive egress." },
+        { sig:"DDoS protection + web application firewall", ans:"Cloud Armor", tip:"Cloud Armor provides Layer 7 DDoS mitigation, WAF rules (OWASP top 10), and IP allow/deny lists. Integrates with Cloud Load Balancing." },
+        { sig:"Bot protection + verify human users on website", ans:"reCAPTCHA Enterprise", tip:"reCAPTCHA Enterprise detects bots, scrapers, and abuse with minimal user friction. Better than classic CAPTCHA with risk-score APIs for server-side decisions." },
+        { sig:"Load balance globally + low latency for users worldwide", ans:"Cloud Load Balancing (Global)", tip:"GCP's global load balancer routes users to the nearest healthy backend, uses Anycast IPs, and integrates with Cloud CDN for content delivery." },
+        { sig:"Cache static content close to users globally", ans:"Cloud CDN", tip:"Cloud CDN integrates with Cloud Load Balancing to cache content at Google's global edge nodes, reducing latency and origin load for static/cached responses." }
+      ]
+    },
+    {
+      id:"security", icon:"🔒", name:"Güvenlik & Kimlik",
+      rules:[
+        { sig:"Detect sensitive data / PII / credit card numbers", ans:"Cloud Data Loss Prevention (DLP)", tip:"DLP can scan Cloud Storage, BigQuery, Datastore for sensitive info (PII, PHI, credentials) and redact, mask, or tokenize it. Reduces compliance risk." },
+        { sig:"Compliance reporting + security recommendations for org", ans:"Security Command Center (SCC)", tip:"SCC is the centralized security dashboard for GCP. It shows vulnerabilities, misconfigurations, threats, and compliance status across all projects in your organization." },
+        { sig:"IAM → control permissions + access", ans:"Assign Roles (IAM)", tip:"IAM controls who (identity) has what access (role) to which resource. Roles are collections of permissions. Best practice: grant least-privilege, use groups not individuals." },
+        { sig:"Active Directory / LDAP → sync to Google accounts", ans:"Google Cloud Directory Sync (GCDS)", tip:"GCDS synchronizes users and groups from Active Directory or LDAP to Cloud Identity/Workspace. One-way sync only (AD → Google). Used for provisioning at scale." },
+        { sig:"Active Directory → Google access, terminate on deactivation", ans:"Single Sign-On (SSO)", tip:"SSO links Google accounts to Active Directory authentication. When an AD account is disabled, the user can no longer authenticate to Google services automatically." },
+        { sig:"Identity for Compute Engine to access other GCP services", ans:"Service Account (IAM)", tip:"Service accounts are non-human identities for VMs, Cloud Functions, etc. Grant them IAM roles instead of embedding credentials. Use workload identity in GKE." },
+        { sig:"Restrict external IPs across all projects/folders in org", ans:"Organization Policy at root node", tip:"Apply the 'compute.vmExternalIpAccess' constraint at the organization level. It cascades to all projects. Setting it at folder or project level misses future projects." },
+        { sig:"Multi-cloud security + unified platform", ans:"Anthos + Security Command Center", tip:"Anthos provides a consistent control plane across GCP, on-prem, and other clouds. SCC gives centralized security visibility. Together they address multi-cloud security posture." },
+        { sig:"Zero-trust access to internal apps (no VPN)", ans:"Identity-Aware Proxy (IAP)", tip:"IAP authenticates and authorizes users at the Google front-end before requests reach your app. Enables secure access to internal tools without a VPN." },
+        { sig:"Users' username/password management + identity-based access control", ans:"Identity Platform", tip:"Identity Platform is GCP's customer-facing identity solution (like Firebase Auth with enterprise features). Supports OAuth, SAML, OIDC, and MFA for public apps." }
+      ]
+    },
+    {
+      id:"analytics", icon:"📊", name:"Veri Analizi & Pipeline",
+      rules:[
+        { sig:"Serverless streaming data pipeline + auto-scale", ans:"Dataflow", tip:"Dataflow is GCP's managed Apache Beam service for stream and batch processing. Fully serverless — no cluster to manage. Handles both bounded and unbounded data." },
+        { sig:"Hadoop/Spark cluster for batch processing", ans:"Dataproc", tip:"Dataproc is a managed Hadoop and Spark service. Use it when you already have Spark/Hadoop jobs you want to run on GCP. Not serverless — you manage cluster size." },
+        { sig:"Serverless messaging + decouple services + event ingestion", ans:"Pub/Sub", tip:"Pub/Sub is GCP's asynchronous messaging service. Producers push to topics, consumers subscribe. At-least-once delivery, global, and virtually unlimited throughput." },
+        { sig:"Integrate + clean + transform + blend data (serverless ETL)", ans:"Cloud Data Fusion", tip:"Cloud Data Fusion is a fully managed, code-free data integration service. It's built on CDAP and provides a visual pipeline designer. No infrastructure management needed." },
+        { sig:"Visualize data / dashboards / BI reports", ans:"Looker Studio (Data Studio)", tip:"Looker Studio (formerly Data Studio) creates interactive dashboards and reports from BigQuery, Google Sheets, and other sources. Free and browser-based." },
+        { sig:"Discover and catalog data assets across GCP", ans:"Data Catalog", tip:"Data Catalog is a metadata management service. It helps you find, understand, and manage data assets across BigQuery, Cloud Storage, and other GCP services." }
+      ]
+    },
+    {
+      id:"ml", icon:"🤖", name:"Yapay Zeka & ML",
+      rules:[
+        { sig:"Categorize / classify static images", ans:"Cloud Vision API", tip:"Vision API is a pre-trained ML model for image analysis. It can detect objects, faces, text (OCR), safe content, and landmarks. No ML expertise required — call the API." },
+        { sig:"Personalized product recommendations", ans:"Recommendations AI", tip:"Recommendations AI delivers personalized product suggestions at scale. Used by e-commerce sites to predict what users will want to buy based on behavior and catalog." },
+        { sig:"ML model with SQL skills + no data export", ans:"BigQuery ML", tip:"BigQuery ML lets you CREATE MODEL and PREDICT in SQL inside BigQuery. Great for analysts. Supports linear regression, logistic regression, k-means, DNN, and more." },
+        { sig:"Custom ML with existing TensorFlow models", ans:"Vertex AI (AI Platform)", tip:"Vertex AI is GCP's unified ML platform for training, serving, and managing custom models. Supports TensorFlow, PyTorch, scikit-learn. Use when pre-built APIs aren't enough." },
+        { sig:"Transcribe speech → text", ans:"Speech-to-Text API", tip:"Speech-to-Text converts audio to text using ML. Supports 125+ languages, real-time and batch. Use for voice commands, call center transcription, or subtitle generation." },
+        { sig:"Translate text between languages", ans:"Cloud Translation API", tip:"Translation API supports 100+ languages with neural machine translation. Use the basic edition for simple cases or Advanced for glossaries and custom models." },
+        { sig:"Extract entities / sentiment from text", ans:"Natural Language API", tip:"Natural Language API analyzes text for entities, sentiment, syntax, and content classification. Pre-trained — no ML knowledge needed." },
+        { sig:"Mislabeled training data → model quality impact", ans:"Increased risk of inaccuracy", tip:"If training data has incorrect labels, the model learns wrong patterns. This directly causes inaccurate predictions. This is a data quality problem, not a privacy or compatibility issue." }
+      ]
+    },
+    {
+      id:"migration", icon:"🚚", name:"Migrasyon",
+      rules:[
+        { sig:"Migrate data (1TB–few PBs) with timeline + bandwidth constraints", ans:"Storage Transfer Service", tip:"Storage Transfer Service handles scheduled, automated transfers from on-prem (SFTP), S3, Azure, or other GCS buckets. Great when you have a bandwidth budget and timeline." },
+        { sig:"Petabyte-scale offline data transfer (no bandwidth)", ans:"Transfer Appliance", tip:"Transfer Appliance is a physical device shipped to your data center. You copy data to it and ship it back. Use when uploading over the network would take weeks." },
+        { sig:"Migrate Google Cloud between billing accounts / projects", ans:"Cloud Billing Support", tip:"For billing-related mistakes (wrong CUD, billing account issues), contact Cloud Billing Support — not Technical Support, Trust & Safety, or your financial institution." },
+        { sig:"Automate data migration + Google-managed + use Interconnect", ans:"Storage Transfer Service", tip:"Storage Transfer Service can run transfers through Dedicated or Partner Interconnect, not just the internet. It's fully managed by Google once configured." }
+      ]
+    },
+    {
+      id:"cost", icon:"💰", name:"Maliyet & Faturalandırma",
+      rules:[
+        { sig:"Monthly cost waterfall / overview chart", ans:"Cost Breakdown Reports", tip:"Cost Breakdown Reports in Cloud Billing show a waterfall (cascade) view of your charges and credits. Perfect for management summaries showing where money goes each month." },
+        { sig:"Cost visibility across projects / departments", ans:"Billing Dashboards + Resource Labels", tip:"Billing dashboards show spending trends. Resource labels (key:value tags) let you attribute costs to teams, environments, or features. Together they give full visibility." },
+        { sig:"Multiple projects — optimize shared commit discount", ans:"CUD Sharing (Committed Use Discount sharing)", tip:"When you enable CUD sharing on a billing account, committed discounts apply across all linked projects. One shared commitment is more efficient than per-project commitments." },
+        { sig:"Cloud costs vary — review frequently", ans:"Review cloud costs frequently (usage-based)", tip:"Unlike on-prem (CapEx, fixed), cloud costs are OpEx and vary with usage. Best practice: monitor frequently, set budget alerts, use recommender to right-size." },
+        { sig:"Isolate dev/prod costs + tracking simplicity", ans:"Separate Projects per environment", tip:"Separate GCP projects for dev/test/prod cleanly segregate billing, IAM, and resources. Use resource labels for finer-grained cost attribution within a project." }
+      ]
+    },
+    {
+      id:"support", icon:"🎧", name:"Destek Planları",
+      rules:[
+        { sig:"P1 case response: 1 hour, control costs", ans:"Enhanced Support", tip:"Enhanced Support provides 1-hour response for P1 (business-critical) issues. It's cheaper than Premium while still meeting aggressive SLAs. Good for production systems." },
+        { sig:"2-hour SLA + minimum cost", ans:"Enhanced Support", tip:"The 2-hour target for Critical cases (P1) aligns with Enhanced Support. Premium offers faster response but costs significantly more. Enhanced is the cost-minimizing choice." },
+        { sig:"Fastest response + dedicated TAM", ans:"Premium Support", tip:"Premium Support gives you the fastest response SLAs and a dedicated Technical Account Manager (TAM) who knows your environment. Most expensive tier." },
+        { sig:"Basic / free support plan", ans:"Basic Support (free)", tip:"Basic Support is free and includes access to documentation, community forums, and billing support. No technical case support. Not suitable for production workloads." }
+      ]
+    },
+    {
+      id:"org", icon:"🏗️", name:"Organizasyon & Kaynak Hiyerarşisi",
+      rules:[
+        { sig:"Segregate departments + environments in resource hierarchy", ans:"Folder per department, Project per environment", tip:"Best practice: Organization → Folders (by department) → Projects (by environment: dev/test/prod). This gives IAM inheritance, billing isolation, and policy scope control." },
+        { sig:"Apply policy to ALL future projects/folders automatically", ans:"Organization Policy at root organization node", tip:"Policies set at the organization node cascade to all child folders and projects, including ones created in the future. Setting it lower misses future resources." },
+        { sig:"Service-level resource isolation (compute/storage/network)", ans:"Projects", tip:"Projects are the fundamental unit of isolation in GCP. Each project has its own billing, IAM, APIs, and resource quotas. Use them to separate environments or workloads." },
+        { sig:"Group resources + inherit IAM + hierarchy between org and projects", ans:"Folders", tip:"Folders let you group projects and apply IAM policies that inherit down. Create a folder per department or business unit to manage access at scale." },
+        { sig:"Best practice initial GCP setup", ans:"Define hierarchy with Organization node on top", tip:"Start by creating an organization node (linked to your Cloud Identity/Workspace domain), then folders, then projects. Don't start creating projects at the root level." }
+      ]
+    },
+    {
+      id:"monitoring", icon:"📡", name:"İzleme & Operasyon",
+      rules:[
+        { sig:"SLO monitoring + alerts + uptime checks", ans:"Cloud Monitoring", tip:"Cloud Monitoring (formerly Stackdriver) collects metrics, creates dashboards, and fires alerts. It's the go-to for SLO tracking, uptime monitoring, and performance visibility." },
+        { sig:"Aggregate + search + export logs", ans:"Cloud Logging", tip:"Cloud Logging stores, searches, and exports logs from GCP services and apps. Logs can be exported to BigQuery, Cloud Storage, or Pub/Sub for long-term analysis." },
+        { sig:"Distributed request tracing + latency analysis", ans:"Cloud Trace", tip:"Cloud Trace shows latency distributions and traces individual requests across microservices. Use it to find slow calls and bottlenecks in distributed systems." },
+        { sig:"Log integrity / prevent tampering with audit logs", ans:"Log versioning + copy to separate project/owner", tip:"To ensure log integrity: enable object versioning on the GCS log bucket AND copy logs to a project with a different owner so no single person can delete both copies." },
+        { sig:"SRE → automate problem solving / toil reduction", ans:"Focus on automation / allocate to ops teams", tip:"Site Reliability Engineering reduces operational toil through automation. Developers contributing to SRE write automation, define SLOs, and collaborate with ops — not manual config." }
+      ]
+    },
+    {
+      id:"cloud101", icon:"☁️", name:"Cloud Temelleri",
+      rules:[
+        { sig:"Multiple OS on single physical hardware", ans:"Hypervisor", tip:"A hypervisor (Type 1 or Type 2) virtualizes hardware so multiple OS instances can run simultaneously on one physical machine. Foundation of cloud VM technology." },
+        { sig:"Increase/decrease resources based on demand", ans:"Elasticity", tip:"Elasticity is the ability to scale resources up and down automatically based on demand. Different from scalability (just growing) — elasticity implies dynamic adjustment both ways." },
+        { sig:"High availability + redundancy + fault tolerance", ans:"Multiple zones/regions", tip:"For high availability, deploy across multiple zones (in one region) or multiple regions. Zones protect against datacenter failures; regions protect against regional disasters." },
+        { sig:"Unlimited resources without purchasing equipment", ans:"Public Cloud", tip:"Public clouds (GCP, AWS, Azure) provide near-unlimited on-demand resources without CapEx hardware investment. You pay only for what you use (OpEx model)." },
+        { sig:"On-premises data + cloud processing → hybrid", ans:"Hybrid Cloud", tip:"Hybrid cloud connects on-premises infrastructure with public cloud. Use it when regulations require some data to stay on-prem, but you want cloud for compute/scalability." },
+        { sig:"Cloud-native app → fast feature delivery + agile", ans:"Cloud-native architecture", tip:"Cloud-native apps are designed for the cloud from the start — using microservices, containers, managed services. Key benefit: teams can release features independently and rapidly." },
+        { sig:"Digital transformation → new ways of communicating/collaborating", ans:"Organizational Transformation", tip:"When a company adopts cloud to fundamentally change how it communicates and operates (not just cost-cut), that's organizational transformation — a cultural and structural shift." }
+      ]
+    }
+  ];
+
+  var CHEAT_SIGNAL_MAP = [];
+  CHEAT_CATS.forEach(function(cat) {
+    cat.rules.forEach(function(rule) {
+      CHEAT_SIGNAL_MAP.push({ cat: cat.id, catName: cat.name, sig: rule.sig, ans: rule.ans, tip: rule.tip });
+    });
+  });
+
+  function cheatDetectSignals(qtext) {
+    var text = qtext.toLowerCase();
+    var matched = [];
+    var keywords = {
+      "cloud functions": ["cloud functions","event-driven","scales to zero","lightweight","triggered by"],
+      "gke": ["kubernetes","gke","fine-grained control","container.*traf","traf.*container"],
+      "cloud run": ["cloud run","stateless container","event.*container","container.*event","request.*container"],
+      "anthos": ["anthos","cloud-native.*migrat","migrat.*container","modernize.*workload"],
+      "migrate compute engine": ["migrate for compute engine","lift and shift","vm.*migrat"],
+      "preemptible": ["preemptible","interruptible","interrupt","spot"],
+      "committed use": ["committed use","3-year","1-year commit","cud"],
+      "cloud spanner": ["spanner","global.*consistent","globally.*distrib.*sql","unlimited.*grow.*transact"],
+      "bigtable": ["bigtable","iot.*sensor","time.series","billions of rows","sensor.*data"],
+      "firestore": ["firestore","document.*db","mobile.*database","real-time.*database"],
+      "bigquery": ["bigquery","data warehouse","analytics.*warehouse","pay.*per.*query"],
+      "bigquery ml": ["bigquery ml","sql.*machine learn","machine learn.*sql","standard sql.*model"],
+      "dataflow": ["dataflow","streaming.*pipeline","apache beam","stream.*process"],
+      "dataproc": ["dataproc","hadoop","spark","batch.*cluster"],
+      "pubsub": ["pub/sub","pubsub","messaging","decouple.*service","event.*ingest"],
+      "cloud storage": ["cloud storage","object storage","gcs","store.*files","store.*images","store.*videos"],
+      "coldline": ["coldline","quarterly","once per quarter","90.day","infrequent"],
+      "archive": ["archive.*storage","compliance.*archive","365.day","never access"],
+      "nearline": ["nearline","once.*month","30.day"],
+      "dual-region turbo": ["turbo replication","15.min","dual.region.*rpo","rpo.*dual"],
+      "cloud vpn": ["cloud vpn","vpn.*tunnel","quick.*private","encrypted.*tunnel"],
+      "interconnect": ["dedicated interconnect","cloud interconnect","high.*bandwidth.*private","direct.*connect"],
+      "partner interconnect": ["partner interconnect","service provider.*connect","no colocation"],
+      "cloud armor": ["cloud armor","ddos","waf","web application firewall"],
+      "recaptcha": ["recaptcha","bot.*protect","spam.*protect","human.*verif"],
+      "cloud dlp": ["data loss prevention","dlp","pii","sensitive.*data.*detect","personally identifiable"],
+      "scc": ["security command center","compliance.*report","security.*recomm","vulnerability.*scan"],
+      "iam roles": ["iam","assign.*role","permission.*control","access.*control.*iam"],
+      "gcds": ["google cloud directory sync","gcds","ldap.*sync","active directory.*sync"],
+      "sso": ["single sign-on","sso","active directory.*google","ldap.*google.*access"],
+      "service account": ["service account","vm.*access.*gcp","compute.*engine.*access","instance.*iam"],
+      "org policy": ["organization policy","org.*policy","restrict.*all.*project","all.*vm.*external"],
+      "vision api": ["vision api","classify.*image","categorize.*image","static.*image.*ml"],
+      "recommendations ai": ["recommendations ai","product.*recommend","personalized.*suggest"],
+      "storage transfer": ["storage transfer","automated.*transfer","scheduled.*transfer","transfer.*service"],
+      "transfer appliance": ["transfer appliance","petabyte","offline.*transfer","physical.*device"],
+      "billing support": ["billing support","cloud billing","wrong.*commit","accidentally.*purchased"],
+      "cost breakdown": ["cost breakdown","waterfall.*cost","monthly.*cost.*overview"],
+      "resource labels": ["resource labels","label.*cost","cost.*visibility","attribute.*cost"],
+      "cud sharing": ["cud.*shar","commit.*shar","multiple.*project.*discount"],
+      "enhanced support": ["enhanced support","1.hour.*p1","p1.*1.hour","2.hour.*sla","sla.*2.hour"],
+      "premium support": ["premium support","tam","technical account manager","fastest.*response"],
+      "folder hierarchy": ["folder.*department","department.*folder","resource.*hierarchy","organiz.*node"],
+      "cloud monitoring": ["cloud monitoring","slo.*monitor","uptime.*check","alert.*slo"],
+      "cloud logging": ["cloud logging","aggregate.*log","search.*log","export.*log"],
+      "cloud trace": ["cloud trace","distributed.*trac","latency.*analy","request.*trac"],
+      "elasticity": ["elasticity","elastic","scale.*demand","demand.*scale"],
+      "firebase": ["firebase","mobile.*app.*platform","full.featured.*mobile"],
+      "app engine": ["app engine","zero.config.*deploy","deploy.*zero.config","fully managed.*web"],
+      "cloud build": ["cloud build","ci/cd","automat.*build","build.*test.*deploy"],
+      "hypervisor": ["hypervisor","multiple os","multiple.*operat.*system.*single"],
+      "hybrid cloud": ["hybrid cloud","on-premises.*cloud","cloud.*on.premises","data.*on.premises.*process.*cloud"],
+      "public cloud": ["public cloud","unlimited.*resource","no.*equipment.*purchas"],
+      "identity platform": ["identity platform","username.*password.*manage","customer.*identity"],
+      "memorystore": ["memorystore","redis","memcache","in-memory","cache.*low.latency"],
+      "cloud sql": ["cloud sql","mysql.*managed","postgresql.*managed","relational.*managed"],
+      "database migration": ["database migration service","dms","mysql.*minimal.*disrupt","migrate.*sql"],
+      "data fusion": ["data fusion","code-free.*etl","visual.*pipeline","integrate.*clean.*transform"],
+      "looker studio": ["data studio","looker studio","dashboard.*visualiz","bi.*report"],
+      "vertex ai": ["vertex ai","custom.*ml","tensorflow.*train","ml.*platform"],
+      "org transform": ["organizational transform","digital.*transform","new.*way.*communicat"],
+      "cloud native": ["cloud-native","cloud native","agile.*feature","fast.*feature.*deliver"],
+      "cloud cdn": ["cloud cdn","cdn","content delivery","cache.*static"],
+      "standard tier": ["standard.*tier","minimize.*egress","internet.*egress.*cost"],
+      "iap": ["identity-aware proxy","iap","zero.trust","no.*vpn.*internal"]
+    };
+
+    var lc = qtext.toLowerCase();
+    Object.keys(keywords).forEach(function(key) {
+      var patterns = keywords[key];
+      for (var i = 0; i < patterns.length; i++) {
+        try {
+          if (new RegExp(patterns[i]).test(lc)) {
+            matched.push(key);
+            break;
+          }
+        } catch(e) {}
+      }
+    });
+    return matched;
+  }
+
+  function cheatGetRulesForSignals(signals) {
+    var rules = [];
+    var lc_signals = signals.join(" ");
+    CHEAT_SIGNAL_MAP.forEach(function(r) {
+      var ansLc = r.ans.toLowerCase().replace(/[^a-z0-9 ]/g,"");
+      var matched = false;
+      signals.forEach(function(s) {
+        if (ansLc.indexOf(s.replace(/_/g," ")) !== -1 || s.indexOf(ansLc.split(" ")[0]) !== -1) matched = true;
+      });
+      if (!matched) {
+        var sigWords = r.sig.toLowerCase().split(/\W+/);
+        sigWords.forEach(function(w) {
+          if (w.length > 4 && lc_signals.indexOf(w) !== -1) matched = true;
+        });
+      }
+      if (matched) rules.push(r);
+    });
+    return rules;
+  }
+
+  function cheatFindRulesForQuestion(q) {
+    var signals = cheatDetectSignals(q.text);
+    var rules = [];
+    // Direct answer matching
+    var correctAns = q.correct.map(function(l){ return (q.options[l]||"").toLowerCase(); }).join(" ");
+    CHEAT_SIGNAL_MAP.forEach(function(r) {
+      var ansWords = r.ans.toLowerCase().replace(/[()]/g,"").split(/\W+/).filter(function(w){ return w.length > 3; });
+      var sigWords = r.sig.toLowerCase().split(/\W+/).filter(function(w){ return w.length > 4; });
+      var sigMatch = sigWords.some(function(w){ return q.text.toLowerCase().indexOf(w) !== -1; });
+      var ansMatch = ansWords.some(function(w){ return correctAns.indexOf(w) !== -1; });
+      if ((sigMatch && ansMatch) || (ansMatch && ansWords.length >= 2)) {
+        if (rules.indexOf(r) === -1) rules.push(r);
+      }
+    });
+    if (rules.length === 0) {
+      // fallback: just signal match
+      signals.forEach(function(s) {
+        CHEAT_SIGNAL_MAP.forEach(function(r) {
+          var ansLc = r.ans.toLowerCase().replace(/[^a-z0-9 ]/g,"");
+          if (ansLc.indexOf(s.replace(/_/g," ")) !== -1 && rules.indexOf(r) === -1) rules.push(r);
+        });
+      });
+    }
+    return { signals: signals, rules: rules.slice(0,4) };
+  }
+
+  // Build quiz inline tip
+  function cheatShowQuizTip(q) {
+    var tipPanel = document.getElementById("quiz-tip-panel");
+    var tipBody = document.getElementById("quiz-tip-body");
+    if (!tipPanel || !q) return;
+    var found = cheatFindRulesForQuestion(q);
+    if (found.rules.length === 0) { tipPanel.style.display = "none"; return; }
+    tipPanel.style.display = "block";
+    var html = "";
+    found.rules.slice(0,2).forEach(function(r) {
+      html += '<div class="tip-rule">→ <b>' + esc(r.sig) + '</b>: ' + esc(r.ans) + '</div>';
+    });
+    tipBody.innerHTML = html;
+  }
+
+  // Cheat screen state
+  var cheatState = { activeCat: null };
+
+  function cheatShowView(view) {
+    document.querySelectorAll(".cheat-tab-view").forEach(function(v){ v.classList.remove("active"); });
+    document.querySelectorAll(".cheat-tab").forEach(function(t){ t.classList.remove("active"); });
+    var v = document.getElementById("cheat-view-"+view);
+    if (v) v.classList.add("active");
+    document.querySelectorAll(".cheat-tab").forEach(function(t){
+      if (t.dataset.view === view) t.classList.add("active");
+    });
+  }
+
+  function cheatRenderCats() {
+    var grid = document.getElementById("cheat-cats-grid");
+    if (!grid) return;
+    var html = "";
+    CHEAT_CATS.forEach(function(cat) {
+      html += '<button class="cheat-cat-btn" data-catid="'+cat.id+'">'
+        + '<span class="cat-icon">'+cat.icon+'</span>'
+        + '<span>'+esc(cat.name)+'</span>'
+        + '<span class="cat-count">'+cat.rules.length+'</span>'
+        + '</button>';
+    });
+    grid.innerHTML = html;
+    grid.querySelectorAll(".cheat-cat-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() { cheatOpenCat(btn.dataset.catid); });
+    });
+  }
+
+  function cheatOpenCat(catId) {
+    var cat = CHEAT_CATS.find(function(c){ return c.id === catId; });
+    if (!cat) return;
+    var catsGrid = document.getElementById("cheat-cats-grid");
+    var rulesArea = document.getElementById("cheat-rules-area");
+    catsGrid.style.display = "none";
+    rulesArea.classList.add("open");
+    document.getElementById("cheat-cat-title").textContent = cat.icon + " " + cat.name;
+    var list = document.getElementById("cheat-rules-list");
+    var html = "";
+    cat.rules.forEach(function(r) {
+      html += '<div class="cheat-rule">'
+        + '<div class="sig">Sinyal: <span>' + esc(r.sig) + '</span></div>'
+        + '<div class="ans">→ ' + esc(r.ans) + '</div>'
+        + '<div class="tip">' + esc(r.tip) + '</div>'
+        + '</div>';
+    });
+    list.innerHTML = html;
+  }
+
+  function cheatCloseCat() {
+    document.getElementById("cheat-cats-grid").style.display = "";
+    document.getElementById("cheat-rules-area").classList.remove("open");
+  }
+
+  // Question search
+  function cheatRenderQList(filterText) {
+    var list = document.getElementById("cheat-q-list");
+    if (!list) return;
+    var ft = (filterText || "").trim().toLowerCase();
+    var results = QUESTIONS;
+    if (ft) {
+      var num = parseInt(ft);
+      results = QUESTIONS.filter(function(q) {
+        if (!isNaN(num) && q.id === num) return true;
+        return q.text.toLowerCase().indexOf(ft) !== -1;
+      });
+    } else {
+      results = QUESTIONS.slice(0, 40);
+    }
+    if (results.length === 0) { list.innerHTML = '<div class="cheat-no-rules">Sonuç bulunamadı.</div>'; return; }
+    var html = "";
+    results.slice(0,50).forEach(function(q) {
+      var found = cheatFindRulesForQuestion(q);
+      var tags = found.rules.slice(0,3).map(function(r){ return '<span class="q-tag">'+esc(r.ans)+'</span>'; }).join("");
+      html += '<div class="cheat-q-item" data-qid="'+q.id+'">'
+        + '<div class="q-num">Soru #'+q.id+'</div>'
+        + '<div class="q-text">'+esc(q.text.substring(0,120))+(q.text.length>120?"...":"")+'</div>'
+        + (tags ? '<div class="q-tags">'+tags+'</div>' : '')
+        + '</div>';
+    });
+    list.innerHTML = html;
+    list.querySelectorAll(".cheat-q-item").forEach(function(item) {
+      item.addEventListener("click", function() { cheatOpenQuestion(parseInt(item.dataset.qid)); });
+    });
+  }
+
+  function cheatOpenQuestion(qid) {
+    var q = QUESTIONS.find(function(x){ return x.id === qid; });
+    if (!q) return;
+    document.getElementById("cheat-search-panel").style.display = "none";
+    var detail = document.getElementById("cheat-detail");
+    detail.classList.add("open");
+    document.getElementById("cheat-detail-qid").textContent = "Soru #" + q.id;
+    document.getElementById("cheat-detail-qtext").textContent = q.text;
+    var found = cheatFindRulesForQuestion(q);
+    // Signals
+    var sigHtml = found.signals.length > 0
+      ? found.signals.map(function(s){ return '<span class="cheat-signal-pill">'+esc(s.replace(/_/g," "))+'</span>'; }).join("")
+      : '<span class="cheat-no-rules">Otomatik sinyal tespit edilemedi.</span>';
+    document.getElementById("cheat-detail-signals").innerHTML = sigHtml;
+    // Rules
+    var rulesHtml = "";
+    if (found.rules.length > 0) {
+      found.rules.forEach(function(r) {
+        rulesHtml += '<div class="cheat-rule">'
+          + '<div class="sig">'+esc(r.sig)+'</div>'
+          + '<div class="ans">→ ' + esc(r.ans) + '</div>'
+          + '<div class="tip">'+esc(r.tip)+'</div>'
+          + '</div>';
+      });
+    } else {
+      rulesHtml = '<div class="cheat-no-rules">Bu soru için eşleşen kural bulunamadı.</div>';
+    }
+    document.getElementById("cheat-detail-matched-rules").innerHTML = rulesHtml;
+    // Correct answer
+    var correctText = q.correct.map(function(l){ return l+": "+q.options[l]; }).join(" | ");
+    document.getElementById("cheat-detail-correct").innerHTML = "✓ Doğru Cevap: <b>" + esc(correctText) + "</b>";
+    // Learn box
+    var learnBox = document.getElementById("cheat-detail-learn");
+    if (q.learnEn || q.learn) {
+      learnBox.style.display = "block";
+      learnBox.textContent = "💡 " + (q.learnEn || q.learn);
+    } else {
+      learnBox.style.display = "none";
+    }
+  }
+
+  function cheatCloseDetail() {
+    document.getElementById("cheat-search-panel").style.display = "";
+    document.getElementById("cheat-detail").classList.remove("open");
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  function startCheat() {
+    showScreen(document.getElementById("screen-cheat"));
+    cheatRenderCats();
+    cheatRenderQList("");
+    cheatShowView("rules");
+    // reset rules area
+    document.getElementById("cheat-cats-grid").style.display = "";
+    document.getElementById("cheat-rules-area").classList.remove("open");
+    document.getElementById("cheat-search-panel").style.display = "";
+    document.getElementById("cheat-detail").classList.remove("open");
+  }
+
+  document.getElementById("btn-cheat").addEventListener("click", startCheat);
+  document.getElementById("btn-cheat-menu").addEventListener("click", function(){ showScreen(screenMenu); });
+  document.getElementById("btn-cheat-back").addEventListener("click", cheatCloseCat);
+  document.getElementById("btn-cheat-detail-back").addEventListener("click", cheatCloseDetail);
+
+  document.querySelectorAll(".cheat-tab").forEach(function(tab) {
+    tab.addEventListener("click", function(){ cheatShowView(tab.dataset.view); });
+  });
+
+  var cheatSearchTimeout;
+  document.getElementById("cheat-search-input").addEventListener("input", function() {
+    clearTimeout(cheatSearchTimeout);
+    var val = this.value;
+    cheatSearchTimeout = setTimeout(function(){ cheatRenderQList(val); }, 220);
+  });
+  // ==================== END SINAV ASİSTANI ====================
 
   // Event wiring
   document.querySelectorAll(".mode-btn[data-mode]").forEach(function (btn) {
