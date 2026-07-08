@@ -693,6 +693,58 @@ h1 {
   font-size:14px; color:#78350f; line-height:1.5;
 }
 
+/* Glossary */
+.glossary-item {
+  display:flex; align-items:flex-start; gap:12px;
+  padding:12px 14px; border-radius:12px; border:1.5px solid var(--line);
+  background:var(--soft); margin-bottom:8px;
+}
+.glossary-item .g-en { font-weight:700; font-size:14.5px; color:var(--primary-ink); min-width:160px; }
+.glossary-item .g-tr { font-size:14px; color:var(--ink); flex:1; }
+.glossary-item .g-tr .g-tr-name { font-weight:700; color:#0f766e; }
+.glossary-item .g-tr .g-tr-exp { font-size:13px; color:var(--muted); margin-top:2px; }
+.glossary-cat-header { font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:16px 0 8px; }
+
+/* Question Analysis blocks */
+.qa-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+.qa-qtype {
+  padding:4px 12px; border-radius:999px; font-size:12px; font-weight:700;
+  background:#e0f2fe; color:#0369a1;
+}
+.qa-qid { font-size:12px; font-weight:700; color:var(--muted); }
+.qa-original {
+  padding:14px 16px; border-radius:13px; background:#f8fafc;
+  border:1.5px solid var(--line); margin-bottom:12px;
+}
+.qa-original .qa-orig-text { font-size:14px; color:var(--ink); line-height:1.55; margin-top:6px; }
+.qa-block {
+  border-radius:13px; padding:14px 16px; margin-bottom:10px; border-left:4px solid;
+}
+.qa-tr  { background:#f0fdf4; border-color:#22c55e; }
+.qa-terms { background:#fefce8; border-color:#eab308; }
+.qa-look  { background:#eff6ff; border-color:#3b82f6; }
+.qa-ans   { background:#ecfdf5; border-color:#10b981; }
+.qa-rules-wrap { background:var(--soft); border-color:var(--primary2); }
+.qa-label {
+  font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:.07em;
+  color:var(--muted); margin-bottom:8px;
+}
+.qa-body { font-size:14.5px; line-height:1.6; }
+.qa-tr .qa-body { color:#14532d; font-weight:500; }
+.qa-look .qa-body { color:#1e3a8a; }
+.qa-ans .qa-body { color:#065f46; font-weight:600; }
+.term-pill {
+  display:inline-block; padding:3px 10px; border-radius:999px;
+  background:#fef9c3; color:#713f12; font-size:12.5px; font-weight:700;
+  margin:3px 3px 3px 0; cursor:default;
+}
+.term-row { display:flex; align-items:flex-start; gap:8px; margin-bottom:8px; }
+.term-row .term-en { font-weight:700; color:#7c2d12; min-width:140px; font-size:13.5px; }
+.term-row .term-arrow { color:var(--muted); }
+.term-row .term-info { flex:1; }
+.term-row .term-tr-name { font-weight:700; color:#0f766e; font-size:13.5px; }
+.term-row .term-tr-exp { font-size:12.5px; color:var(--muted); margin-top:1px; line-height:1.4; }
+
 /* Quiz inline tip */
 .quiz-tip-panel {
   margin-top:12px; padding:12px 16px; border-radius:12px;
@@ -855,6 +907,7 @@ h1 {
     <div class="cheat-tabs">
       <button class="cheat-tab active" data-view="rules">📚 Kural Kütüphanesi</button>
       <button class="cheat-tab" data-view="search">🔍 Soru Analizi</button>
+      <button class="cheat-tab" data-view="glossary">📖 Sözlük</button>
     </div>
 
     <!-- KURALLAR -->
@@ -871,24 +924,65 @@ h1 {
     <div class="cheat-tab-view" id="cheat-view-search">
       <div id="cheat-search-panel">
         <div class="cheat-search-bar">
-          <input type="text" id="cheat-search-input" placeholder="Soru numarası veya anahtar kelime..." autocomplete="off">
+          <input type="text" id="cheat-search-input" placeholder="Soru numarası veya anahtar kelime ara..." autocomplete="off">
         </div>
+        <p style="color:var(--muted);font-size:13px;margin:0 0 12px;">Her soruyu tıklayarak: Türkçe özet · Anahtar terimler · Ne aramalısın · Doğru cevap</p>
         <div id="cheat-q-list" class="cheat-q-list"></div>
       </div>
       <div id="cheat-detail" class="cheat-detail">
         <button id="btn-cheat-detail-back" class="action-btn secondary cheat-back" style="font-size:13px;padding:9px 16px;">← Listeye Dön</button>
-        <div class="cheat-detail-q">
-          <div class="q-id" id="cheat-detail-qid"></div>
-          <div id="cheat-detail-qtext"></div>
+
+        <!-- Soru tipi + orijinal soru -->
+        <div class="qa-header">
+          <div class="qa-qtype" id="qa-qtype"></div>
+          <div class="qa-qid" id="cheat-detail-qid"></div>
         </div>
-        <div class="cheat-detail-rules">
-          <h4>Tespit Edilen Sinyaller ve Kurallar</h4>
-          <div id="cheat-detail-signals"></div>
+        <div class="qa-original">
+          <div class="qa-label">📄 Orijinal Soru (İngilizce)</div>
+          <div id="cheat-detail-qtext" class="qa-orig-text"></div>
+        </div>
+
+        <!-- Türkçe özet -->
+        <div class="qa-block qa-tr">
+          <div class="qa-label">🇹🇷 Soru Ne Diyor? (Türkçe Özet)</div>
+          <div id="qa-turkish" class="qa-body"></div>
+        </div>
+
+        <!-- Anahtar terimler -->
+        <div class="qa-block qa-terms">
+          <div class="qa-label">🔑 Anahtar Terimler (İngilizce → Türkçe)</div>
+          <div id="qa-terms" class="qa-body"></div>
+        </div>
+
+        <!-- Ne aramalısın -->
+        <div class="qa-block qa-look">
+          <div class="qa-label">🎯 Cevapta Ne Aramalısın?</div>
+          <div id="qa-lookfor" class="qa-body"></div>
+        </div>
+
+        <!-- Doğru cevap -->
+        <div class="qa-block qa-ans">
+          <div class="qa-label">✅ Doğru Cevap</div>
+          <div id="qa-correct" class="qa-body"></div>
+        </div>
+
+        <!-- Kural eşleşmeleri -->
+        <div class="qa-block qa-rules-wrap" id="qa-rules-wrap">
+          <div class="qa-label">📚 İlgili Kurallar</div>
           <div id="cheat-detail-matched-rules"></div>
         </div>
-        <div id="cheat-detail-correct" class="cheat-detail-correct"></div>
+
+        <!-- Learn note -->
         <div id="cheat-detail-learn" class="cheat-learn-box" style="display:none;"></div>
       </div>
+    </div>
+
+    <!-- TERİMLER SÖZLÜĞÜ -->
+    <div class="cheat-tab-view" id="cheat-view-glossary">
+      <div class="cheat-search-bar">
+        <input type="text" id="glossary-search-input" placeholder="Terim ara (İngilizce veya Türkçe)..." autocomplete="off">
+      </div>
+      <div id="glossary-list"></div>
     </div>
   </div>
 
@@ -2773,6 +2867,410 @@ const QUESTIONS = [
   }
 
   // ==================== SINAV ASİSTANI ====================
+
+  // --- TERIM SOZLUGU ---
+  var TERM_GLOSSARY = [
+    // Kimlik & Erişim
+    { cat:"Kimlik & Erişim", en:"Authentication", tr:"Kimlik Doğrulama", exp:"Kullanıcının kim olduğunu kanıtlama süreci. 'Şifreni gir' = authentication." },
+    { cat:"Kimlik & Erişim", en:"Authorization", tr:"Yetkilendirme", exp:"Kimliği doğrulanmış kullanıcının ne yapabileceğini belirleme. 'Bu dosyayı okuyabilirsin' = authorization." },
+    { cat:"Kimlik & Erişim", en:"Identity", tr:"Kimlik", exp:"Sistemde bir kullanıcı, servis hesabı veya uygulamayı temsil eden varlık." },
+    { cat:"Kimlik & Erişim", en:"IAM (Identity and Access Management)", tr:"Kimlik ve Erişim Yönetimi", exp:"GCP'de kimin hangi kaynağa ne düzeyde erişebileceğini kontrol eden sistem." },
+    { cat:"Kimlik & Erişim", en:"Role", tr:"Rol", exp:"Bir grup izni bir araya getiren yapı. Örn: roles/storage.viewer → Cloud Storage okuma izni." },
+    { cat:"Kimlik & Erişim", en:"Permission", tr:"İzin", exp:"Belirli bir kaynakta belirli bir işlemi yapma hakkı. Örn: storage.buckets.get" },
+    { cat:"Kimlik & Erişim", en:"Service Account", tr:"Servis Hesabı", exp:"İnsan değil, uygulama/VM için kullanılan kimlik. Kod GCP servislerine bu kimlikle erişir." },
+    { cat:"Kimlik & Erişim", en:"Principle of Least Privilege", tr:"En Az Ayrıcalık İlkesi", exp:"Kullanıcıya/servise sadece görevini yapacak kadar izin ver, fazlasını değil." },
+    { cat:"Kimlik & Erişim", en:"Single Sign-On (SSO)", tr:"Tek Oturum Açma", exp:"Bir kez giriş yap, tüm sistemlere erişebil. Active Directory + Google entegrasyonunda kullanılır." },
+    { cat:"Kimlik & Erişim", en:"Active Directory", tr:"Aktif Dizin", exp:"Microsoft'un kullanıcı/grup yönetim sistemi. Şirketlerde yaygın. GCP'ye GCDS veya SSO ile bağlanır." },
+    { cat:"Kimlik & Erişim", en:"LDAP", tr:"Hafif Dizin Erişim Protokolü", exp:"Kullanıcı/grup bilgilerinin saklandığı dizin servisi. AD ile aynı kategoride." },
+    { cat:"Kimlik & Erişim", en:"Google Cloud Directory Sync (GCDS)", tr:"Google Bulut Dizin Senkronizasyonu", exp:"Active Directory/LDAP'taki kullanıcıları otomatik olarak Google hesaplarına senkronize eder." },
+    { cat:"Kimlik & Erişim", en:"Identity-Aware Proxy (IAP)", tr:"Kimlik Tabanlı Proxy", exp:"VPN olmadan şirket içi uygulamalarına güvenli erişim. Sıfır güven modeli." },
+    { cat:"Kimlik & Erişim", en:"Identity Platform", tr:"Kimlik Platformu", exp:"Müşteri uygulamaları için kullanıcı adı/şifre yönetimi. Firebase Auth'un kurumsal versiyonu." },
+    { cat:"Kimlik & Erişim", en:"BeyondCorp", tr:"BeyondCorp (Sıfır Güven Modeli)", exp:"Google'ın sıfır güven güvenlik çerçevesi. Ağ konumuna bakılmaksızın kimlik doğrulama gerektirir." },
+    // Compute
+    { cat:"Compute & Serverless", en:"Virtual Machine (VM)", tr:"Sanal Makine", exp:"Fiziksel donanımı taklit eden yazılım tabanlı bilgisayar. GCP'de Compute Engine servisi." },
+    { cat:"Compute & Serverless", en:"Compute Engine", tr:"İşlem Motoru (GCP VM Servisi)", exp:"GCP'nin IaaS ürünü. Tam kontrol istediğinde, özel işletim sistemi veya konfigürasyon gerektiğinde kullan." },
+    { cat:"Compute & Serverless", en:"Preemptible VM", tr:"Kesilebilir Sanal Makine", exp:"GCP istediği zaman durdurabileceği ucuz VM. %80 ucuz ama 24 saat içinde kapanabilir. Kısa + hata tolere eden işler için." },
+    { cat:"Compute & Serverless", en:"Committed Use Discount (CUD)", tr:"Taahhüt İndirimi", exp:"1 veya 3 yıl boyunca belirli kaynak kullanmayı taahhüt edince verilen indirim. Sabit iş yükleri için." },
+    { cat:"Compute & Serverless", en:"Sustained Use Discount", tr:"Sürekli Kullanım İndirimi", exp:"VM'yi ayın büyük bölümünde çalıştırınca GCP otomatik indirim uygular. Taahhüt gerekmez." },
+    { cat:"Compute & Serverless", en:"Serverless", tr:"Sunucusuz", exp:"Sunucu yönetimi yapmadan kod çalıştırma. GCP otomatik ölçeklendirir. Cloud Functions, Cloud Run, App Engine." },
+    { cat:"Compute & Serverless", en:"Cloud Functions", tr:"Bulut Fonksiyonları", exp:"Olay tetiklemeli sunucusuz. Küçük fonksiyonlar yaz, GCP çalıştırır. Sıfıra ölçeklenir." },
+    { cat:"Compute & Serverless", en:"Cloud Run", tr:"Bulut Çalıştırma", exp:"Container tabanlı sunucusuz. Durumsuz (stateless) container'ları HTTP/event ile tetikle. Altyapı yönetimi yok." },
+    { cat:"Compute & Serverless", en:"App Engine", tr:"Uygulama Motoru", exp:"Sıfır konfigürasyonla kod deploy et. GCP ölçeklendirir ve yönetir. Web uygulamaları için tam PaaS." },
+    { cat:"Compute & Serverless", en:"Google Kubernetes Engine (GKE)", tr:"Google Kubernetes Motoru", exp:"Yönetilen Kubernetes servisi. Container orkestrasyon: trafik, ölçekleme, güncelleme tam kontrol." },
+    { cat:"Compute & Serverless", en:"Container", tr:"Konteyner", exp:"Uygulama + bağımlılıklarını paketleyen hafif izolasyon birimi. VM'den hızlı başlar, daha taşınabilir." },
+    { cat:"Compute & Serverless", en:"Hypervisor", tr:"Hipervizör", exp:"Fiziksel donanım üzerinde birden fazla işletim sistemi çalıştıran yazılım katmanı. Bulut VM'lerin temelidir." },
+    { cat:"Compute & Serverless", en:"Lift and Shift", tr:"Taşı ve Bırak", exp:"Uygulamayı değiştirmeden buluta taşıma. Hızlı ama modernizasyon yok. Anthos bunu konteynere çevirir." },
+    { cat:"Compute & Serverless", en:"Migrate for Anthos", tr:"Anthos için Geçiş", exp:"VM'leri container'a dönüştürerek cloud-native modernizasyon. Anthos = container hedef." },
+    { cat:"Compute & Serverless", en:"Migrate for Compute Engine", tr:"Compute Engine için Geçiş", exp:"VM'leri GCP'ye VM olarak taşı. Lift-and-shift. Container'a dönüştürme yok." },
+    { cat:"Compute & Serverless", en:"Firebase", tr:"Firebase", exp:"Google'ın mobil/web uygulama geliştirme platformu. Auth, Firestore, Storage, Hosting hepsini içerir." },
+    { cat:"Compute & Serverless", en:"Cloud Build", tr:"Bulut Derleme", exp:"GCP'nin CI/CD servisi. Kaynak kod değişince otomatik derle, test et, deploy et." },
+    // Veritabanı
+    { cat:"Veritabanları", en:"Cloud SQL", tr:"Bulut SQL", exp:"Yönetilen ilişkisel veritabanı. MySQL, PostgreSQL, SQL Server destekler. Global ölçek için değil." },
+    { cat:"Veritabanları", en:"Cloud Spanner", tr:"Bulut Spanner", exp:"Dünya genelinde tutarlı, yatay ölçeklenebilir ilişkisel DB. Sınırsız büyüme + ACID işlemleri." },
+    { cat:"Veritabanları", en:"Cloud Bigtable", tr:"Bulut Bigtable", exp:"Petabaytlık NoSQL geniş-sütun DB. IoT sensörü, zaman serisi, arama indeksleri için. Çok hızlı yazma." },
+    { cat:"Veritabanları", en:"Firestore", tr:"Firestore", exp:"Sunucusuz belge tabanlı NoSQL DB. Mobil/web uygulamaları için gerçek zamanlı senkronizasyon." },
+    { cat:"Veritabanları", en:"BigQuery", tr:"Büyük Sorgu", exp:"Sunucusuz veri ambarı. Sadece sorgu ve depolama için öde. OLAP (analiz) için, OLTP için değil." },
+    { cat:"Veritabanları", en:"Memorystore", tr:"Bellek Deposu", exp:"Yönetilen Redis/Memcached. Milisaniye altı gecikme için önbellekleme. Oturum bilgisi, liderlik tabloları." },
+    { cat:"Veritabanları", en:"Database Migration Service (DMS)", tr:"Veritabanı Taşıma Servisi", exp:"Mevcut DB'yi GCP'ye minimal kesinti ile taşır. MySQL/PostgreSQL → Cloud SQL veya AlloyDB." },
+    { cat:"Veritabanları", en:"Relational Database", tr:"İlişkisel Veritabanı", exp:"Tablolar halinde yapılandırılmış veri. SQL ile sorgulama. Cloud SQL, Spanner. Envanter, finansal kayıt için." },
+    { cat:"Veritabanları", en:"NoSQL Database", tr:"NoSQL Veritabanı", exp:"Esnek şema, yatay ölçekleme. Doküman (Firestore), geniş sütun (Bigtable), anahtar-değer tipler var." },
+    // Depolama
+    { cat:"Depolama", en:"Cloud Storage", tr:"Bulut Depolama", exp:"GCP'nin nesne depolama sistemi. Dosya, görsel, video sakla ve paylaş. 11 dokuz dayanıklılık." },
+    { cat:"Depolama", en:"Standard Storage", tr:"Standart Depolama", exp:"Sık erişilen veri için. En yüksek GB başı maliyet ama erişim ücreti yok." },
+    { cat:"Depolama", en:"Nearline Storage", tr:"Yakın Hat Depolama", exp:"Ayda yaklaşık 1 kez erişilen veri. 30 gün minimum süre. Standart'tan ucuz ama erişim ücreti var." },
+    { cat:"Depolama", en:"Coldline Storage", tr:"Soğuk Hat Depolama", exp:"3 ayda bir erişilen veri. 90 gün minimum. Felaket kurtarma yedekleri için ideal." },
+    { cat:"Depolama", en:"Archive Storage", tr:"Arşiv Depolama", exp:"Neredeyse hiç erişilmeyecek veri (uyumluluk, arşiv). 365 gün minimum. En ucuz depolama." },
+    { cat:"Depolama", en:"Turbo Replication", tr:"Turbo Çoğaltma", exp:"Dual-region'da 15 dakika içinde her iki bölgeye yazım garantisi. RPO bağlamında önemli." },
+    { cat:"Depolama", en:"Filestore", tr:"Dosya Deposu", exp:"Yönetilen NFS dosya sistemi. Web içeriği, dosya paylaşımı, medya işleme, veri analizi için." },
+    { cat:"Depolama", en:"Persistent Disk", tr:"Kalıcı Disk", exp:"VM'lere bağlanan blok depolama. SSD veya HDD seçenekleri. VM kapansa da veri kalır." },
+    // Ağ
+    { cat:"Ağ & Bağlantı", en:"VPC (Virtual Private Cloud)", tr:"Sanal Özel Bulut", exp:"GCP'deki özel ağ alanı. IP aralığı, alt ağlar, güvenlik duvarları tanımla." },
+    { cat:"Ağ & Bağlantı", en:"Cloud VPN", tr:"Bulut VPN", exp:"İnternet üzerinden şifreli tünel. On-prem → GCP hızlı ve ucuz bağlantı. Bant genişliği sınırlı (~3 Gbps)." },
+    { cat:"Ağ & Bağlantı", en:"Cloud Interconnect", tr:"Bulut Doğrudan Bağlantı", exp:"Yüksek bant genişliği (10-100 Gbps) özel fiziksel bağlantı. Google POP'a co-location gerektirir." },
+    { cat:"Ağ & Bağlantı", en:"Partner Interconnect", tr:"Ortak Doğrudan Bağlantı", exp:"Servis sağlayıcı üzerinden GCP'ye özel bağlantı. Co-location gerekmez. 50 Mbps – 50 Gbps." },
+    { cat:"Ağ & Bağlantı", en:"Cloud CDN", tr:"İçerik Dağıtım Ağı", exp:"Statik içeriği dünya genelinde edge node'larda önbelleğe al. Gecikmeyi azaltır." },
+    { cat:"Ağ & Bağlantı", en:"Cloud Load Balancing", tr:"Yük Dengeleme", exp:"Global anycast ile trafiği sağlıklı backend'lere yönlendir. CDN ile entegre çalışır." },
+    { cat:"Ağ & Bağlantı", en:"Standard Network Tier", tr:"Standart Ağ Katmanı", exp:"Trafiği daha çok genel internet üzerinden yönlendirir. Premium'dan ucuz ama daha yüksek gecikme." },
+    { cat:"Ağ & Bağlantı", en:"Premium Network Tier", tr:"Premium Ağ Katmanı", exp:"Trafiği Google'ın özel fiber altyapısında taşır. Düşük gecikme, yüksek güvenilirlik." },
+    { cat:"Ağ & Bağlantı", en:"Egress", tr:"Çıkış Trafiği", exp:"GCP'den internete/dışarıya çıkan veri. Bu veri için ücret ödenir. Ingress (giriş) genellikle ücretsiz." },
+    // Güvenlik
+    { cat:"Güvenlik", en:"Cloud Armor", tr:"Bulut Zırhı", exp:"DDoS saldırı koruması + Web Uygulama Güvenlik Duvarı. Cloud Load Balancing ile entegre." },
+    { cat:"Güvenlik", en:"Cloud DLP (Data Loss Prevention)", tr:"Veri Kaybı Önleme", exp:"Hassas veriyi (PII, kredi kartı, TC kimlik) tespit et, maskele veya tokenize et." },
+    { cat:"Güvenlik", en:"Security Command Center (SCC)", tr:"Güvenlik Komuta Merkezi", exp:"Tüm organizasyondaki güvenlik açıklarını, uyumluluk durumunu ve tehditleri merkezi göster." },
+    { cat:"Güvenlik", en:"reCAPTCHA Enterprise", tr:"reCAPTCHA Kurumsal", exp:"İnsan/bot ayrımı yap, spam ve kötüye kullanımı önle. Risk skoru API'si ile server-side karar ver." },
+    { cat:"Güvenlik", en:"PII (Personally Identifiable Information)", tr:"Kişisel Tanımlayıcı Bilgi", exp:"Bir kişiyi tanımlamaya yarayan bilgi. Ad, TC kimlik, pasaport, e-posta vb. Özel korunmalı." },
+    { cat:"Güvenlik", en:"DDoS (Distributed Denial of Service)", tr:"Dağıtık Hizmet Engelleme Saldırısı", exp:"Binlerce kaynaktan gelen yük ile sistemi çökertme girişimi. Cloud Armor ile önlenir." },
+    { cat:"Güvenlik", en:"Encryption", tr:"Şifreleme", exp:"Veriyi yetkisiz erişime karşı koruma. GCP tüm veriyi default olarak şifreler (at rest ve in transit)." },
+    { cat:"Güvenlik", en:"Secret Manager", tr:"Gizli Anahtar Yöneticisi", exp:"API anahtarları, şifreler, sertifikalar gibi hassas bilgileri güvenli saklama ve erişim servisi." },
+    { cat:"Güvenlik", en:"Organization Policy", tr:"Organizasyon Politikası", exp:"Tüm projelere/klasörlere uygulanan kısıtlama kuralları. Üst düzeyden alt düzeye miras alınır." },
+    { cat:"Güvenlik", en:"Web Risk", tr:"Web Riski", exp:"Kötü amaçlı URL tespiti API'si. Kullanıcıların tehlikeli sitelere erişimini engeller." },
+    // Analiz & Pipeline
+    { cat:"Veri Analizi", en:"Dataflow", tr:"Veri Akışı", exp:"Apache Beam tabanlı sunucusuz pipeline. Hem akış (streaming) hem toplu (batch) işleme. Küme yönetimi yok." },
+    { cat:"Veri Analizi", en:"Dataproc", tr:"Veri İşleme Kümesi", exp:"Yönetilen Hadoop/Spark kümesi. Mevcut Spark işlerini GCP'de çalıştır. Sunucusuz değil." },
+    { cat:"Veri Analizi", en:"Pub/Sub", tr:"Yayın/Abone Mesajlaşma", exp:"Asenkron mesajlaşma. Üreticiler topic'e gönderir, aboneler alır. Servisleri ayırır (decouple)." },
+    { cat:"Veri Analizi", en:"Cloud Data Fusion", tr:"Bulut Veri Birleştirme", exp:"Kod yazmadan görsel ETL pipeline tasarla. Entegrasyon, temizleme, dönüştürme, harmanlama." },
+    { cat:"Veri Analizi", en:"Looker Studio (Data Studio)", tr:"Veri Görselleştirme Aracı", exp:"Tarayıcı tabanlı ücretsiz BI raporu ve dashboard aracı. BigQuery verilerini görsel hale getir." },
+    { cat:"Veri Analizi", en:"BigQuery ML", tr:"SQL ile Makine Öğrenmesi", exp:"BigQuery içinde standart SQL kullanarak ML modeli oluştur ve tahmin yap. Veri dışa aktarımı gerekmez." },
+    { cat:"Veri Analizi", en:"Data Catalog", tr:"Veri Kataloğu", exp:"GCP'deki veri varlıklarını keşfet, etiketle ve anla. Metadata yönetim servisi." },
+    { cat:"Veri Analizi", en:"Datalab", tr:"Veri Laboratuvarı", exp:"Jupyter notebook tabanlı etkileşimli veri analizi aracı. BigQuery, Cloud ML ile entegre." },
+    // ML/AI
+    { cat:"Yapay Zeka & ML", en:"Cloud Vision API", tr:"Görüntü Tanıma API", exp:"Önceden eğitilmiş ML modeli. Görüntüleri sınıflandır, nesne/yüz/metin tespit et. Kod yazmadan." },
+    { cat:"Yapay Zeka & ML", en:"Recommendations AI", tr:"Kişiselleştirilmiş Öneri Motoru", exp:"Kullanıcı davranışına göre ürün önerileri üret. E-ticaret siteleri için." },
+    { cat:"Yapay Zeka & ML", en:"AutoML", tr:"Otomatik ML", exp:"Makine öğrenmesi uzmanlığı olmadan özel model eğit. Google senin verilerinden model oluşturur." },
+    { cat:"Yapay Zeka & ML", en:"Vertex AI", tr:"Vertex Yapay Zeka Platformu", exp:"ML'in tüm yaşam döngüsü: eğitim, servis, izleme. TensorFlow, PyTorch, scikit-learn destekler." },
+    { cat:"Yapay Zeka & ML", en:"Speech-to-Text API", tr:"Konuşmadan Metne API", exp:"Ses kayıtlarını metne dönüştür. 125+ dil destekler. Çağrı merkezi analizi, altyazı için." },
+    { cat:"Yapay Zeka & ML", en:"Natural Language API", tr:"Doğal Dil İşleme API", exp:"Metinden varlık çıkar, duygu analizi yap, içerik sınıflandır. Önceden eğitilmiş model." },
+    { cat:"Yapay Zeka & ML", en:"Translation API", tr:"Çeviri API", exp:"100+ dil arasında nöral makine çevirisi. Gerçek zamanlı veya toplu çeviri." },
+    { cat:"Yapay Zeka & ML", en:"Mislabeled data", tr:"Yanlış Etiketli Veri", exp:"Eğitim verisindeki hatalı etiket. Model yanlış örüntü öğrenir → tahmin doğruluğu düşer." },
+    // Migrasyon
+    { cat:"Migrasyon", en:"Storage Transfer Service", tr:"Depolama Transfer Servisi", exp:"S3, Azure, SFTP veya on-prem'den GCS'ye zamanlanmış, otomatik veri transferi." },
+    { cat:"Migrasyon", en:"Transfer Appliance", tr:"Transfer Cihazı", exp:"Fiziksel cihaz. Verini kopyala, Google'a gönder. Petabaytlık offline transfer için." },
+    { cat:"Migrasyon", en:"gsutil", tr:"GCS Komut Satırı Aracı", exp:"Cloud Storage için CLI aracı. Küçük veri transferleri için uygun. Büyük veri için Storage Transfer." },
+    { cat:"Migrasyon", en:"VMware Engine", tr:"VMware Motoru", exp:"GCP'de VMware altyapısını çalıştır. VMware'den ayrılmak istemeyenler için cloud'a geçiş yolu." },
+    { cat:"Migrasyon", en:"Artifact Registry", tr:"Artefakt Kayıt Defteri", exp:"Container image ve diğer artefaktları sakla, yönet, dağıt. Container Registry'nin halefi." },
+    // Maliyet
+    { cat:"Maliyet & Faturalandırma", en:"CapEx (Capital Expenditure)", tr:"Sermaye Harcaması", exp:"Önceden fiziksel donanım satın alma. On-prem modeli. Buluta geçince yerini OpEx alır." },
+    { cat:"Maliyet & Faturalandırma", en:"OpEx (Operational Expenditure)", tr:"Operasyonel Harcama", exp:"Kullandıkça öde modeli. Bulut harcamaları OpEx. Esneklik sağlar, büyük ilk yatırım gerektirmez." },
+    { cat:"Maliyet & Faturalandırma", en:"TCO (Total Cost of Ownership)", tr:"Toplam Sahip Olma Maliyeti", exp:"Donanım, yazılım, operasyon, personel dahil tüm maliyetler. Bulut vs on-prem karşılaştırmasında kullanılır." },
+    { cat:"Maliyet & Faturalandırma", en:"Cost Breakdown Report", tr:"Maliyet Dökümü Raporu", exp:"Aylık harcamaları şelale (waterfall) grafiğiyle gösterir. Yönetim sunumları için idealdir." },
+    { cat:"Maliyet & Faturalandırma", en:"Resource Labels", tr:"Kaynak Etiketleri", exp:"Anahtar:değer çiftleriyle kaynakları etiketle. Maliyet dağıtımı, ortam ayrımı, takip için." },
+    { cat:"Maliyet & Faturalandırma", en:"Budget Notification", tr:"Bütçe Bildirimi", exp:"Harcama belirli eşiği geçince e-posta/Pub/Sub ile uyarı gönder." },
+    // DevOps & SRE
+    { cat:"DevOps & SRE", en:"CI/CD", tr:"Sürekli Entegrasyon/Sürekli Dağıtım", exp:"Kod değişikliklerini otomatik derleme, test etme ve deploy ile hızlandırma yaklaşımı." },
+    { cat:"DevOps & SRE", en:"SRE (Site Reliability Engineering)", tr:"Site Güvenilirlik Mühendisliği", exp:"Google'ın icat ettiği, yazılım mühendisliği yaklaşımıyla operasyonel sorunları çözme disiplini." },
+    { cat:"DevOps & SRE", en:"SLA (Service Level Agreement)", tr:"Hizmet Seviyesi Anlaşması", exp:"Sağlayıcı ile müşteri arasında hizmet garantisi sözleşmesi. Örn: %99.9 uptime." },
+    { cat:"DevOps & SRE", en:"SLO (Service Level Objective)", tr:"Hizmet Seviyesi Hedefi", exp:"İç hedef. SLA'dan biraz daha katı tutulur ki sözleşme ihlal edilmesin." },
+    { cat:"DevOps & SRE", en:"Toil", tr:"Tekrarlayan Manuel İş", exp:"SRE'de otomasyon gerektiren tekrarlayan, değersiz operasyonel iş. Azaltılması hedeflenir." },
+    { cat:"DevOps & SRE", en:"Microservices", tr:"Mikro Hizmetler", exp:"Uygulamayı bağımsız, küçük servislere ayırma mimarisi. Her servis bağımsız deploy edilebilir." },
+    // Cloud Temelleri
+    { cat:"Cloud Temelleri", en:"Elasticity", tr:"Esneklik (Elasticity)", exp:"Talebe göre kaynakları otomatik artırıp azaltma. Hem yukarı hem aşağı ölçekleme." },
+    { cat:"Cloud Temelleri", en:"Scalability", tr:"Ölçeklenebilirlik", exp:"Büyüyen talebi karşılamak için kapasite artırma yeteneği. Elasticity'den farkı: tek yönlü büyüme." },
+    { cat:"Cloud Temelleri", en:"High Availability", tr:"Yüksek Erişilebilirlik", exp:"Sistem arızasına rağmen hizmetin devam etmesi. Birden fazla zone/bölge kullanımıyla sağlanır." },
+    { cat:"Cloud Temelleri", en:"Fault Tolerance", tr:"Hata Toleransı", exp:"Bileşen arızasına rağmen sistemin çalışmaya devam etmesi. Redundancy (yedekleme) ile sağlanır." },
+    { cat:"Cloud Temelleri", en:"Redundancy", tr:"Yedeklilik", exp:"Aynı kaynağın birden fazla kopyasını bulundurma. Arıza durumunda yedek devreye girer." },
+    { cat:"Cloud Temelleri", en:"Latency", tr:"Gecikme", exp:"Veri paketinin A'dan B'ye gitmesi için geçen süre. Milisaniye cinsinden ölçülür. Az = iyi." },
+    { cat:"Cloud Temelleri", en:"Throughput", tr:"İş Akışı Kapasitesi", exp:"Birim zamanda işlenen veri miktarı. Yüksek throughput = daha fazla iş yapılır." },
+    { cat:"Cloud Temelleri", en:"Region", tr:"Bölge", exp:"Coğrafi alan. Birden fazla zone içerir. Örn: us-central1, europe-west1." },
+    { cat:"Cloud Temelleri", en:"Zone", tr:"Alan (Zone)", exp:"Bir bölge içindeki bağımsız veri merkezi. Zone arızasına karşı çoklu zone kullan." },
+    { cat:"Cloud Temelleri", en:"RPO (Recovery Point Objective)", tr:"Kurtarma Noktası Hedefi", exp:"Felakette maksimum kabul edilebilir veri kaybı süresi. RPO=15 dk → en fazla 15 dk veri kaybı." },
+    { cat:"Cloud Temelleri", en:"RTO (Recovery Time Objective)", tr:"Kurtarma Süresi Hedefi", exp:"Felaket sonrası hizmetin ne kadar sürede ayağa kalkması gerektiği." },
+    { cat:"Cloud Temelleri", en:"Disaster Recovery (DR)", tr:"Felaket Kurtarma", exp:"Büyük arıza/felaket sonrası sistemleri geri getirme planı. Cold/Warm/Hot seviyeleri var." },
+    { cat:"Cloud Temelleri", en:"Cold DR", tr:"Soğuk Felaket Kurtarma", exp:"Veri saklanır ama sistem hazır değil. Devreye almak zaman alır. En ucuz seçenek. Hız gerekmiyorsa." },
+    { cat:"Cloud Temelleri", en:"Hot DR", tr:"Sıcak Felaket Kurtarma", exp:"Yedek sistem her zaman çalışır durumda. Anında geçiş. En pahalı ama en hızlı." },
+    { cat:"Cloud Temelleri", en:"Public Cloud", tr:"Genel Bulut", exp:"AWS, GCP, Azure gibi herkese açık bulut. Sınırsız kaynak, kullandıkça öde, donanım satın alma yok." },
+    { cat:"Cloud Temelleri", en:"Private Cloud", tr:"Özel Bulut", exp:"Sadece bir kuruluşun kullandığı bulut altyapısı. Genelde şirket içinde. Genel kamuyla paylaşılmaz." },
+    { cat:"Cloud Temelleri", en:"Hybrid Cloud", tr:"Hibrit Bulut", exp:"On-premises + public cloud birlikte. Hassas veri yerinde, işlem/ölçekleme bulutta." },
+    { cat:"Cloud Temelleri", en:"Multi-cloud", tr:"Çoklu Bulut", exp:"Birden fazla bulut sağlayıcısı kullanma. Vendor lock-in azaltır. Anthos çoklu bulut yönetir." },
+    { cat:"Cloud Temelleri", en:"IaaS", tr:"Hizmet Olarak Altyapı", exp:"VM, ağ, depolama kiralarsın, siz yönetirsiniz. OS + runtime + middleware senin sorumluluğun." },
+    { cat:"Cloud Temelleri", en:"PaaS", tr:"Hizmet Olarak Platform", exp:"Donanım + OS yönetimini bulut üstlenir. Sen uygulama + veri üzerine odaklanırsın. App Engine." },
+    { cat:"Cloud Temelleri", en:"SaaS", tr:"Hizmet Olarak Yazılım", exp:"Tam uygulama hizmet olarak sunulur. Müşteri sadece kullanır. Gmail, Google Workspace." },
+    { cat:"Cloud Temelleri", en:"On-premises", tr:"Şirket İçi / Yerinde", exp:"Kendi veri merkezinizde çalışan altyapı. Bulut öncesi model. Kontrol tam ama maliyet/esneklik sınırlı." },
+    { cat:"Cloud Temelleri", en:"Workload", tr:"İş Yükü", exp:"Sistem üzerinde çalışan uygulama veya servis. Buluta 'iş yükü taşıma' = workload migration." },
+    { cat:"Cloud Temelleri", en:"Organizational Transformation", tr:"Organizasyonel Dönüşüm", exp:"Bulut sayesinde iletişim, iş birliği ve iş yapış şekillerinin kökten değişmesi süreci." },
+    { cat:"Cloud Temelleri", en:"Cloud-native", tr:"Buluta Özgü (Cloud-native)", exp:"Baştan bulut için tasarlanmış uygulama. Microservice, container, managed service kullanır. Çevik geliştirme sağlar." },
+    // Destek
+    { cat:"Destek Planları", en:"Basic Support", tr:"Temel Destek (Ücretsiz)", exp:"Belge ve topluluk forumu. Teknik vaka desteği yok. Üretim sistemleri için yetersiz." },
+    { cat:"Destek Planları", en:"Standard Support", tr:"Standart Destek", exp:"P2 için 4 saat, P1 için belirsiz süre. Küçük üretim sistemleri için." },
+    { cat:"Destek Planları", en:"Enhanced Support", tr:"Gelişmiş Destek", exp:"P1 için 1 saat yanıt. 2 saatlik SLA gerektiren üretim sistemleri için maliyet-optimize seçenek." },
+    { cat:"Destek Planları", en:"Premium Support", tr:"Premium Destek", exp:"En hızlı yanıt + TAM (Teknik Hesap Yöneticisi). Kurumsal düzey. En pahalı plan." },
+    { cat:"Destek Planları", en:"TAM (Technical Account Manager)", tr:"Teknik Hesap Yöneticisi", exp:"Premium desteğe özel, senin ortamını bilen kişisel Google Cloud uzmanı." }
+  ];
+
+  // --- SORU TİPİ TESPİTİ ---
+  var QT_PATTERNS = [
+    { type:"Ürün/Servis Seçimi", tr:"Bu senaryo için hangi GCP ürününü seçmeli?",
+      pat:/which (google cloud product|service|feature|solution)/i },
+    { type:"Kavram Tanımlama", tr:"Bu eylem/davranış hangi kavramı tanımlıyor?",
+      pat:/which (aspect|concept|term|characteristic|benefit|advantage) .* (describ|defin|explain|represent)/i },
+    { type:"Tanım Sorusu", tr:"Bu terim/kavram ne anlama geliyor?",
+      pat:/which of the following (defines|describes|is the definition|best describes)/i },
+    { type:"En İyi Uygulama", tr:"Bu gereksinimleri karşılamak için ne yapmalı?",
+      pat:/what should (your organization|you|they) do/i },
+    { type:"Neden/Niçin", tr:"Bu yaklaşım neden tercih edilmeli?",
+      pat:/why (should|would|is|does)/i },
+    { type:"Karşılaştırma", tr:"Bu iki ürün/kavram arasındaki fark nedir?",
+      pat:/(differ|difference between|how .* differ|compare)/i },
+    { type:"Sorumluluk Sorusu", tr:"Bu görev/sorumluluk kimin üzerinde?",
+      pat:/(responsib|who.*manages|ownership|own)/i },
+    { type:"Çoktan Seçmeli (Birden Fazla)", tr:"Aşağıdakilerden hangileri doğrudur? (Birden fazla cevap)",
+      pat:/choose (2|3|4|two|three|four)/i },
+    { type:"Avantaj/Fayda", tr:"Bu yaklaşımın/ürünün avantajı nedir?",
+      pat:/(benefit|advantage|reduce.*cost|save|improve)/i }
+  ];
+
+  function detectQuestionType(text) {
+    for (var i = 0; i < QT_PATTERNS.length; i++) {
+      if (QT_PATTERNS[i].pat.test(text)) return QT_PATTERNS[i];
+    }
+    return { type:"Genel Soru", tr:"Soruyu dikkatlice oku ve seçenekleri değerlendir." };
+  }
+
+  // --- TERM EXTRACTION ---
+  function extractTermsFromQuestion(qtext) {
+    var found = [];
+    var lc = qtext.toLowerCase();
+    TERM_GLOSSARY.forEach(function(t) {
+      var enLc = t.en.toLowerCase().replace(/\(.*?\)/g,"").trim();
+      // match full term or key part
+      if (enLc.length > 3 && lc.indexOf(enLc) !== -1) {
+        found.push(t);
+      } else {
+        // Try first word if multi-word
+        var firstWord = enLc.split(/\s+/)[0];
+        if (firstWord.length > 5 && lc.indexOf(firstWord) !== -1) {
+          found.push(t);
+        }
+      }
+    });
+    // dedupe
+    var seen = {};
+    return found.filter(function(t) {
+      if (seen[t.en]) return false;
+      seen[t.en] = true;
+      return true;
+    }).slice(0, 8);
+  }
+
+  // --- TURKISH SCENARIO SUMMARY ---
+  var SCENARIO_PATTERNS = [
+    { pat:/migrat.*(to google cloud|to the cloud|to gcp)/i, tr:"Mevcut sistemi/uygulamayı Google Cloud'a taşımak istiyorlar." },
+    { pat:/reduce.*cost|cost.effective|minimize.*cost|lower.*cost|control.*cost/i, tr:"Maliyeti düşürmek veya optimize etmek istiyorlar." },
+    { pat:/iot|sensor|device.*data|data.*device/i, tr:"IoT cihazlarından gelen sensör verisini yönetmek/işlemek istiyorlar." },
+    { pat:/stream.*data|streaming.*pipeline|real.?time.*data/i, tr:"Gerçek zamanlı veri akışını işleyecek pipeline kurmak istiyorlar." },
+    { pat:/machine learning|ml model|predict|train.*model/i, tr:"Makine öğrenmesi modeli oluşturmak veya tahmin yapmak istiyorlar." },
+    { pat:/disaster recover|backup|failover|redundan/i, tr:"Felaket kurtarma veya yüksek erişilebilirlik planı yapıyorlar." },
+    { pat:/security|encrypt|protect|vulnerab|threat|attack/i, tr:"Güvenlik açığını kapatmak veya sistemi korumak istiyorlar." },
+    { pat:/compli|regulat|gdpr|hipaa|pci|audit/i, tr:"Uyumluluk gereksinimlerini (compliance) karşılamak zorundalar." },
+    { pat:/on.premises|on.prem|data center|datacenter/i, tr:"Şirket içi (on-premises) altyapıdan buluta geçmeyi düşünüyorlar." },
+    { pat:/container|docker|kubernetes|gke/i, tr:"Container tabanlı uygulama çalıştırmak veya yönetmek istiyorlar." },
+    { pat:/serverless|scales to zero|no.*infra|infra.*manage/i, tr:"Altyapı yönetimiyle uğraşmadan, sunucusuz bir çözüm istiyorlar." },
+    { pat:/database|data.*stor|stor.*data/i, tr:"Veri depolama çözümü seçmeleri gerekiyor." },
+    { pat:/global|worldwide|multiple region|multi.region/i, tr:"Dünya genelinde (global) kullanıcılara hizmet verecekler." },
+    { pat:/ci\/cd|automat.*build|automat.*deploy/i, tr:"CI/CD pipeline ile yazılım dağıtım sürecini otomatikleştirmek istiyorlar." },
+    { pat:/monitor|alert|log|trace|observ/i, tr:"Sistem performansını izlemek veya sorunları tespit etmek istiyorlar." },
+    { pat:/support plan|p1.*case|sla.*hour|response.*time/i, tr:"Hangi destek planını seçeceklerini belirlemeye çalışıyorlar." },
+    { pat:/billing|spend|budget|cost.*report/i, tr:"Bulut harcamalarını takip etmek ve raporlamak istiyorlar." },
+    { pat:/identity|access.*control|permission|iam|role/i, tr:"Kullanıcı kimliği ve erişim kontrolünü yönetmek istiyorlar." },
+    { pat:/network.*connect|connect.*network|private.*connect/i, tr:"Şirket ağı ile GCP arasında güvenli bağlantı kurmak istiyorlar." },
+    { pat:/mobile.*app|app.*mobile|firebase/i, tr:"Mobil uygulama için bir platform veya altyapı seçiyorlar." },
+    { pat:/vision|image|photo|picture/i, tr:"Görüntüleri analiz etmek veya sınıflandırmak istiyorlar." },
+    { cat:/verify.*identity|authenticate|sign.?in|log.?in/i, tr:"Kullanıcının kimliğini doğrulama (authentication) konusunu ele alıyorlar." },
+    { pat:/verify.*identity|authenticate/i, tr:"Sisteme erişmek isteyen kullanıcının kimliğinin doğrulanması gerekiyor." },
+    { pat:/storage.*class|coldline|nearline|archive.*storage/i, tr:"Doğru Cloud Storage sınıfını (Standard/Nearline/Coldline/Archive) seçmeliler." },
+    { pat:/scale.*down|scale.*up|elasticit|autoscal/i, tr:"İş yüküne göre otomatik ölçeklenebilen bir çözüm arıyorlar." }
+  ];
+
+  function generateTurkishSummary(q) {
+    var text = q.text;
+    var matched = [];
+    SCENARIO_PATTERNS.forEach(function(p) {
+      var key = p.pat || p.cat;
+      if (key && key.test && key.test(text)) matched.push(p.tr);
+    });
+    if (matched.length > 0) return matched.slice(0, 2).join(" ");
+
+    // Fallback: use learn field if available
+    if (q.learn) return "Bu soru şunu test ediyor: " + q.learn;
+
+    // Generic fallback
+    var qt = detectQuestionType(text);
+    return qt.tr;
+  }
+
+  // --- LOOK FOR guidance ---
+  var LOOKFOR_PATTERNS = [
+    { pat:/iot.*device|device.*iot|sensor.*iot/i, look:"IoT cihaz yönetimi = Cloud IoT Core. Seçeneklerde IoT Core veya benzer yönetim servisi ara." },
+    { pat:/ddos|denial.of.service/i, look:"DDoS = Cloud Armor. Seçeneklerde Cloud Armor'ı bul." },
+    { pat:/bot.*protect|spam.*bot|recaptcha/i, look:"Bot koruması = reCAPTCHA Enterprise. 'human verification' veya 'bot detection' sinyali." },
+    { pat:/pii|personally identifiable|sensitive.*data.*detect|data loss prevention/i, look:"Hassas veri tespiti = Cloud DLP (Data Loss Prevention). 'detect', 'classify', 'redact' sinyalleri." },
+    { pat:/compliance.*report|security.*recommend|vulnerab.*scan/i, look:"Güvenlik raporu/öneri = Security Command Center. Tüm organizasyonu kapsar." },
+    { pat:/global.*consistent|unlimited.*grow.*sql|planet.scale/i, look:"Global tutarlılık + ölçeksiz SQL = Cloud Spanner. 'global', 'unlimited growth', 'consistency' sinyalleri." },
+    { pat:/serverless.*stream|streaming.*pipeline|apache beam/i, look:"Sunucusuz streaming pipeline = Dataflow. 'managed', 'auto-scale', 'no server' sinyalleri." },
+    { pat:/mobile.*app.*platform|full.featured.*mobile/i, look:"Mobil platform = Firebase. iOS/Android için entegre çözüm." },
+    { pat:/quick.*private.*connection|fast.*setup.*private/i, look:"Hızlı kurulum + özel bağlantı = Cloud VPN. 'as soon as possible' + 'private' sinyalleri." },
+    { pat:/high.*bandwidth.*dedicated|dedicated.*interconnect/i, look:"Yüksek bant genişliği özel bağlantı = Cloud Interconnect. 'high throughput' + 'dedicated' sinyalleri." },
+    { pat:/single sign.on|sso|active directory.*google/i, look:"Active Directory entegrasyonu = SSO. Hesap kapatılınca Google erişimi de kapanır." },
+    { pat:/ldap.*sync|sync.*ldap|google cloud directory/i, look:"LDAP → Google hesabı senkronizasyonu = Google Cloud Directory Sync (GCDS)." },
+    { pat:/sql.*ml|ml.*sql|standard sql.*model|machine learning.*database/i, look:"SQL becerisi + ML = BigQuery ML. 'SQL', 'data warehouse', 'no export' sinyalleri." },
+    { pat:/pay.*per.*query|analytics.*warehouse|data.*warehouse.*cost/i, look:"Sorgu başı ödeme + analitik ambar = BigQuery. 'only pay for queries' sinyali." },
+    { pat:/image.*classify|categor.*image|static.*image/i, look:"Statik görüntü sınıflandırma = Cloud Vision API. 'pre-trained', 'no ML expertise' yok bile." },
+    { pat:/coldline|quarterly|once per quarter|90.day/i, look:"3 ayda bir erişim = Coldline. 'infrequent', 'quarterly', '90-day minimum' sinyalleri." },
+    { pat:/archive.*storage|never.*access|compliance.*archive|365.day/i, look:"Hiç erişilmeyecek = Archive. '365-day', 'compliance', 'rarely accessed' sinyalleri." },
+    { pat:/turbo replication|15.min.*replicate|dual.region.*rpo/i, look:"15 dakika RPO = Dual-region + Turbo Replication. 'target time', 'minimal loss' sinyalleri." },
+    { pat:/container.*traffic.*control|fine.grained.*container/i, look:"Container + trafik kontrolü = GKE. 'fine-grained control', 'scaling policies' sinyalleri." },
+    { pat:/serverless.*container|cloud run/i, look:"Container + sunucusuz = Cloud Run. 'stateless', 'event-triggered', 'no infra management' sinyalleri." },
+    { pat:/event.driven|scales to zero|lightweight.*function/i, look:"Olay tetiklemeli + sıfıra ölçekleme = Cloud Functions. 'triggered', 'lightweight' sinyalleri." },
+    { pat:/modern.*workload.*container|cloud.native.*migrat/i, look:"VM'leri container'a modernize etme = Migrate for Anthos. 'cloud-native' sinyali key." },
+    { pat:/migrate.*vm.*cloud.*minimal/i, look:"VM'leri olduğu gibi taşıma = Migrate for Compute Engine. 'lift-and-shift', 'minimal changes' sinyalleri." },
+    { pat:/preemptible|interruptible.*workload|fault.tolerant.*batch/i, look:"Kesilebilir + ucuz = Preemptible VM. 'can be interrupted', 'cost-optimized', '<12h' sinyalleri." },
+    { pat:/3.year.*constant|constant.*3.year/i, look:"3 yıl sabit kullanım = 3-year Committed Use Discount. 'constant' kelimesi kritik." },
+    { pat:/billing support|wrong.*committed|accidentally.*purchased/i, look:"Faturalandırma hatası = Cloud Billing Support. Technical Support veya Trust&Safety değil!" },
+    { pat:/waterfall.*cost|monthly.*cost.*overview/i, look:"Aylık maliyet şelale grafiği = Cost Breakdown Reports. 'at-a-glance', 'waterfall' sinyalleri." },
+    { pat:/folder.*department|department.*resource/i, look:"Departman bazlı hiyerarşi = Folder per department → Project per environment." },
+    { pat:/organization.*node|all.*project.*policy/i, look:"Tüm projelere policy = Organization node seviyesinde uygula. Alt seviye gelecekteki projeleri kapsamaz." },
+    { pat:/verify.*identity|authenticate.*user|identity.*management/i, look:"Kimlik doğrulama = Authentication. 'verify identity', 'who are you' sinyalleri. Authorization ile karıştırma!" },
+    { pat:/what.*permission|access.*resource|who.*can.*access/i, look:"Yetkilendirme = Authorization. 'what can they do', 'access to resource' sinyalleri." },
+    { pat:/sustained use|baseline.*load.*long/i, look:"Uzun süreli baseline yük = Sustained Use Discount. Otomatik uygulanır, taahhüt gerekmez!" },
+    { pat:/1.hour.*p1|p1.*1.hour|2.hour.*sla|sla.*critical/i, look:"P1 için 1 saat yanıt = Enhanced Support. Premium değil — maliyet optimizasyonu isteniyor." },
+    { pat:/tam|technical account manager|fastest.*response/i, look:"En hızlı yanıt + TAM = Premium Support. Fiyat sorulmuyorsa Premium'u seç." },
+    { pat:/minimize.*egress|internet.*traffic.*cost/i, look:"İnternet çıkış maliyeti = Standard Network Tier. 'minimize egress' sinyali Premium'un değil Standard'ın." },
+    { pat:/slo.*monitor|alert.*slo|uptime.*check/i, look:"SLO izleme + uyarı = Cloud Monitoring. 'SLO', 'alert', 'uptime' sinyalleri." }
+  ];
+
+  function getLookFor(q) {
+    var text = q.text;
+    var matched = [];
+    LOOKFOR_PATTERNS.forEach(function(p) {
+      if (p.pat.test(text)) matched.push(p.look);
+    });
+    if (matched.length > 0) return matched.slice(0, 2).join("<br><br>");
+    // Fallback: use learnEn
+    if (q.learnEn) return q.learnEn;
+    if (q.learn) return q.learn;
+    return "Seçenekleri dikkatlice oku. Senaryo koşullarını (maliyet, hız, ölçek, yönetim) not et.";
+  }
+
+  // --- RENDER QUESTION DETAIL (enhanced) ---
+  function cheatOpenQuestion(qid) {
+    var q = QUESTIONS.find(function(x){ return x.id === qid; });
+    if (!q) return;
+    document.getElementById("cheat-search-panel").style.display = "none";
+    var detail = document.getElementById("cheat-detail");
+    detail.classList.add("open");
+
+    // Question type badge
+    var qt = detectQuestionType(q.text);
+    document.getElementById("qa-qtype").textContent = qt.type;
+    document.getElementById("cheat-detail-qid").textContent = "Soru #" + q.id + (q.correct.length > 1 ? " · " + q.correct.length + " doğru cevap" : "");
+
+    // Original text
+    document.getElementById("cheat-detail-qtext").textContent = q.text;
+
+    // Turkish summary
+    document.getElementById("qa-turkish").textContent = generateTurkishSummary(q);
+
+    // Key terms
+    var terms = extractTermsFromQuestion(q.text);
+    var termsHtml = "";
+    if (terms.length > 0) {
+      terms.forEach(function(t) {
+        termsHtml += '<div class="term-row">'
+          + '<div class="term-en">' + esc(t.en) + '</div>'
+          + '<div class="term-arrow">→</div>'
+          + '<div class="term-info">'
+          + '<div class="term-tr-name">' + esc(t.tr) + '</div>'
+          + '<div class="term-tr-exp">' + esc(t.exp) + '</div>'
+          + '</div></div>';
+      });
+    } else {
+      termsHtml = '<span style="color:var(--muted);font-size:13px;">Otomatik terim tespit edilemedi. Soruyu yukarıdan oku.</span>';
+    }
+    document.getElementById("qa-terms").innerHTML = termsHtml;
+
+    // Look for
+    document.getElementById("qa-lookfor").innerHTML = getLookFor(q);
+
+    // Correct answer
+    var correctText = q.correct.map(function(l){ return "<b>" + esc(l) + ":</b> " + esc(q.options[l]); }).join("<br>");
+    document.getElementById("qa-correct").innerHTML = correctText;
+
+    // Matched rules
+    var found = cheatFindRulesForQuestion(q);
+    var rulesHtml = "";
+    if (found.rules.length > 0) {
+      found.rules.forEach(function(r) {
+        rulesHtml += '<div class="cheat-rule">'
+          + '<div class="sig">' + esc(r.sig) + '</div>'
+          + '<div class="ans">→ ' + esc(r.ans) + '</div>'
+          + '<div class="tip">' + esc(r.tip) + '</div>'
+          + '</div>';
+      });
+    } else {
+      rulesHtml = '<div class="cheat-no-rules">Bu soru için eşleşen kural bulunamadı.</div>';
+    }
+    document.getElementById("cheat-detail-matched-rules").innerHTML = rulesHtml;
+
+    // Learn note
+    var learnBox = document.getElementById("cheat-detail-learn");
+    if (q.learnEn || q.learn) {
+      learnBox.style.display = "block";
+      learnBox.innerHTML = "💡 <b>Öğrenim Notu:</b> " + esc(q.learnEn || q.learn);
+    } else {
+      learnBox.style.display = "none";
+    }
+  }
+
+  // --- GLOSSARY RENDER ---
+  function renderGlossary(filter) {
+    var gl = document.getElementById("glossary-list");
+    if (!gl) return;
+    var ft = (filter || "").toLowerCase().trim();
+    var items = TERM_GLOSSARY;
+    if (ft) {
+      items = TERM_GLOSSARY.filter(function(t) {
+        return t.en.toLowerCase().indexOf(ft) !== -1 || t.tr.toLowerCase().indexOf(ft) !== -1 || t.exp.toLowerCase().indexOf(ft) !== -1;
+      });
+    }
+    if (items.length === 0) { gl.innerHTML = '<div class="cheat-no-rules">Sonuç bulunamadı.</div>'; return; }
+    // Group by cat
+    var cats = {};
+    items.forEach(function(t) {
+      if (!cats[t.cat]) cats[t.cat] = [];
+      cats[t.cat].push(t);
+    });
+    var html = "";
+    Object.keys(cats).forEach(function(cat) {
+      if (!ft) html += '<div class="glossary-cat-header">' + esc(cat) + '</div>';
+      cats[cat].forEach(function(t) {
+        html += '<div class="glossary-item">'
+          + '<div class="g-en">' + esc(t.en) + '</div>'
+          + '<div class="g-tr"><div class="g-tr-name">' + esc(t.tr) + '</div><div class="g-tr-exp">' + esc(t.exp) + '</div></div>'
+          + '</div>';
+      });
+    });
+    gl.innerHTML = html;
+  }
+
   var CHEAT_CATS = [
     {
       id:"compute", icon:"💻", name:"Compute & Serverless",
@@ -3176,47 +3674,6 @@ const QUESTIONS = [
     });
   }
 
-  function cheatOpenQuestion(qid) {
-    var q = QUESTIONS.find(function(x){ return x.id === qid; });
-    if (!q) return;
-    document.getElementById("cheat-search-panel").style.display = "none";
-    var detail = document.getElementById("cheat-detail");
-    detail.classList.add("open");
-    document.getElementById("cheat-detail-qid").textContent = "Soru #" + q.id;
-    document.getElementById("cheat-detail-qtext").textContent = q.text;
-    var found = cheatFindRulesForQuestion(q);
-    // Signals
-    var sigHtml = found.signals.length > 0
-      ? found.signals.map(function(s){ return '<span class="cheat-signal-pill">'+esc(s.replace(/_/g," "))+'</span>'; }).join("")
-      : '<span class="cheat-no-rules">Otomatik sinyal tespit edilemedi.</span>';
-    document.getElementById("cheat-detail-signals").innerHTML = sigHtml;
-    // Rules
-    var rulesHtml = "";
-    if (found.rules.length > 0) {
-      found.rules.forEach(function(r) {
-        rulesHtml += '<div class="cheat-rule">'
-          + '<div class="sig">'+esc(r.sig)+'</div>'
-          + '<div class="ans">→ ' + esc(r.ans) + '</div>'
-          + '<div class="tip">'+esc(r.tip)+'</div>'
-          + '</div>';
-      });
-    } else {
-      rulesHtml = '<div class="cheat-no-rules">Bu soru için eşleşen kural bulunamadı.</div>';
-    }
-    document.getElementById("cheat-detail-matched-rules").innerHTML = rulesHtml;
-    // Correct answer
-    var correctText = q.correct.map(function(l){ return l+": "+q.options[l]; }).join(" | ");
-    document.getElementById("cheat-detail-correct").innerHTML = "✓ Doğru Cevap: <b>" + esc(correctText) + "</b>";
-    // Learn box
-    var learnBox = document.getElementById("cheat-detail-learn");
-    if (q.learnEn || q.learn) {
-      learnBox.style.display = "block";
-      learnBox.textContent = "💡 " + (q.learnEn || q.learn);
-    } else {
-      learnBox.style.display = "none";
-    }
-  }
-
   function cheatCloseDetail() {
     document.getElementById("cheat-search-panel").style.display = "";
     document.getElementById("cheat-detail").classList.remove("open");
@@ -3230,8 +3687,8 @@ const QUESTIONS = [
     showScreen(document.getElementById("screen-cheat"));
     cheatRenderCats();
     cheatRenderQList("");
+    renderGlossary("");
     cheatShowView("rules");
-    // reset rules area
     document.getElementById("cheat-cats-grid").style.display = "";
     document.getElementById("cheat-rules-area").classList.remove("open");
     document.getElementById("cheat-search-panel").style.display = "";
@@ -3244,7 +3701,10 @@ const QUESTIONS = [
   document.getElementById("btn-cheat-detail-back").addEventListener("click", cheatCloseDetail);
 
   document.querySelectorAll(".cheat-tab").forEach(function(tab) {
-    tab.addEventListener("click", function(){ cheatShowView(tab.dataset.view); });
+    tab.addEventListener("click", function(){
+      cheatShowView(tab.dataset.view);
+      if (tab.dataset.view === "glossary") renderGlossary(document.getElementById("glossary-search-input").value);
+    });
   });
 
   var cheatSearchTimeout;
@@ -3252,6 +3712,13 @@ const QUESTIONS = [
     clearTimeout(cheatSearchTimeout);
     var val = this.value;
     cheatSearchTimeout = setTimeout(function(){ cheatRenderQList(val); }, 220);
+  });
+
+  var glossarySearchTimeout;
+  document.getElementById("glossary-search-input").addEventListener("input", function() {
+    clearTimeout(glossarySearchTimeout);
+    var val = this.value;
+    glossarySearchTimeout = setTimeout(function(){ renderGlossary(val); }, 200);
   });
   // ==================== END SINAV ASİSTANI ====================
 
