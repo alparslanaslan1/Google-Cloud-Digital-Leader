@@ -2192,6 +2192,7 @@ const QUESTIONS = [
     if (screenBz11) screenBz11.style.display = "none";
     if (screenB13Study) screenB13Study.style.display = "none";
     if (screenSrs) screenSrs.style.display = "none";
+    if (screenStudy) screenStudy.style.display = "none";
     screen.style.display = "block";
   }
 
@@ -4534,7 +4535,9 @@ const QUESTIONS = [
     // 2. Cevapta Ne Aramalıyız?
     var terms = (typeof extractTermsFromQuestion === 'function') ? extractTermsFromQuestion(q.text) : [];
     var lookFor = (typeof getLookFor === 'function') ? getLookFor(q) : '';
-    var matchedRules = (typeof cheatFindRulesForQuestion === 'function') ? cheatFindRulesForQuestion(q) : [];
+    // cheatFindRulesForQuestion returns { signals, rules } — extract .rules array
+    var cheatResult = (typeof cheatFindRulesForQuestion === 'function') ? cheatFindRulesForQuestion(q) : { rules: [] };
+    var matchedRules = (cheatResult && cheatResult.rules) ? cheatResult.rules : [];
     html += '<div class="study-info-section">';
     html += '<div class="study-section-title">🔍 Cevapta Ne Aramalıyız?</div>';
     if (terms && terms.length > 0) {
@@ -4550,7 +4553,7 @@ const QUESTIONS = [
     if (lookFor) {
       html += '<div class="study-lookfor-content">' + lookFor + '</div>';
     }
-    if (matchedRules && matchedRules.length > 0) {
+    if (matchedRules.length > 0) {
       html += '<div style="margin-top:10px;">';
       matchedRules.slice(0, 2).forEach(function(r) {
         var tipText = r.tip ? r.tip.split('\n\n📌')[0] : '';
@@ -4562,14 +4565,14 @@ const QUESTIONS = [
       });
       html += '</div>';
     }
-    if (!terms.length && !lookFor && (!matchedRules || !matchedRules.length)) {
+    if (!terms.length && !lookFor && !matchedRules.length) {
       html += '<div style="color:#6b7280;font-size:13px;font-style:italic;">Cevap seçeneklerini dikkatle karşılaştır; sorudaki anahtar koşulu (maliyet, hız, ölçek, güvenlik) bul.</div>';
     }
     html += '</div>';
 
     // 3. Soruda Nasıl Anlarsın? (Turkish guides from matched rules)
     var hasGuides = false;
-    if (matchedRules && matchedRules.length > 0) {
+    if (matchedRules.length > 0) {
       var guideHtml = '';
       matchedRules.forEach(function(r) {
         if (r.tip && r.tip.indexOf('📌 Soruda nasıl anlarsın?') !== -1) {
@@ -4618,7 +4621,7 @@ const QUESTIONS = [
   }
 
   function getStudyScenarios(q, matchedRules) {
-    if (!matchedRules || matchedRules.length === 0) return '';
+    if (!matchedRules || !matchedRules.length) return '';
     // Collect categories from matched rules
     var catIds = [];
     matchedRules.forEach(function(r) {
