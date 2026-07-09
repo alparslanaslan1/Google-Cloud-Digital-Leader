@@ -718,18 +718,29 @@ h1 {
 }
 .qa-original .qa-orig-text { font-size:14px; color:var(--ink); line-height:1.55; margin-top:6px; }
 .qa-block {
-  border-radius:13px; padding:14px 16px; margin-bottom:10px; border-left:4px solid;
+  border-radius:14px; padding:16px 18px; margin-bottom:12px;
+  border:1px solid var(--line); border-left:4px solid;
+  box-shadow:0 1px 3px rgba(0,0,0,.05); overflow-wrap:break-word; word-break:break-word;
 }
-.qa-tr  { background:#f0fdf4; border-color:#22c55e; }
-.qa-terms { background:#fefce8; border-color:#eab308; }
-.qa-look  { background:#eff6ff; border-color:#3b82f6; }
-.qa-ans   { background:#ecfdf5; border-color:#10b981; }
-.qa-rules-wrap { background:var(--soft); border-color:var(--primary2); }
+.qa-tr  { background:#f0fdf4; border-color:#22c55e; border-left-color:#22c55e; }
+.qa-terms { background:#fefce8; border-color:#f0e5a8; border-left-color:#eab308; }
+.qa-look  { background:#eff6ff; border-color:#c7dbfa; border-left-color:#3b82f6; }
+.qa-ans   { background:#ecfdf5; border-color:#a7e8cf; border-left-color:#10b981; }
+.qa-rules-wrap { background:var(--soft); border-color:var(--primary2); border-left-color:var(--primary2); }
+/* Header with soft badge background + accent line */
 .qa-label {
-  font-size:11.5px; font-weight:800; text-transform:uppercase; letter-spacing:.07em;
-  color:var(--muted); margin-bottom:8px;
+  display:inline-block; font-size:11.5px; font-weight:800;
+  text-transform:uppercase; letter-spacing:.07em;
+  color:#334155; margin-bottom:10px; padding:4px 12px 4px 10px;
+  border-radius:7px; border-left:4px solid currentColor;
+  background:rgba(255,255,255,.6);
 }
-.qa-body { font-size:14.5px; line-height:1.6; }
+.qa-tr .qa-label { color:#15803d; }
+.qa-terms .qa-label { color:#a16207; }
+.qa-look .qa-label { color:#1d4ed8; }
+.qa-ans .qa-label { color:#047857; }
+.qa-rules-wrap .qa-label { color:#6d28d9; }
+.qa-body { font-size:14.5px; line-height:1.65; overflow-wrap:break-word; }
 .qa-tr .qa-body { color:#14532d; font-weight:500; }
 .qa-look .qa-body { color:#1e3a8a; }
 .qa-ans .qa-body { color:#065f46; font-weight:600; }
@@ -738,12 +749,21 @@ h1 {
   background:#fef9c3; color:#713f12; font-size:12.5px; font-weight:700;
   margin:3px 3px 3px 0; cursor:default;
 }
-.term-row { display:flex; align-items:flex-start; gap:8px; margin-bottom:8px; }
-.term-row .term-en { font-weight:700; color:#7c2d12; min-width:140px; font-size:13.5px; }
-.term-row .term-arrow { color:var(--muted); }
-.term-row .term-info { flex:1; }
-.term-row .term-tr-name { font-weight:700; color:#0f766e; font-size:13.5px; }
-.term-row .term-tr-exp { font-size:12.5px; color:var(--muted); margin-top:1px; line-height:1.4; }
+/* Anahtar Terimler → aligned 2-column grid (EN | TR) */
+.term-grid { display:flex; flex-direction:column; gap:0; }
+.term-row {
+  display:grid; grid-template-columns:minmax(120px,38%) 1fr;
+  align-items:start; gap:12px;
+  padding:8px 4px; border-bottom:1px solid rgba(0,0,0,.06);
+}
+.term-row:last-child { border-bottom:none; }
+.term-row .term-en {
+  font-weight:700; color:#7c2d12; font-size:13.5px;
+  overflow-wrap:break-word; word-break:break-word;
+}
+.term-row .term-info { min-width:0; }
+.term-row .term-tr-name { font-weight:700; color:#0f766e; font-size:13.5px; overflow-wrap:break-word; }
+.term-row .term-tr-exp { font-size:12.5px; color:var(--muted); margin-top:2px; line-height:1.45; overflow-wrap:break-word; }
 
 /* Quiz inline tip */
 .quiz-tip-panel {
@@ -774,6 +794,15 @@ h1 {
   --thl1-bg: #eff6ff; --thl1-text: #1d4ed8; --thl1-border: #93c5fd;
   --thl2-bg: #f0fdf4; --thl2-text: #15803d; --thl2-border: #86efac;
   --thl3-bg: #f5f3ff; --thl3-text: #6d28d9; --thl3-border: #c4b5fd;
+}
+/* Dark theme: keep trigger badges readable with muted-but-clear pastels */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --thl0-bg: #3b2f14; --thl0-text: #fcd34d; --thl0-border: #a16207;
+    --thl1-bg: #172554; --thl1-text: #93c5fd; --thl1-border: #2563eb;
+    --thl2-bg: #14321f; --thl2-text: #86efac; --thl2-border: #16a34a;
+    --thl3-bg: #2a1f47; --thl3-text: #c4b5fd; --thl3-border: #7c3aed;
+  }
 }
 
 #screen-study {
@@ -828,9 +857,10 @@ h1 {
   cursor: pointer;
   font-size: 13px;
   font-weight: 600;
-  transition: background .14s, color .14s, box-shadow .14s;
+  transition: all .2s ease-in-out;
   white-space: nowrap;
 }
+.study-nav-btn:focus-visible { outline: 2px solid var(--study-accent); outline-offset: 2px; }
 .study-nav-btn:hover { background: var(--study-accent); color: #fff; box-shadow: 0 2px 8px rgba(79,70,229,.25); }
 .study-nav-btn:disabled { border-color: #e2e8f0; color: #c4c9d4; cursor: default; }
 .study-nav-btn:disabled:hover { background: #fff; box-shadow: none; }
@@ -926,6 +956,8 @@ h1 {
   color: #0f172a;
   line-height: 1.7;
   margin-bottom: 22px;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 .study-options {
   display: flex;
@@ -944,7 +976,9 @@ h1 {
   font-size: 14px;
   color: #334155;
   line-height: 1.55;
-  transition: border-color .18s, background .18s;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  transition: border-color .2s ease-in-out, background .2s ease-in-out;
 }
 .study-opt.correct {
   background: #f0fdf4;
@@ -1534,7 +1568,7 @@ const QUESTIONS = [
   { id: 39, text: "You are a program manager for a team of developers who are building an event-driven application to allow users to follow one another's activities in the app. Each time a user adds himself as a follower of another user, a write occurs in the real-time database. The developers will develop a lightweight piece of code that can respond to database writes and generate a notification to let the appropriate users know that they have gained new followers. The code should integrate with other cloud services such as Pub/Sub, Firebase, and Cloud APIs to streamline the orchestration process. The application requires a platform that automatically manages underlying infrastructure and scales to zero when there is no activity. Which primary compute resource should your developers select, given these requirements?", options: { A: "Google Kubernetes Engine", B: "Cloud Functions", C: "App Engine flexible environment", D: "Compute Engine" }, correct: ["B"], groups: ["bolum1", "sec15"], learn: "Event-driven + sıfıra ölçeklenen + hafif kod → Cloud Functions", learnEn: "Event-driven + scales to zero + lightweight code → Cloud Functions" },
   { id: 40, text: "To optimize the company's Google Cloud spend, the management committee team wants an at-a-glance waterfall overview of their monthly costs and savings. Which of the following should you use to provide this information to the management team?", options: { A: "Cost Breakdown reports", B: "Budget notifications", C: "Cost Table reports", D: "Pricing table reports" }, correct: ["A"], groups: ["bolum2", "bolum3", "son2", "son3", "benzersizson2"], learn: "Aylık maliyet şelale (waterfall) görünümü → Cost Breakdown Reports", learnEn: "Monthly cost waterfall view → Cost Breakdown Reports" },
   { id: 41, text: "Your organization is developing an application that will capture a large amount of data from millions of different sensor devices spread all around the world. Your organization needs a database that is suitable for worldwide, high-speed data storage of a large amount of unstructured data. Which Google Cloud product should your organization choose?", options: { A: "Firestore", B: "Cloud Data Fusion", C: "Cloud SQL", D: "Cloud Bigtable" }, correct: ["D"], groups: ["bolum1", "bolum3"], learn: "Global yüksek hızlı NoSQL + büyük veri → Cloud Bigtable", learnEn: "Global high-speed NoSQL + big data → Cloud Bigtable" },
-  { id: 42, text: "Your client is a global packaging and printing company. They want to migrate to a fully managed Google Cloud storage solution with the following capabilities: - Web content management - File sharing - Media processing and rendering - Data analysis. Which solution should the company use?", options: { A: "Archive Storage", B: "Filestore", C: "Persistent Disk", D: "Local SSD" }, correct: ["B"], groups: [] },
+  { id: 42, text: "Your client is a global packaging and printing company. They want to migrate to a fully managed Google Cloud storage solution with the following capabilities: - Web content management - File sharing - Media processing and rendering - Data analysis. Which solution should the company use?", options: { A: "Archive Storage", B: "Filestore", C: "Persistent Disk", D: "Local SSD" }, correct: ["B"], groups: [], learn: "Tam yönetilen dosya paylaşımı + web içeriği + medya işleme → Filestore (NFS)", learnEn: "Fully managed file sharing + web content + media processing → Filestore (NFS)" },
   { id: 43, text: "Your organization needs to build streaming data pipelines. You don't want to manage the individual servers that do the data processing in the pipelines. Instead, you want a managed service that will automatically scale with the amount of data to be processed. Which Google Cloud product or feature should your organization choose?", options: { A: "Pub/Sub", B: "Dataflow", C: "Data Catalog", D: "Dataprep by Trifacta" }, correct: ["B"], groups: ["bolum3"], learn: "Sunucusuz akış pipeline → Dataflow", learnEn: "Serverless streaming pipeline → Dataflow" },
   { id: 44, text: "Which of the following occurs when an organization adopts cloud technology to create and define new ways of communicating and collaborating for its customers, employees, and stakeholders?", options: { A: "A reduced need for security", B: "The burning platform effect", C: "Virtualization of all business operations", D: "Organizational transformation" }, correct: ["D"], groups: ["bolum2", "son2", "benzersiz"], learn: "Yeni iletişim/işbirliği yolları → Organizational Transformation", learnEn: "New communication/collaboration ways → Organizational Transformation" },
   { id: 45, text: "Your organization is building an application running in Google Cloud. Currently, software builds, tests, and regular deployments are done manually, but you want to reduce work for the team. Your organization wants to use Google Cloud managed solutions to automate your build, testing, and deployment process. Which Google Cloud product or feature should your organization use?", options: { A: "Cloud Scheduler", B: "Cloud Code", C: "Cloud Build", D: "Cloud Deployment Manager" }, correct: ["C"], groups: ["bolum2", "sec15"], learn: "Otomatik build/test/deploy → Cloud Build", learnEn: "Automated build/test/deploy → Cloud Build" },
@@ -1560,7 +1594,7 @@ const QUESTIONS = [
   { id: 65, text: "Your organization wants to run a container-based application on Google Cloud. This application is expected to increase in complexity. You have a security need for fine-grained control of traffic between the containers. You also have an operational need to exercise fine-grained control over the application's scaling policies. What Google Cloud product or feature should your organization use?", options: { A: "Google Kubernetes Engine cluster", B: "App Engine", C: "Cloud Run", D: "Compute Engine virtual machines" }, correct: ["A"], groups: ["bolum2", "son2", "son3", "benzersiz"], learn: "Container + trafik kontrolü + ölçekleme politikası → GKE", learnEn: "Container + traffic control + scaling policy → GKE" },
   { id: 66, text: "A team of Cloud Engineers is working on developing and deploying a containerized application that will process and serve a large amount of image data in cloud storage. The data must be invocable via requests or events. Which Google Cloud compute service should the team use so that there are no infrastructure management problems?", options: { A: "Cloud Build", B: "Cloud Code", C: "Cloud Run", D: "Cloud Deploy" }, correct: ["C"], groups: ["bolum1", "sec15"], learn: "Container + event/istek tetiklemeli + altyapı yönetimi yok → Cloud Run", learnEn: "Container + event/request triggered + no infra management → Cloud Run" },
   { id: 67, text: "Which Google Cloud product or feature makes specific recommendations based on security risks and compliance violations?", options: { A: "Google Cloud firewalls", B: "Security Command Center", C: "Cloud Deployment Manager", D: "Google Cloud Armor" }, correct: ["B"], groups: ["bolum1"], learn: "Güvenlik risk ve compliance ihlali önerileri → Security Command Center", learnEn: "Security risk and compliance violation recommendations → Security Command Center" },
-  { id: 68, text: "Which of the following scenarios is not suitable for a Content Delivery Network (CDN)? (Choose 2 answers)", options: { A: "A website for a small construction company located in the United States", B: "A global retail company with customers in Europe and the Americas", C: "A family history website with only a few visitors annually", D: "A global media website that provides news in multiple languages" }, correct: ["A", "C"], groups: ["sec15"] },
+  { id: 68, text: "Which of the following scenarios is not suitable for a Content Delivery Network (CDN)? (Choose 2 answers)", options: { A: "A website for a small construction company located in the United States", B: "A global retail company with customers in Europe and the Americas", C: "A family history website with only a few visitors annually", D: "A global media website that provides news in multiple languages" }, correct: ["A", "C"], groups: ["sec15"], learn: "CDN düşük trafikli / tek bölgesel siteler için gereksiz → küçük yerel şirket ve yıllık birkaç ziyaretçili site uygun DEĞİL", learnEn: "CDN is unnecessary for low-traffic/single-region sites → small local company + rarely-visited site are NOT suitable" },
   { id: 69, text: "Which Google Cloud product provides a consistent platform for multi-cloud application deployments and extends other Google Cloud services to your organization's environment?", options: { A: "Google Kubernetes Engine", B: "Virtual Public Cloud", C: "Compute Engine", D: "Anthos" }, correct: ["D"], groups: ["bolum1"], learn: "Multi-cloud + tutarlı platform + Google servislerini genişletme → Anthos", learnEn: "Multi-cloud + consistent platform + extend Google services → Anthos" },
   { id: 70, text: "Your company's website enables users to upload images and input text to create memes of their choice. Lately, you have observed some suspicious traffic and want to protect your website from spam, specifically from bots using the website. Which of the following Google Cloud solutions should you use to protect your website from bots and ensure that it is being accessed only by human users?", options: { A: "reCAPTCHA Enterprise", B: "Policy Troubleshooter", C: "Web Risk", D: "Cloud Identity" }, correct: ["A"], groups: ["bolum2", "son2", "benzersizilk", "benzersizson2"], learn: "Bot koruması + insan doğrulama → reCAPTCHA Enterprise", learnEn: "Bot protection + human verification → reCAPTCHA Enterprise" },
   { id: 71, text: "Your organization wants an economical solution to store data such as files, graphical images, and videos and to access and share them securely. Which Google Cloud product or service should your organization use?", options: { A: "Cloud Storage", B: "Cloud SQL", C: "Cloud Spanner", D: "BigQuery" }, correct: ["A"], groups: [], learn: "Dosya/görsel/video depolama ve paylaşım → Cloud Storage", learnEn: "Store and share files/images/videos → Cloud Storage" },
@@ -1607,7 +1641,7 @@ const QUESTIONS = [
   { id: 112, text: "Which of the following statements about GCP tools/services is false?", options: { A: "You can find the latest ISO/IEC certificates, SOC reports, and self-assessments in the Container Registry.", B: "Container Registry is tightly integrated with all of Google's container services.", C: "The resources found in the Compliance Reports Manager tool can be used to aid your own company's reporting and compliance efforts.", D: "All of the GCP services receive independent verification for security, privacy, and compliance." }, correct: ["A"], groups: ["bolum2", "son3", "sec15"], learn: "ISO/IEC sertifikaları → Compliance Reports Manager'da (Container Registry'de değil)", learnEn: "ISO/IEC certificates → in Compliance Reports Manager (not Container Registry)" },
   { id: 113, text: "Which of the following is not a level of organizational GCP support?", options: { A: "Ultra", B: "Basic", C: "Standard", D: "Premium" }, correct: ["A"], groups: ["bolum3", "son1", "benzersiz"], learn: "Geçerli olmayan destek seviyesi → Ultra", learnEn: "Non-existent support tier → Ultra" },
   { id: 114, text: "If you need to migrate data in Oracle to a new type of database in GCP, then _____ might be a better choice than Database Migration Service.", options: { A: "Datastream", B: "Data Fusion", C: "Cloud Spanner", D: "Dataflow" }, correct: ["A"], groups: ["sec15"], learn: "Oracle gibi heterojen DB göçü → Datastream (DMS yerine)", learnEn: "Heterogeneous DB migration (Oracle) → Datastream (over DMS)" },
-  { id: 115, text: "A _____ is a custom-designed ASIC (or application-specific integrated circuit) that is used for ML workloads.", options: { A: "datastream", B: "cloud TPU", C: "cloud GPU", D: "container registry" }, correct: ["B"], groups: [] },
+  { id: 115, text: "A _____ is a custom-designed ASIC (or application-specific integrated circuit) that is used for ML workloads.", options: { A: "datastream", B: "cloud TPU", C: "cloud GPU", D: "container registry" }, correct: ["B"], groups: [], learn: "ML iş yükleri için özel tasarım ASIC → Cloud TPU (Tensor Processing Unit)", learnEn: "Custom-designed ASIC for ML workloads → Cloud TPU (Tensor Processing Unit)" },
   { id: 116, text: "Which GCP tool offers an easy, centralized location to store and manage all your Docker container images?", options: { A: "Compliance Reports Manager", B: "Container Registry", C: "Database Migration Service", D: "Cloud TPU" }, correct: ["B"], groups: ["bolum2"], learn: "Docker container image merkezi → Container Registry", learnEn: "Central Docker container image store → Container Registry" },
   { id: 117, text: "Which Google product is used to dynamically translate between languages?", options: { A: "Vision OCR", B: "Natural Language", C: "Text AI", D: "Translation" }, correct: ["D"], groups: ["bolum3", "benzersizilk"], learn: "Dinamik dil çevirisi → Translation API", learnEn: "Dynamic language translation → Translation API" },
   { id: 118, text: "Which of the following statements about GCP Container Registry is false?", options: { A: "It gives you partial control over who can access, view, or download images.", B: "It allows you to access your images quickly and reliably.", C: "It allows you to flag outdated or compromised images and prevent them from being deployed in the future.", D: "It helps increase the security of your images." }, correct: ["A"], groups: ["bolum2", "son2", "son3", "benzersizson2"], learn: "Container Registry → tam erişim kontrolü sağlar (kısmi değil)", learnEn: "Container Registry → provides full access control (not partial)" },
@@ -1628,7 +1662,7 @@ const QUESTIONS = [
   { id: 133, text: "An organization relies on online seasonal sales for the majority of their annual revenue. Why should the organization use App Engine for their customer app?", options: { A: "Automatically adjusts physical inventory in real time", B: "Autoscales during peaks in demand", C: "Runs maintenance during seasonal sales", D: "Recommends the right products to customers" }, correct: ["B"], groups: ["bolum2", "son2", "son3", "benzersizilk", "benzersizson2", "sec15ozel"], learn: "Mevsimsel trafik zirvesi → App Engine otomatik ölçekleme", learnEn: "Seasonal traffic spikes → App Engine autoscaling" },
   { id: 134, text: "Your organization recently migrated its compute workloads to Google Cloud. You want these workloads in Google Cloud to privately and securely access your large volume of on-premises data, and you also want to minimize latency. What should your organization do?", options: { A: "Use Storage Transfer Service to securely make your data available to Google Cloud", B: "Create a VPC between your on-premises data center and your Google resources", C: "Peer your on-premises data center to Google's Edge Network", D: "Use Transfer Appliance to securely make your data available to Google Cloud" }, correct: ["B"], groups: ["bolum2", "son2", "son3", "benzersizson2"], learn: "On-premises veri + bulut erişim + düşük gecikme → VPC bağlantısı kur", learnEn: "On-premises data + cloud access + low latency → create VPC connection" },
   { id: 135, text: "Your organization consists of many teams. Each team has many Google Cloud projects. Your organization wants to simplify the management of identity and access policies for these projects. How can you group these projects to meet this goal?", options: { A: "Group each team's projects into a separate domain", B: "Assign labels based on the virtual machines that are part of each team's projects", C: "Use folders to group each team's projects", D: "Group each team's projects into a separate organization node" }, correct: ["C"], groups: ["bolum2", "sec15"], learn: "Çok proje, basit IAM → Folder'larla grupla", learnEn: "Multiple projects, simple IAM → group with Folders" },
-  { id: 136, text: "An organization needs to categorize text-based customer reviews on their website using a pre-trained machine learning model. Which Google Cloud product or service should the organization use?", options: { A: "Cloud Natural Language API", B: "Dialogflow", C: "Recommendations AI", D: "TensorFlow" }, correct: ["A"], groups: ["sec15"] },
+  { id: 136, text: "An organization needs to categorize text-based customer reviews on their website using a pre-trained machine learning model. Which Google Cloud product or service should the organization use?", options: { A: "Cloud Natural Language API", B: "Dialogflow", C: "Recommendations AI", D: "TensorFlow" }, correct: ["A"], groups: ["sec15"], learn: "Metin sınıflandırma + önceden eğitilmiş model → Cloud Natural Language API", learnEn: "Text classification + pre-trained model → Cloud Natural Language API" },
   { id: 137, text: "Your team is publishing research results and needs to make large amounts of data available to other researchers within the professional community and the public at minimum cost. How should you host the data?", options: { A: "Use a Cloud Storage bucket and enable 'Requester Pays'.", B: "Use a Cloud Storage bucket and provide Signed URLs for the data files.", C: "Use a Cloud Storage bucket and set up a Cloud Interconnect connection to allow access to the data.", D: "Host the data on-premises, and set up a Cloud Interconnect connection to allow access to the data." }, correct: ["A"], groups: ["bolum2", "son1", "son2", "son3", "benzersiz"], learn: "Büyük araştırma verisi + düşük maliyet → Cloud Storage + Requester Pays", learnEn: "Large research data + minimum cost → Cloud Storage + Requester Pays" },
   { id: 138, text: "Your company needs to segment Google Cloud resources used by each team from the others. The teams' efforts are changing frequently, and you need to reduce operational risk and maintain cost visibility. Which approach does Google recommend?", options: { A: "One project per team.", B: "One organization per team.", C: "One project that contains all of each team's resources.", D: "One top-level folder per team" }, correct: ["D"], groups: ["bolum2", "son3", "sec15"], learn: "Takım bazlı ayrım + maliyet görünürlüğü → top-level folder per team", learnEn: "Team-based separation + cost visibility → one top-level folder per team" },
   { id: 139, text: "Your organization needs to restrict access to a Cloud Storage bucket. Only employees who are based in Canada should be allowed to view the contents. What is the most effective and efficient way to satisfy this requirement?", options: { A: "Deploy the Cloud Storage bucket to a Google Cloud region in Canada", B: "Configure Google Cloud Armor to allow access to the bucket only from IP addresses based in Canada", C: "Give each employee who is based in Canada access to the bucket", D: "Create a group consisting of all Canada-based employees, and give the group access to the bucket" }, correct: ["B"], groups: ["bolum2"], learn: "Kanada IP kısıtlaması → Cloud Armor (coğrafi IP filtresi)", learnEn: "Canada IP restriction → Cloud Armor (geographic IP filter)" },
@@ -1642,18 +1676,18 @@ const QUESTIONS = [
   { id: 147, text: "You are leading a team of developers on a project whose goal is to improve customer experience on a credit card company's website. The solution requires custom code without the overhead of managing operating systems or infrastructure. Which of the following cloud offerings would you suggest to your client?", options: { A: "Infrastructure as a Service (IaaS)", B: "Platform as a Service (PaaS)", C: "On-premises infrastructure", D: "Software as a Service (SaaS)" }, correct: ["B"], groups: ["bolum2", "bolum3"], learn: "Altyapı yönetimi yok + özel kod → PaaS", learnEn: "No infrastructure management + custom code → PaaS" },
   { id: 148, text: "You work for a ridesharing company that has recently moved to Google Cloud. Jack, the senior manager of the corporate accounting group is worried about the bill and wants to track actual Google Cloud spend against planned spend. Jack also wants to receive alerts via email when certain budget expenditures are reached. Which of the following actions should Jack take to meet these requirements?", options: { A: "Create Cloud Billing Budgets, set a budget amount, and set budget alert threshold rules", B: "Use Cloud Billing Reports with Google Data Studio", C: "Use Cloud Billing data export to BigQuery functionality with Google Data Studio", D: "Create a Cloud Billing account, set a budget amount, and set budget alert threshold rules" }, correct: ["A"], groups: ["bolum2", "bolum3"], learn: "Bütçe takibi + e-posta uyarısı → Cloud Billing Budgets", learnEn: "Budget tracking + email alerts → Cloud Billing Budgets" },
   { id: 149, text: "Which of the following is a use of Big Table?", options: { A: "SQL support for an online transaction processing system", B: "Interactive querying in an online analytical processing system", C: "Real-time data sync between users", D: "NoSQL database operations for large analytical and operational workloads" }, correct: ["D"], groups: ["bolum2", "son2", "son3", "benzersizilk", "benzersizson2"], learn: "Bigtable → büyük analitik/operasyonel NoSQL iş yükleri", learnEn: "Bigtable → large analytical/operational NoSQL workloads" },
-  { id: 150, text: "A wearable startup collecting the health data of its users is adding approximately 50 TBs of data every month. The data is expected to grow to 200+ TB every year. It is observed that the users are primarily concerned with the last 30 days of data and are ready to wait for data retrieval if data is older than 30 days. The company has decided that they will now store infrequently accessed data that is older than 30 days to minimize the cost, as this data is typically accessed no more than once per quarter. To minimize manual intervention when moving data older than 30 days to Coldline storage from Standard storage, what should the company do?", options: { A: "Configure object lifecycle management.", B: "Write a code and schedule it using Cloud Scheduler.", C: "Configure Cloud Scheduler to move data based on required conditions.", D: "Configure an Object Lifecycle Management job using Cloud Scheduler." }, correct: ["A"], groups: ["benzersizson2"] },
+  { id: 150, text: "A wearable startup collecting the health data of its users is adding approximately 50 TBs of data every month. The data is expected to grow to 200+ TB every year. It is observed that the users are primarily concerned with the last 30 days of data and are ready to wait for data retrieval if data is older than 30 days. The company has decided that they will now store infrequently accessed data that is older than 30 days to minimize the cost, as this data is typically accessed no more than once per quarter. To minimize manual intervention when moving data older than 30 days to Coldline storage from Standard storage, what should the company do?", options: { A: "Configure object lifecycle management.", B: "Write a code and schedule it using Cloud Scheduler.", C: "Configure Cloud Scheduler to move data based on required conditions.", D: "Configure an Object Lifecycle Management job using Cloud Scheduler." }, correct: ["A"], groups: ["benzersizson2"], learn: "Veriyi otomatik olarak Coldline'a taşı, manuel müdahale olmadan → Object Lifecycle Management", learnEn: "Auto-move data to Coldline without manual intervention → Object Lifecycle Management" },
   { id: 151, text: "Which areas are the sole responsibility of the customer for SaaS, PaaS, and IaaS services? (Choose 2 answers)", options: { A: "Devices (Mobile and PCs)", B: "Information and data", C: "Physical network", D: "Physical security of the data center" }, correct: ["A", "B"], groups: ["bolum3", "sec15"], learn: "Her cloud modelinde müşteri sorumluluğu: cihazlar + veri/bilgi", learnEn: "Customer responsibility in all cloud models: devices + data/information" },
   { id: 152, text: "An organization is developing a business-critical application using Google App Engine. Which of the following should the organization expect to do? (Choose 2 answers)", options: { A: "Establish Role-based access policies", B: "Encrypt data at rest", C: "Monitor application security", D: "Maintain network security" }, correct: ["A", "C"], groups: ["bolum3", "sec15"], learn: "App Engine'de müşteri sorumluluğu: erişim politikaları + uygulama güvenliği", learnEn: "App Engine customer responsibility: access policies + application security" },
   { id: 153, text: "You have joined a growing company that offers online costume rentals through its website and mobile application. Although the volume of rental requests varies throughout the year, it peaks during the holiday season from October through January. The Head of the AppDev team has called for suggestions on scaling the systems to meet the spikes in demand without posing a risk to uptime. Which of the following solutions would best meet these requirements?", options: { A: "Scale the systems vertically", B: "Increase the number of servers", C: "Scale the systems horizontally", D: "Implement load-balancing" }, correct: ["C"], groups: ["bolum2", "son2", "son3", "benzersiz"], learn: "Mevsimsel trafik artışı → horizontal scaling (sunucu sayısını artır)", learnEn: "Seasonal traffic surge → horizontal scaling (add more servers)" },
-  { id: 154, text: "You are working on an enhancement project that requires the existing application to access the Analytics report data from the Analytics Reporting API. The application is hosted on a virtual machine with an internal IP address and no external IP address. What should you do to access the Analytics Reporting API?", options: { A: "Disable Private Google Access.", B: "Enable Private Google Access.", C: "Ensure that VM interface has an external IP address assigned.", D: "Ensure that the VM interface is connected to a subnet where Private Google Access is disabled." }, correct: ["B"], groups: ["sec15"] },
+  { id: 154, text: "You are working on an enhancement project that requires the existing application to access the Analytics report data from the Analytics Reporting API. The application is hosted on a virtual machine with an internal IP address and no external IP address. What should you do to access the Analytics Reporting API?", options: { A: "Disable Private Google Access.", B: "Enable Private Google Access.", C: "Ensure that VM interface has an external IP address assigned.", D: "Ensure that the VM interface is connected to a subnet where Private Google Access is disabled." }, correct: ["B"], groups: ["sec15"], learn: "Dış IP olmadan Google API'lerine erişim → Private Google Access'i etkinleştir", learnEn: "Access Google APIs without external IP → Enable Private Google Access" },
   { id: 155, text: "What would provide near-unlimited availability of computing resources without requiring your organization to procure and provision new equipment?", options: { A: "Public cloud", B: "Containers", C: "Private cloud", D: "Microservices" }, correct: ["A"], groups: [], learn: "Sınırsız hesaplama + ekipman gerektirmez → public cloud", learnEn: "Unlimited compute + no equipment needed → public cloud" },
   { id: 156, text: "In Google Cloud Platform, you control which permissions are granted to your users by assigning _____.", options: { A: "roles", B: "access lists", C: "authentications", D: "resources" }, correct: ["A"], groups: ["bolum3", "benzersiz"], learn: "GCP'de izin kontrolü → rol atama", learnEn: "GCP permission control → assign roles" },
   { id: 157, text: "Which of the following options is not one of the three main types of roles in Google Cloud Platform?", options: { A: "basic", B: "composite", C: "custom", D: "predefined" }, correct: ["B"], groups: ["bolum3", "son1", "benzersiz"], learn: "Üç ana rol tipi: basic, custom, predefined (composite yok)", learnEn: "Three role types: basic, custom, predefined (composite doesn't exist)" },
   { id: 158, text: "Which of the following statements about Google Cloud Platform is false?", options: { A: "When creating a new project, you are asked to pick a location.", B: "Permissions can always be changed after they are assigned.", C: "A project marked for deletion is immediately deleted.", D: "If you already have Active Directory or LDAP, you can use Google Cloud Directory Sync to automatically replicate them to Google Cloud Identity." }, correct: ["C"], groups: ["bolum2", "bolum3", "benzersizson2", "sec15ozel"], learn: "Silme için işaretlenen proje hemen silinmez (30 gün bekler)", learnEn: "Project marked for deletion is NOT immediately deleted (30-day wait)" },
   { id: 159, text: "Which of the following statements about billing in Google Cloud Platform is false?", options: { A: "Google has a free tier, which gives you limited access to some GCP services.", B: "Setting a budget creates a hard cap on spending.", C: "Disabling billing stops automatic payments.", D: "When you disable billing, you are still responsible for all outstanding charges for the project." }, correct: ["B"], groups: ["bolum2", "bolum3", "son2", "son3", "benzersizilk", "benzersizson2"], learn: "Budget → sabit harcama sınırı değil, sadece uyarı verir", learnEn: "Budget → not a hard spending cap, just sends alerts" },
   { id: 160, text: "In Google Cloud Platform, _____ are used for generating alerts when costs begin to rise.", options: { A: "billing monitors", B: "billing queries", C: "budgets", D: "billing exports" }, correct: ["C"], groups: ["bolum3"], learn: "GCP'de maliyet uyarısı → Budgets", learnEn: "GCP cost alerts → Budgets" },
-  { id: 161, text: "In Google Cloud Platform, by default, administrators and users with billing account roles will receive email alerts when the amount spent exceeds _____, _____, and _____ percent of the budget.", options: { A: "25, 50, 100", B: "50, 90, 100", C: "25, 50, 75", D: "50, 75, 100" }, correct: ["B"], groups: ["son2", "son3", "benzersizson2"] },
+  { id: 161, text: "In Google Cloud Platform, by default, administrators and users with billing account roles will receive email alerts when the amount spent exceeds _____, _____, and _____ percent of the budget.", options: { A: "25, 50, 100", B: "50, 90, 100", C: "25, 50, 75", D: "50, 75, 100" }, correct: ["B"], groups: ["son2", "son3", "benzersizson2"], learn: "Varsayılan bütçe uyarı eşikleri → %50, %90, %100", learnEn: "Default budget alert thresholds → 50%, 90%, 100%" },
   { id: 162, text: "Which of the following statements about project names and IDs in Google Cloud Platform is false?", options: { A: "It is possible to pick your own Project ID.", B: "The Project ID must be globally unique.", C: "The Project Name must be globally unique.", D: "The Project Name can be changed at any time." }, correct: ["C"], groups: ["bolum3", "sec15"], learn: "Project Name → global unique olmak zorunda değil", learnEn: "Project Name does NOT need to be globally unique" },
   { id: 163, text: "In Google Cloud Platform, _____ are detailed copies of your charges that live inside a BigQuery database.", options: { A: "billing monitors", B: "billing queries", C: "budgets", D: "billing exports" }, correct: ["D"], groups: ["bolum2", "bolum3"], learn: "BigQuery'de detaylı faturalandırma kopyaları → Billing exports", learnEn: "Detailed billing copies in BigQuery → Billing exports" },
   { id: 164, text: "Which Google Cloud Platform predefined role only allows the user to view the current compute resources?", options: { A: "Compute Viewer", B: "Compute Security Admin", C: "Compute Admin", D: "Compute Browser" }, correct: ["A"], groups: ["bolum2", "bolum3", "son2", "benzersizson2"], learn: "Sadece compute kaynaklarını görme → Compute Viewer rolü", learnEn: "View-only compute resources → Compute Viewer role" },
@@ -2008,7 +2042,7 @@ const QUESTIONS = [
   { id: 513, text: "An organization has created an application that can diagnose different medical conditions when users submit images of their affected body parts. Which Google Cloud product or service did the organization use?", options: { A: "Machine learning", B: "App Engine", C: "Cloud Logging", D: "Cloud Profiler" }, correct: ["A"], groups: ["bolum3"], learn: "Görsel tabanlı tıbbi teşhis → Machine learning", learnEn: "Image-based medical diagnosis → Machine learning" },
   { id: 514, text: "An organization wants to duplicate critical system components to enhance reliability and mitigate single points of failure Which design consideration should the organization use?", options: { A: "Latency", B: "Security", C: "Backups", D: "Redundancy" }, correct: ["D"], groups: ["bolum3", "benzersiz"], learn: "Tek nokta arızasını önleme → Redundancy (yedeklilik)", learnEn: "Eliminate single points of failure → Redundancy" },
   { id: 515, text: "A small scale retailer has been collecting its point of sale transaction in a PostgreSQL Da-tabase. They have raised funding for a strategic expansion goal in the next year that will see them grow significantly in Asia, Europe, North America, Which Database option should they choose in Google Cloud?", options: { A: "BigQuary", B: "Cloud SQL", C: "Bigtable", D: "Spanner" }, correct: ["D"], groups: ["bolum1"], learn: "PostgreSQL → global büyüme → Cloud Spanner", learnEn: "PostgreSQL → global growth → Cloud Spanner" },
-  { id: 516, text: "An organization is looking for a storage solution that will help them serve content to users worldwide. They need a solution that offers a high level of availability What feature of Cloud Storage would they benefit from?", options: { A: "Object versioning", B: "Global metadata", C: "Data encryption", D: "Multi-regional storage" }, correct: ["D"], groups: ["bolum3"] },
+  { id: 516, text: "An organization is looking for a storage solution that will help them serve content to users worldwide. They need a solution that offers a high level of availability What feature of Cloud Storage would they benefit from?", options: { A: "Object versioning", B: "Global metadata", C: "Data encryption", D: "Multi-regional storage" }, correct: ["D"], groups: ["bolum3"], learn: "Dünya çapında içerik sunma + yüksek erişilebilirlik → Multi-regional storage", learnEn: "Serve content worldwide + high availability → Multi-regional storage" },
 ];
 </script>
 <script>
@@ -3646,15 +3680,16 @@ const QUESTIONS = [
     var terms = extractTermsFromQuestion(q.text);
     var termsHtml = "";
     if (terms.length > 0) {
+      termsHtml = '<div class="term-grid">';
       terms.forEach(function(t) {
         termsHtml += '<div class="term-row">'
           + '<div class="term-en">' + esc(t.en) + '</div>'
-          + '<div class="term-arrow">→</div>'
           + '<div class="term-info">'
           + '<div class="term-tr-name">' + esc(t.tr) + '</div>'
-          + '<div class="term-tr-exp">' + esc(t.exp) + '</div>'
+          + (t.exp ? '<div class="term-tr-exp">' + esc(t.exp) + '</div>' : '')
           + '</div></div>';
       });
+      termsHtml += '</div>';
     } else {
       termsHtml = '<span style="color:var(--muted);font-size:13px;">Otomatik terim tespit edilemedi. Soruyu yukarıdan oku.</span>';
     }
@@ -4475,10 +4510,10 @@ const QUESTIONS = [
   }
 
   var TRIGGER_COLORS = [
-    { bg:'#fef3c7', color:'#92400e', border:'#f59e0b', cls:'thl-0' },
-    { bg:'#dbeafe', color:'#1e40af', border:'#3b82f6', cls:'thl-1' },
-    { bg:'#dcfce7', color:'#166534', border:'#22c55e', cls:'thl-2' },
-    { bg:'#ede9fe', color:'#5b21b6', border:'#8b5cf6', cls:'thl-3' }
+    { bg:'#fef9ec', color:'#854d0e', border:'#fcd34d', cls:'thl-0' },
+    { bg:'#eff6ff', color:'#1d4ed8', border:'#93c5fd', cls:'thl-1' },
+    { bg:'#f0fdf4', color:'#15803d', border:'#86efac', cls:'thl-2' },
+    { bg:'#f5f3ff', color:'#6d28d9', border:'#c4b5fd', cls:'thl-3' }
   ];
 
   // Returns [{phrase, colorIdx, ruleAns}] sorted longest-first, deduped
@@ -4613,8 +4648,8 @@ const QUESTIONS = [
     var revBtn = document.getElementById("study-reveal-btn");
     if (revBtn) {
       revBtn.addEventListener("click", function() {
-        studyAnswerShown = true;
-        renderStudyQ();
+        studyRevealAnswer();
+        this.blur();
       });
     }
 
@@ -4788,11 +4823,24 @@ const QUESTIONS = [
   document.getElementById("study-back-btn").addEventListener("click", function() {
     showScreen(screenMenu);
   });
-  document.getElementById("study-prev-btn").addEventListener("click", function() {
+  // Shared navigation helpers (used by both buttons and keyboard)
+  function studyGoPrev() {
     if (studyIdx > 0) { studyIdx--; studyAnswerShown = false; renderStudyQ(); }
+  }
+  function studyGoNext() {
+    if (studyIdx < studyList.length - 1) { studyIdx++; studyAnswerShown = false; renderStudyQ(); }
+  }
+  function studyRevealAnswer() {
+    if (!studyAnswerShown) { studyAnswerShown = true; renderStudyQ(); }
+  }
+
+  document.getElementById("study-prev-btn").addEventListener("click", function() {
+    studyGoPrev();
+    this.blur(); // release focus so Space/Enter don't re-fire this button
   });
   document.getElementById("study-next-btn").addEventListener("click", function() {
-    if (studyIdx < studyList.length - 1) { studyIdx++; studyAnswerShown = false; renderStudyQ(); }
+    studyGoNext();
+    this.blur();
   });
   document.getElementById("study-goto-input").addEventListener("change", function() {
     var n = parseInt(this.value);
@@ -4802,27 +4850,34 @@ const QUESTIONS = [
       renderStudyQ();
     }
     this.value = "";
+    this.blur();
   });
   document.getElementById("study-filter-select").addEventListener("change", function() {
     buildStudyList(this.value);
     studyIdx = 0;
     studyAnswerShown = false;
     renderStudyQ();
+    this.blur();
   });
 
-  // Keyboard navigation for study mode
+  // Keyboard navigation for study mode (with focus management)
   document.addEventListener("keydown", function(e) {
     var active = document.getElementById("screen-study");
     if (!active || active.style.display === "none") return;
-    // Don't capture when typing in input
-    if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
+    // Ignore keys while typing in form fields
+    var tag = e.target.tagName;
+    if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+
     if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-      if (studyIdx > 0) { studyIdx--; studyAnswerShown = false; renderStudyQ(); }
-    } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-      if (studyIdx < studyList.length - 1) { studyIdx++; studyAnswerShown = false; renderStudyQ(); }
-    } else if (e.key === " ") {
       e.preventDefault();
-      if (!studyAnswerShown) { studyAnswerShown = true; renderStudyQ(); }
+      studyGoPrev();
+    } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      e.preventDefault();
+      studyGoNext();
+    } else if (e.key === " " || e.code === "Space") {
+      // Prevent native button re-activation / page scroll; keep single source of truth
+      e.preventDefault();
+      studyRevealAnswer();
     }
   });
 
