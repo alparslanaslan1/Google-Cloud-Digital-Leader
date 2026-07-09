@@ -1097,6 +1097,30 @@ h1 {
 }
 .study-filter-bar select:focus { border-color: #4f46e5; }
 
+/* Trigger highlights in question text */
+.thl-0 { background:#fef3c7; color:#92400e; border-bottom:2px solid #f59e0b; padding:1px 5px; border-radius:4px; font-weight:700; cursor:help; }
+.thl-1 { background:#dbeafe; color:#1e40af; border-bottom:2px solid #3b82f6; padding:1px 5px; border-radius:4px; font-weight:700; cursor:help; }
+.thl-2 { background:#dcfce7; color:#166534; border-bottom:2px solid #22c55e; padding:1px 5px; border-radius:4px; font-weight:700; cursor:help; }
+.thl-3 { background:#ede9fe; color:#5b21b6; border-bottom:2px solid #8b5cf6; padding:1px 5px; border-radius:4px; font-weight:700; cursor:help; }
+
+/* Trigger analysis section */
+.trigger-chip {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:4px 12px; border-radius:20px; font-size:12.5px; font-weight:700;
+  margin:3px 3px 3px 0;
+}
+.trigger-chip-arrow { font-size:13px; font-weight:400; opacity:.7; }
+.trigger-chip-ans { font-weight:400; font-size:12px; }
+.alt-scenario {
+  display:flex; flex-direction:column; gap:3px;
+  background:#fff; border:1px solid #e2e8f0; border-radius:8px;
+  padding:10px 13px; margin-bottom:7px; font-size:13px;
+}
+.alt-scenario-if { color:#64748b; }
+.alt-scenario-if em { font-style:normal; font-weight:700; }
+.alt-scenario-then { color:#166534; font-weight:700; font-size:13.5px; }
+.alt-scenario-hint { color:#6b7280; font-size:12px; font-style:italic; margin-top:2px; }
+
 /* Keyboard hints */
 .study-kbd-hints {
   font-size: 11px;
@@ -4454,12 +4478,78 @@ const QUESTIONS = [
     renderStudyQ();
   }
 
+  var TRIGGER_COLORS = [
+    { bg:'#fef3c7', color:'#92400e', border:'#f59e0b', cls:'thl-0' },
+    { bg:'#dbeafe', color:'#1e40af', border:'#3b82f6', cls:'thl-1' },
+    { bg:'#dcfce7', color:'#166534', border:'#22c55e', cls:'thl-2' },
+    { bg:'#ede9fe', color:'#5b21b6', border:'#8b5cf6', cls:'thl-3' }
+  ];
+
+  // Returns [{phrase, colorIdx, ruleAns}] sorted longest-first, deduped
+  function extractTriggerPhrases(matchedRules) {
+    var seen = {};
+    var list = [];
+    matchedRules.slice(0, 4).forEach(function(rule, rIdx) {
+      var colorIdx = rIdx % 4;
+      // split sig on ' + ', '/', '→', '(' etc.
+      var parts = rule.sig.split(/\s*[\+\/→,\(\)]\s*/).concat(rule.sig.split(/\s+/));
+      parts.forEach(function(p) {
+        p = p.trim().replace(/^\W+|\W+$/g, '');
+        if (p.length < 4) return;
+        var key = p.toLowerCase();
+        if (seen[key]) return;
+        seen[key] = true;
+        list.push({ phrase: p, lc: key, colorIdx: colorIdx, ruleAns: rule.ans });
+      });
+    });
+    list.sort(function(a, b) { return b.phrase.length - a.phrase.length; });
+    return list;
+  }
+
+  function highlightTriggersInText(text, matchedRules) {
+    if (!matchedRules || !matchedRules.length) return text;
+    var triggers = extractTriggerPhrases(matchedRules);
+    if (!triggers.length) return text;
+
+    // Mark character ranges to highlight
+    var ranges = []; // {start, end, colorIdx}
+    var textLc = text.toLowerCase();
+    triggers.forEach(function(t) {
+      var idx = textLc.indexOf(t.lc);
+      while (idx !== -1) {
+        // check not overlapping
+        var overlaps = ranges.some(function(r) { return idx < r.end && idx + t.lc.length > r.start; });
+        if (!overlaps) {
+          ranges.push({ start: idx, end: idx + t.lc.length, colorIdx: t.colorIdx });
+        }
+        idx = textLc.indexOf(t.lc, idx + 1);
+      }
+    });
+
+    if (!ranges.length) return text;
+    ranges.sort(function(a, b) { return a.start - b.start; });
+
+    var result = '';
+    var last = 0;
+    ranges.forEach(function(r) {
+      result += text.substring(last, r.start);
+      result += '<span class="' + TRIGGER_COLORS[r.colorIdx].cls + '" title="Cevabı tetikleyen ifade">' + text.substring(r.start, r.end) + '</span>';
+      last = r.end;
+    });
+    result += text.substring(last);
+    return result;
+  }
+
   function renderStudyQ() {
     if (studyList.length === 0) return;
     var qIdx = studyList[studyIdx];
     var q = QUESTIONS[qIdx];
     var total = studyList.length;
     var pos = studyIdx + 1;
+
+    // Get matched rules early — used for both highlight + info panel
+    var cheatResult = cheatFindRulesForQuestion(q);
+    var matchedRules = cheatResult ? cheatResult.rules : [];
 
     // Update top bar
     document.getElementById("study-counter").textContent = "Soru " + pos + " / " + total;
@@ -4471,7 +4561,21 @@ const QUESTIONS = [
     // Render question panel
     var letters = ["A","B","C","D","E","F"];
     var qHtml = '<div class="study-q-number">Soru #' + (qIdx + 1) + (q.groups && q.groups.length ? ' &nbsp;·&nbsp; ' + q.groups.join(', ') : '') + '</div>';
-    qHtml += '<div class="study-q-text">' + q.text + '</div>';
+    // Highlight trigger words in question text
+    qHtml += '<div class="study-q-text">' + highlightTriggersInText(q.text, matchedRules) + '</div>';
+
+    // Legend: show which color = which answer
+    if (matchedRules.length > 0) {
+      qHtml += '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px;">';
+      matchedRules.slice(0, 4).forEach(function(rule, i) {
+        var c = TRIGGER_COLORS[i % 4];
+        qHtml += '<span class="trigger-chip" style="background:' + c.bg + ';color:' + c.color + ';border:1px solid ' + c.border + ';">';
+        qHtml += '● ' + rule.ans;
+        qHtml += '</span>';
+      });
+      qHtml += '</div>';
+    }
+
     qHtml += '<div class="study-options">';
     letters.forEach(function(l) {
       if (q.options && q.options[l]) {
@@ -4511,13 +4615,41 @@ const QUESTIONS = [
       });
     }
 
-    // Render info panel
-    document.getElementById("study-info-panel").innerHTML = renderStudyInfoPanel(q);
+    // Render info panel — pass matchedRules so we don't recompute
+    document.getElementById("study-info-panel").innerHTML = renderStudyInfoPanel(q, matchedRules);
     document.getElementById("study-info-panel").scrollTop = 0;
   }
 
-  function renderStudyInfoPanel(q) {
+  function renderStudyInfoPanel(q, matchedRules) {
+    // matchedRules already computed in renderStudyQ — reuse it
+    if (!matchedRules) {
+      var cheatResult = cheatFindRulesForQuestion(q);
+      matchedRules = (cheatResult && cheatResult.rules) ? cheatResult.rules : [];
+    }
     var html = '';
+
+    // 0. Tetikleyici Analiz — ALWAYS first
+    if (matchedRules.length > 0) {
+      html += '<div class="study-info-section" style="background:linear-gradient(135deg,#fffbeb,#fff);">';
+      html += '<div class="study-section-title">🎨 Tetikleyici İfadeler</div>';
+      html += '<div style="font-size:12px;color:#6b7280;margin-bottom:10px;">Soruda bu ifadeler cevabı belirliyor (renkler sorudaki vurgularla eşleşir):</div>';
+      matchedRules.slice(0, 4).forEach(function(rule, i) {
+        var c = TRIGGER_COLORS[i % 4];
+        // Extract the most relevant signal phrases from this rule's sig
+        var sigParts = rule.sig.split(/\s*\+\s*/);
+        html += '<div style="margin-bottom:8px;">';
+        html += '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px;">';
+        sigParts.forEach(function(part) {
+          part = part.trim();
+          if (part.length < 2) return;
+          html += '<span class="trigger-chip" style="background:' + c.bg + ';color:' + c.color + ';border:1px solid ' + c.border + ';font-size:12px;">' + part + '</span>';
+        });
+        html += '</div>';
+        html += '<div style="font-size:12.5px;color:#374151;padding-left:4px;">→ <strong>' + rule.ans + '</strong></div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    }
 
     // 1. Soru Ne İstiyor?
     var qType = (typeof detectQuestionType === 'function') ? detectQuestionType(q.text) : null;
@@ -4535,9 +4667,6 @@ const QUESTIONS = [
     // 2. Cevapta Ne Aramalıyız?
     var terms = (typeof extractTermsFromQuestion === 'function') ? extractTermsFromQuestion(q.text) : [];
     var lookFor = (typeof getLookFor === 'function') ? getLookFor(q) : '';
-    // cheatFindRulesForQuestion returns { signals, rules } — extract .rules array
-    var cheatResult = (typeof cheatFindRulesForQuestion === 'function') ? cheatFindRulesForQuestion(q) : { rules: [] };
-    var matchedRules = (cheatResult && cheatResult.rules) ? cheatResult.rules : [];
     html += '<div class="study-info-section">';
     html += '<div class="study-section-title">🔍 Cevapta Ne Aramalıyız?</div>';
     if (terms && terms.length > 0) {
@@ -4620,43 +4749,86 @@ const QUESTIONS = [
     return html;
   }
 
+  // Find the "current" trigger phrase from a matched rule that appears in the question
+  function findActiveTrigger(qtext, rule) {
+    var qtLc = qtext.toLowerCase();
+    var sigParts = rule.sig.split(/\s*[\+\/→]\s*/);
+    for (var i = 0; i < sigParts.length; i++) {
+      var part = sigParts[i].trim().toLowerCase().replace(/[()]/g,'').trim();
+      if (part.length >= 4 && qtLc.indexOf(part) !== -1) return sigParts[i].trim();
+    }
+    // Try individual words
+    var words = rule.sig.split(/\W+/).filter(function(w){ return w.length >= 5; });
+    for (var i = 0; i < words.length; i++) {
+      if (qtLc.indexOf(words[i].toLowerCase()) !== -1) return words[i];
+    }
+    return null;
+  }
+
   function getStudyScenarios(q, matchedRules) {
     if (!matchedRules || !matchedRules.length) return '';
+
+    // Build correct answer texts for filtering
+    var correctTexts = [];
+    if (q.correct) {
+      q.correct.forEach(function(l) {
+        if (q.options && q.options[l]) correctTexts.push(q.options[l].toLowerCase().substring(0, 22));
+      });
+    }
+
     // Collect categories from matched rules
     var catIds = [];
     matchedRules.forEach(function(r) {
       if (catIds.indexOf(r.cat) === -1) catIds.push(r.cat);
     });
 
-    // Build correct answer text list (lowercased) for comparison
-    var correctTexts = [];
-    if (q.correct) {
-      q.correct.forEach(function(l) {
-        if (q.options && q.options[l]) correctTexts.push(q.options[l].toLowerCase().substring(0, 20));
-      });
-    }
+    // Build "current trigger" map: catId → trigger phrase found in question
+    var currentTriggers = {};
+    matchedRules.forEach(function(r) {
+      if (!currentTriggers[r.cat]) {
+        var trig = findActiveTrigger(q.text, r);
+        if (trig) currentTriggers[r.cat] = { phrase: trig, ans: r.ans };
+      }
+    });
 
     var html = '';
     var shown = 0;
-    var maxScenarios = 5;
+    var maxScenarios = 6;
 
     catIds.forEach(function(catId) {
       if (shown >= maxScenarios) return;
       for (var i = 0; i < CHEAT_CATS.length; i++) {
         var cat = CHEAT_CATS[i];
         if (cat.id !== catId) continue;
+
+        var curTrig = currentTriggers[catId];
+
         cat.rules.forEach(function(rule) {
           if (shown >= maxScenarios) return;
-          // Skip if this rule matches the correct answer
+          // Skip if this rule IS the current answer
           var isCurrentAns = false;
           correctTexts.forEach(function(ct) {
-            if (rule.ans && rule.ans.toLowerCase().substring(0, 20).indexOf(ct.substring(0, 10)) !== -1) isCurrentAns = true;
-            if (ct.indexOf(rule.ans.toLowerCase().substring(0, 10)) !== -1) isCurrentAns = true;
+            var rAnsLc = rule.ans.toLowerCase().substring(0, 22);
+            if (rAnsLc.indexOf(ct.substring(0, 10)) !== -1 || ct.indexOf(rAnsLc.substring(0, 10)) !== -1) isCurrentAns = true;
           });
           if (isCurrentAns) return;
-          html += '<div class="study-scenario">';
-          html += '<div class="scenario-if">Soru <em>"' + rule.sig + '"</em> deseydi;</div>';
-          html += '<div class="scenario-then">→ Cevap: <strong>' + rule.ans + '</strong></div>';
+
+          // Build a meaningful "if X instead of Y" message
+          var altTrig = findActiveTrigger(q.text, rule); // does this rule's trigger also appear? (probably not)
+          var sigShort = rule.sig.split(/\s*\+\s*/)[0]; // first signal keyword from alternative rule
+
+          html += '<div class="alt-scenario">';
+          if (curTrig && curTrig.phrase) {
+            html += '<div class="alt-scenario-if">Eğer <em>"' + curTrig.phrase + '"</em> yerine <em>"' + sigShort + '"</em> olsaydı;</div>';
+          } else {
+            html += '<div class="alt-scenario-if">Eğer soru <em>"' + sigShort + '"</em> deseydi;</div>';
+          }
+          html += '<div class="alt-scenario-then">→ Cevap: ' + rule.ans + '</div>';
+          // Short hint from tip
+          var tipShort = rule.tip ? rule.tip.split('\n\n📌')[0].split('.')[0] : '';
+          if (tipShort && tipShort.length > 10 && tipShort.length < 120) {
+            html += '<div class="alt-scenario-hint">' + tipShort + '</div>';
+          }
           html += '</div>';
           shown++;
         });
