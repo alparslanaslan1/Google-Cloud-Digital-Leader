@@ -755,7 +755,358 @@ h1 {
 .quiz-tip-panel .tip-title { font-weight:700; color:#0369a1; margin-bottom:4px; font-size:12px; text-transform:uppercase; letter-spacing:.05em; }
 .quiz-tip-panel .tip-body { color:#1e3a5f; }
 .quiz-tip-panel .tip-rule { margin-top:5px; padding:5px 10px; background:rgba(255,255,255,.6); border-radius:8px; font-size:12.5px; }
-.quiz-tip-panel .tip-rule b { color:#0369a1; }</style>
+.quiz-tip-panel .tip-rule b { color:#0369a1; }
+
+/* ===== ÇALIŞMA MODU ===== */
+#screen-study {
+  max-width: 100%;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  min-height: 100vh;
+}
+.study-top-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: #fff;
+  border-bottom: 2px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,.07);
+}
+.study-back-btn {
+  padding: 7px 14px;
+  border: 1.5px solid #d1d5db;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #374151;
+  transition: background .15s;
+}
+.study-back-btn:hover { background: #f3f4f6; }
+.study-nav-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  justify-content: center;
+}
+.study-nav-btn {
+  padding: 7px 16px;
+  border: 1.5px solid #4f46e5;
+  background: #fff;
+  color: #4f46e5;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background .15s, color .15s;
+}
+.study-nav-btn:hover { background: #4f46e5; color: #fff; }
+.study-nav-btn:disabled { border-color: #d1d5db; color: #9ca3af; cursor: default; }
+.study-nav-btn:disabled:hover { background: #fff; color: #9ca3af; }
+.study-counter {
+  font-size: 14px;
+  font-weight: 700;
+  color: #374151;
+  min-width: 120px;
+  text-align: center;
+  background: #f3f4f6;
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+.study-goto-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.study-goto-wrap label { font-size: 12px; color: #6b7280; }
+.study-goto-input {
+  width: 72px;
+  padding: 6px 10px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 7px;
+  font-size: 13px;
+  outline: none;
+}
+.study-goto-input:focus { border-color: #4f46e5; }
+.study-progress-bar-wrap {
+  width: 100%;
+  height: 3px;
+  background: #e5e7eb;
+  border-radius: 2px;
+  margin-top: 2px;
+}
+.study-progress-bar {
+  height: 3px;
+  background: linear-gradient(90deg, #4f46e5, #06b6d4);
+  border-radius: 2px;
+  transition: width .3s;
+}
+
+/* Two-column layout */
+.study-layout {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  min-height: calc(100vh - 68px);
+  gap: 0;
+}
+@media (max-width: 900px) {
+  .study-layout { grid-template-columns: 1fr; }
+}
+
+/* Left: Question panel */
+.study-q-panel {
+  padding: 28px 32px;
+  border-right: 2px solid #e5e7eb;
+  background: #fff;
+  overflow-y: auto;
+}
+.study-q-number {
+  font-size: 12px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 12px;
+}
+.study-q-text {
+  font-size: 17px;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+.study-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.study-opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fafafa;
+  font-size: 14.5px;
+  color: #374151;
+  cursor: default;
+  transition: border-color .15s, background .15s;
+}
+.study-opt.correct {
+  background: #f0fdf4;
+  border-color: #22c55e;
+  color: #166534;
+}
+.study-opt.correct .study-opt-letter {
+  background: #22c55e;
+  color: #fff;
+}
+.study-opt-letter {
+  font-weight: 700;
+  font-size: 13px;
+  background: #e5e7eb;
+  color: #374151;
+  padding: 2px 8px;
+  border-radius: 6px;
+  min-width: 26px;
+  text-align: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.study-reveal-btn {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity .15s;
+  margin-top: 4px;
+}
+.study-reveal-btn:hover { opacity: .9; }
+.study-answer-box {
+  background: #f0fdf4;
+  border: 1.5px solid #86efac;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-top: 4px;
+}
+.study-correct-label {
+  font-size: 14px;
+  color: #166534;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.study-correct-text {
+  font-size: 14px;
+  color: #166534;
+  line-height: 1.5;
+}
+.study-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+.study-group-tag {
+  font-size: 11px;
+  background: #ede9fe;
+  color: #5b21b6;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+/* Right: Info panel */
+.study-info-panel {
+  background: #f8fafc;
+  overflow-y: auto;
+  padding: 0;
+}
+.study-info-section {
+  padding: 18px 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.study-info-section:last-child { border-bottom: none; }
+.study-section-title {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #6b7280;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.study-type-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+}
+.study-summary-text {
+  font-size: 14px;
+  color: #1e293b;
+  line-height: 1.65;
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px 14px;
+  border: 1px solid #e2e8f0;
+}
+.study-terms-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+.study-term-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.study-term-en {
+  font-weight: 700;
+  color: #0369a1;
+  background: #e0f2fe;
+  padding: 2px 9px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+.study-term-tr {
+  color: #374151;
+}
+.study-lookfor-content {
+  font-size: 13.5px;
+  color: #1e293b;
+  line-height: 1.65;
+}
+.study-lookfor-content ul { margin: 6px 0; padding-left: 18px; }
+.study-lookfor-content li { margin-bottom: 4px; }
+
+/* Scenarios */
+.study-scenario {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-left: 3px solid #06b6d4;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.study-scenario:last-child { margin-bottom: 0; }
+.scenario-if {
+  color: #475569;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+.scenario-if em { color: #0369a1; font-style: normal; font-weight: 600; }
+.scenario-then {
+  color: #166534;
+  font-weight: 700;
+}
+.scenario-then strong { color: #15803d; }
+
+/* Learn note */
+.study-learn-text {
+  font-size: 13.5px;
+  color: #1e293b;
+  line-height: 1.7;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+/* Filter bar */
+.study-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.study-filter-bar select {
+  padding: 6px 10px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 7px;
+  font-size: 13px;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+  outline: none;
+}
+.study-filter-bar select:focus { border-color: #4f46e5; }
+
+/* Keyboard hints */
+.study-kbd-hints {
+  font-size: 11px;
+  color: #9ca3af;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.study-kbd { background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 4px; padding: 1px 6px; font-family: monospace; font-size: 11px; }
+</style>
 </head>
 <body>
 
@@ -778,6 +1129,10 @@ h1 {
       <button class="mode-btn cheat-hero" id="btn-cheat">
         <span class="srs-hero-title">🧭 Sınav Asistanı</span>
         <span class="srs-hero-sub">Soru analizi · Sinyal → cevap · Cheat kütüphanesi</span>
+      </button>
+      <button class="mode-btn" id="btn-study-mode" style="background:linear-gradient(135deg,#0f766e,#0891b2);color:#fff;border:none;padding:16px 18px;font-size:15px;font-weight:700;border-radius:12px;text-align:left;">
+        <span style="display:block;font-size:16px;margin-bottom:3px;">📖 Çalışma Modu</span>
+        <span style="font-size:12px;font-weight:400;opacity:.85;">Tüm 516 soru · Soru analizi · Senaryo rehberi</span>
       </button>
       <!-- Pratik Modlar ana toggle -->
       <div class="bolum7-block">
@@ -830,6 +1185,46 @@ h1 {
 
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ÇALIŞMA MODU SCREEN -->
+  <div id="screen-study" class="screen" style="display:none;">
+    <div class="study-top-bar">
+      <button class="study-back-btn" id="study-back-btn">← Ana Menü</button>
+      <div class="study-nav-group">
+        <button class="study-nav-btn" id="study-prev-btn">◀ Önceki</button>
+        <span class="study-counter" id="study-counter">Soru 1 / 516</span>
+        <button class="study-nav-btn" id="study-next-btn">Sonraki ▶</button>
+      </div>
+      <div class="study-goto-wrap">
+        <label for="study-goto-input">#</label>
+        <input type="number" class="study-goto-input" id="study-goto-input" placeholder="Git..." min="1" max="516">
+      </div>
+      <div class="study-filter-bar">
+        <select id="study-filter-select">
+          <option value="all">Tüm Sorular</option>
+          <option value="bolum6">Bölüm 6</option>
+          <option value="bolum12">Bölüm 12</option>
+          <option value="bolum13">Bölüm 13</option>
+          <option value="coklu">Çoklu Cevaplı</option>
+        </select>
+      </div>
+      <div class="study-kbd-hints">
+        <span><span class="study-kbd">←</span> önceki</span>
+        <span><span class="study-kbd">→</span> sonraki</span>
+        <span><span class="study-kbd">Space</span> cevap göster</span>
+      </div>
+      <div class="study-progress-bar-wrap" style="width:100%;order:99">
+        <div class="study-progress-bar" id="study-progress-bar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="study-layout">
+      <!-- Sol: Soru -->
+      <div class="study-q-panel" id="study-q-panel"></div>
+      <!-- Sağ: Bilgi Paneli -->
+      <div class="study-info-panel" id="study-info-panel"></div>
     </div>
   </div>
 
@@ -4023,6 +4418,295 @@ const QUESTIONS = [
   document.getElementById("btn-b13-again").addEventListener("click", b13Again);
   document.getElementById("btn-b13-menu").addEventListener("click", function () {
     showScreen(screenMenu);
+  });
+
+  /* ===== ÇALIŞMA MODU ===== */
+  var studyIdx = 0;
+  var studyAnswerShown = false;
+  var studyList = []; // filtered question list (indices into QUESTIONS)
+  var screenStudy = document.getElementById("screen-study");
+
+  function buildStudyList(filter) {
+    studyList = [];
+    for (var i = 0; i < QUESTIONS.length; i++) {
+      var q = QUESTIONS[i];
+      if (!filter || filter === "all") {
+        studyList.push(i);
+      } else if (filter === "bolum6" && q.groups && q.groups.indexOf("bolum6") !== -1) {
+        studyList.push(i);
+      } else if (filter === "bolum12" && q.groups && q.groups.indexOf("bolum12") !== -1) {
+        studyList.push(i);
+      } else if (filter === "bolum13" && q.groups && q.groups.indexOf("bolum13") !== -1) {
+        studyList.push(i);
+      } else if (filter === "coklu" && q.correct && q.correct.length > 1) {
+        studyList.push(i);
+      }
+    }
+  }
+
+  function startStudyMode(startAt) {
+    buildStudyList("all");
+    studyIdx = startAt || 0;
+    studyAnswerShown = false;
+    showScreen(screenStudy);
+    document.getElementById("study-filter-select").value = "all";
+    renderStudyQ();
+  }
+
+  function renderStudyQ() {
+    if (studyList.length === 0) return;
+    var qIdx = studyList[studyIdx];
+    var q = QUESTIONS[qIdx];
+    var total = studyList.length;
+    var pos = studyIdx + 1;
+
+    // Update top bar
+    document.getElementById("study-counter").textContent = "Soru " + pos + " / " + total;
+    document.getElementById("study-progress-bar").style.width = Math.round((pos / total) * 100) + "%";
+    document.getElementById("study-prev-btn").disabled = (studyIdx === 0);
+    document.getElementById("study-next-btn").disabled = (studyIdx === total - 1);
+    document.getElementById("study-goto-input").value = "";
+
+    // Render question panel
+    var letters = ["A","B","C","D","E","F"];
+    var qHtml = '<div class="study-q-number">Soru #' + (qIdx + 1) + (q.groups && q.groups.length ? ' &nbsp;·&nbsp; ' + q.groups.join(', ') : '') + '</div>';
+    qHtml += '<div class="study-q-text">' + q.text + '</div>';
+    qHtml += '<div class="study-options">';
+    letters.forEach(function(l) {
+      if (q.options && q.options[l]) {
+        var isCorrect = studyAnswerShown && q.correct && q.correct.indexOf(l) !== -1;
+        qHtml += '<div class="study-opt' + (isCorrect ? ' correct' : '') + '">';
+        qHtml += '<span class="study-opt-letter">' + l + '</span>';
+        qHtml += q.options[l];
+        qHtml += '</div>';
+      }
+    });
+    qHtml += '</div>';
+
+    if (!studyAnswerShown) {
+      qHtml += '<button class="study-reveal-btn" id="study-reveal-btn">✅ Cevabı Göster</button>';
+    } else {
+      qHtml += '<div class="study-answer-box">';
+      qHtml += '<div class="study-correct-label">✅ Doğru Cevap: ' + (q.correct ? q.correct.join(', ') : '?') + '</div>';
+      if (q.correct) {
+        q.correct.forEach(function(l) {
+          if (q.options && q.options[l]) {
+            qHtml += '<div class="study-correct-text"><strong>' + l + ')</strong> ' + q.options[l] + '</div>';
+          }
+        });
+      }
+      qHtml += '</div>';
+    }
+
+    document.getElementById("study-q-panel").innerHTML = qHtml;
+    document.getElementById("study-q-panel").scrollTop = 0;
+
+    // Bind reveal button
+    var revBtn = document.getElementById("study-reveal-btn");
+    if (revBtn) {
+      revBtn.addEventListener("click", function() {
+        studyAnswerShown = true;
+        renderStudyQ();
+      });
+    }
+
+    // Render info panel
+    document.getElementById("study-info-panel").innerHTML = renderStudyInfoPanel(q);
+    document.getElementById("study-info-panel").scrollTop = 0;
+  }
+
+  function renderStudyInfoPanel(q) {
+    var html = '';
+
+    // 1. Soru Ne İstiyor?
+    var qType = (typeof detectQuestionType === 'function') ? detectQuestionType(q.text) : null;
+    var summary = (typeof generateTurkishSummary === 'function') ? generateTurkishSummary(q) : '';
+    html += '<div class="study-info-section">';
+    html += '<div class="study-section-title">🎯 Soru Ne İstiyor?</div>';
+    if (qType) html += '<div class="study-type-badge">' + qType.tr + '</div>';
+    if (summary) {
+      html += '<div class="study-summary-text">' + summary + '</div>';
+    } else {
+      html += '<div class="study-summary-text" style="color:#6b7280;font-style:italic;">Soru genel bir seçim sorusu: doğru ürün veya kavramı bul.</div>';
+    }
+    html += '</div>';
+
+    // 2. Cevapta Ne Aramalıyız?
+    var terms = (typeof extractTermsFromQuestion === 'function') ? extractTermsFromQuestion(q.text) : [];
+    var lookFor = (typeof getLookFor === 'function') ? getLookFor(q) : '';
+    var matchedRules = (typeof cheatFindRulesForQuestion === 'function') ? cheatFindRulesForQuestion(q) : [];
+    html += '<div class="study-info-section">';
+    html += '<div class="study-section-title">🔍 Cevapta Ne Aramalıyız?</div>';
+    if (terms && terms.length > 0) {
+      html += '<div class="study-terms-list">';
+      terms.slice(0, 6).forEach(function(t) {
+        html += '<div class="study-term-row">';
+        html += '<span class="study-term-en">' + t.en + '</span>';
+        html += '<span class="study-term-tr">→ ' + t.tr + (t.exp ? ' — <em style="color:#6b7280;font-size:12px;">' + t.exp + '</em>' : '') + '</span>';
+        html += '</div>';
+      });
+      html += '</div>';
+    }
+    if (lookFor) {
+      html += '<div class="study-lookfor-content">' + lookFor + '</div>';
+    }
+    if (matchedRules && matchedRules.length > 0) {
+      html += '<div style="margin-top:10px;">';
+      matchedRules.slice(0, 2).forEach(function(r) {
+        var tipText = r.tip ? r.tip.split('\n\n📌')[0] : '';
+        if (tipText) {
+          html += '<div style="background:#fff;border:1px solid #e2e8f0;border-left:3px solid #4f46e5;border-radius:8px;padding:10px 13px;margin-bottom:6px;font-size:13px;color:#1e293b;line-height:1.6;">';
+          html += '<strong style="color:#4f46e5;font-size:11px;text-transform:uppercase;letter-spacing:.05em;">' + r.catName + '</strong><br>' + tipText;
+          html += '</div>';
+        }
+      });
+      html += '</div>';
+    }
+    if (!terms.length && !lookFor && (!matchedRules || !matchedRules.length)) {
+      html += '<div style="color:#6b7280;font-size:13px;font-style:italic;">Cevap seçeneklerini dikkatle karşılaştır; sorudaki anahtar koşulu (maliyet, hız, ölçek, güvenlik) bul.</div>';
+    }
+    html += '</div>';
+
+    // 3. Soruda Nasıl Anlarsın? (Turkish guides from matched rules)
+    var hasGuides = false;
+    if (matchedRules && matchedRules.length > 0) {
+      var guideHtml = '';
+      matchedRules.forEach(function(r) {
+        if (r.tip && r.tip.indexOf('📌 Soruda nasıl anlarsın?') !== -1) {
+          var parts = r.tip.split('\n\n📌 Soruda nasıl anlarsın?');
+          if (parts[1]) {
+            guideHtml += '<div class="study-scenario">';
+            guideHtml += '<div class="scenario-if">📌 <strong>' + r.ans + '</strong> için:</div>';
+            guideHtml += '<div style="font-size:13px;color:#374151;line-height:1.6;margin-top:4px;">' + parts[1].trim() + '</div>';
+            guideHtml += '</div>';
+            hasGuides = true;
+          }
+        }
+      });
+      if (hasGuides) {
+        html += '<div class="study-info-section">';
+        html += '<div class="study-section-title">📌 Soruda Nasıl Anlarsın?</div>';
+        html += guideHtml;
+        html += '</div>';
+      }
+    }
+
+    // 4. Farklı Senaryolarda Ne Olurdu?
+    var scenarios = getStudyScenarios(q, matchedRules);
+    if (scenarios) {
+      html += '<div class="study-info-section">';
+      html += '<div class="study-section-title">🔄 Farklı Senaryolarda Ne Olurdu?</div>';
+      html += scenarios;
+      html += '</div>';
+    }
+
+    // 5. Öğren
+    if (q.learn) {
+      html += '<div class="study-info-section">';
+      html += '<div class="study-section-title">📚 Öğren</div>';
+      html += '<div class="study-learn-text">' + q.learn + '</div>';
+      html += '</div>';
+    }
+    if (q.learnEn && q.learnEn !== q.learn) {
+      html += '<div class="study-info-section">';
+      html += '<div class="study-section-title">📘 Learn (EN)</div>';
+      html += '<div class="study-learn-text" style="background:#eff6ff;border-color:#bfdbfe;font-size:13px;">' + q.learnEn + '</div>';
+      html += '</div>';
+    }
+
+    return html;
+  }
+
+  function getStudyScenarios(q, matchedRules) {
+    if (!matchedRules || matchedRules.length === 0) return '';
+    // Collect categories from matched rules
+    var catIds = [];
+    matchedRules.forEach(function(r) {
+      if (catIds.indexOf(r.cat) === -1) catIds.push(r.cat);
+    });
+
+    // Build correct answer text list (lowercased) for comparison
+    var correctTexts = [];
+    if (q.correct) {
+      q.correct.forEach(function(l) {
+        if (q.options && q.options[l]) correctTexts.push(q.options[l].toLowerCase().substring(0, 20));
+      });
+    }
+
+    var html = '';
+    var shown = 0;
+    var maxScenarios = 5;
+
+    catIds.forEach(function(catId) {
+      if (shown >= maxScenarios) return;
+      for (var i = 0; i < CHEAT_CATS.length; i++) {
+        var cat = CHEAT_CATS[i];
+        if (cat.id !== catId) continue;
+        cat.rules.forEach(function(rule) {
+          if (shown >= maxScenarios) return;
+          // Skip if this rule matches the correct answer
+          var isCurrentAns = false;
+          correctTexts.forEach(function(ct) {
+            if (rule.ans && rule.ans.toLowerCase().substring(0, 20).indexOf(ct.substring(0, 10)) !== -1) isCurrentAns = true;
+            if (ct.indexOf(rule.ans.toLowerCase().substring(0, 10)) !== -1) isCurrentAns = true;
+          });
+          if (isCurrentAns) return;
+          html += '<div class="study-scenario">';
+          html += '<div class="scenario-if">Soru <em>"' + rule.sig + '"</em> deseydi;</div>';
+          html += '<div class="scenario-then">→ Cevap: <strong>' + rule.ans + '</strong></div>';
+          html += '</div>';
+          shown++;
+        });
+        break;
+      }
+    });
+
+    return html;
+  }
+
+  // Event bindings for study mode
+  document.getElementById("btn-study-mode").addEventListener("click", function() {
+    startStudyMode(0);
+  });
+  document.getElementById("study-back-btn").addEventListener("click", function() {
+    showScreen(screenMenu);
+  });
+  document.getElementById("study-prev-btn").addEventListener("click", function() {
+    if (studyIdx > 0) { studyIdx--; studyAnswerShown = false; renderStudyQ(); }
+  });
+  document.getElementById("study-next-btn").addEventListener("click", function() {
+    if (studyIdx < studyList.length - 1) { studyIdx++; studyAnswerShown = false; renderStudyQ(); }
+  });
+  document.getElementById("study-goto-input").addEventListener("change", function() {
+    var n = parseInt(this.value);
+    if (!isNaN(n) && n >= 1 && n <= studyList.length) {
+      studyIdx = n - 1;
+      studyAnswerShown = false;
+      renderStudyQ();
+    }
+    this.value = "";
+  });
+  document.getElementById("study-filter-select").addEventListener("change", function() {
+    buildStudyList(this.value);
+    studyIdx = 0;
+    studyAnswerShown = false;
+    renderStudyQ();
+  });
+
+  // Keyboard navigation for study mode
+  document.addEventListener("keydown", function(e) {
+    var active = document.getElementById("screen-study");
+    if (!active || active.style.display === "none") return;
+    // Don't capture when typing in input
+    if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
+    if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      if (studyIdx > 0) { studyIdx--; studyAnswerShown = false; renderStudyQ(); }
+    } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      if (studyIdx < studyList.length - 1) { studyIdx++; studyAnswerShown = false; renderStudyQ(); }
+    } else if (e.key === " ") {
+      e.preventDefault();
+      if (!studyAnswerShown) { studyAnswerShown = true; renderStudyQ(); }
+    }
   });
 
 })();
