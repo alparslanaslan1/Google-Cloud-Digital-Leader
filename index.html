@@ -1188,6 +1188,14 @@ h1 {
         <span style="display:block;font-size:16px;margin-bottom:3px;">📖 Çalışma Modu</span>
         <span style="font-size:12px;font-weight:400;opacity:.85;">Tüm 516 soru · Soru analizi · Senaryo rehberi</span>
       </button>
+      <!-- Akıllı Öğrenme — Yarı Desteler -->
+      <div class="bolum7-block">
+        <button class="mode-btn bolum7-toggle" id="btn-srs-halves-toggle">🎓 Akıllı Öğrenme · Yarı Desteler ▼</button>
+        <div class="bolum7-submenu" id="srs-halves-submenu" style="flex-direction:column;">
+          <button class="mode-btn" id="btn-srs-first">📗 İlk Yarı (Soru 1–258)</button>
+          <button class="mode-btn" id="btn-srs-second">📘 İkinci Yarı (Soru 259–516)</button>
+        </div>
+      </div>
       <!-- Pratik Modlar ana toggle -->
       <div class="bolum7-block">
         <button class="mode-btn bolum7-toggle" id="btn-pratik-toggle">📋 Pratik Modlar ▼</button>
@@ -1474,7 +1482,7 @@ h1 {
 
   <!-- AKILLI ÖĞRENME (SRS) -->
   <div id="screen-srs" class="screen" style="display:none;">
-    <h1>🎓 Akıllı Öğrenme</h1>
+    <h1 id="srs-title">🎓 Akıllı Öğrenme</h1>
     <div class="bzgame-bar">
       <div>
         <button id="btn-srs-dash" class="action-btn">📊 Panel</button>
@@ -2324,6 +2332,10 @@ const QUESTIONS = [
   // Aralıklar: yanlış → 5 dk; doğru serisi → 1 saat → 1 gün → 3 gün → 7 gün → 14 gün → 30 gün
   var SRS_STEPS = [5*60e3, 60*60e3, 24*3600e3, 3*24*3600e3, 7*24*3600e3, 14*24*3600e3, 30*24*3600e3];
   var srs = { cards: {}, db: null, ready: false, queue: [], qIdx: 0, answeredThis: false };
+  // Aktif soru havuzu — Akıllı Öğrenme tüm sorular üzerinde çalışır;
+  // "Yarı" destelerinde bu, sorların bir alt kümesine ayarlanır.
+  var srsPool = QUESTIONS;
+  var srsPoolLabel = "";
 
   function srsOpenDB() {
     return new Promise(function (resolve) {
@@ -2407,7 +2419,7 @@ const QUESTIONS = [
 
   function srsCounts() {
     var now = Date.now(), due = 0, learned = 0, seen = 0, totalW = 0, totalC = 0;
-    QUESTIONS.forEach(function (q) {
+    srsPool.forEach(function (q) {
       var c = srs.cards[q.id];
       if (!c || c.seen === 0) return;
       seen++;
@@ -2415,11 +2427,15 @@ const QUESTIONS = [
       if (c.due <= now) due++;
       if (c.step >= 2) learned++; // 1 gün ve üzeri aralığa ulaşan = öğrenilmiş
     });
-    return { due: due, learned: learned, seen: seen, newCount: QUESTIONS.length - seen, totalW: totalW, totalC: totalC };
+    return { due: due, learned: learned, seen: seen, newCount: srsPool.length - seen, totalW: totalW, totalC: totalC };
   }
 
   function srsUpdateHero() {
+    // Menü rozetleri her zaman TÜM soruları yansıtsın (aktif havuzdan bağımsız)
+    var prevPool = srsPool;
+    srsPool = QUESTIONS;
     var s = srsCounts();
+    srsPool = prevPool;
     var d = document.getElementById("srs-due-pill");
     var n = document.getElementById("srs-new-pill");
     var m = document.getElementById("srs-mastered-pill");
@@ -2445,7 +2461,11 @@ const QUESTIONS = [
     return Math.round(h / 24) + " gün";
   }
 
-  function startSrs() {
+  function startSrs(pool, label) {
+    srsPool = pool || QUESTIONS;
+    srsPoolLabel = label || "";
+    var titleEl = document.getElementById("srs-title");
+    if (titleEl) titleEl.textContent = "🎓 Akıllı Öğrenme" + (srsPoolLabel ? " · " + srsPoolLabel : "");
     srsRenderDash();
     srsShowView("dash");
     showScreen(screenSrs);
@@ -2463,7 +2483,7 @@ const QUESTIONS = [
     // bugünkü liste özeti
     var now = Date.now();
     var soon = [];
-    QUESTIONS.forEach(function (q) {
+    srsPool.forEach(function (q) {
       var c = srs.cards[q.id];
       if (c && c.seen > 0 && c.due > now) soon.push({ id: q.id, in: c.due - now });
     });
@@ -2483,7 +2503,7 @@ const QUESTIONS = [
   function srsBuildQueue() {
     var now = Date.now();
     var due = [], fresh = [];
-    QUESTIONS.forEach(function (q) {
+    srsPool.forEach(function (q) {
       var c = srs.cards[q.id];
       if (c && c.seen > 0) {
         if (c.due <= now) due.push(q);
@@ -2585,7 +2605,7 @@ const QUESTIONS = [
 
   function srsRenderWeak() {
     var rows = [];
-    QUESTIONS.forEach(function (q) {
+    srsPool.forEach(function (q) {
       var c = srs.cards[q.id];
       if (c && c.wrong > 0) rows.push({ q: q, c: c });
     });
@@ -4370,7 +4390,31 @@ const QUESTIONS = [
   loadBzState();
 
   // SRS wiring
-  document.getElementById("btn-srs").addEventListener("click", startSrs);
+  document.getElementById("btn-srs").addEventListener("click", function () {
+    startSrs(QUESTIONS, "");
+  });
+  // Yarı desteler — sorular id sırasına göre bölünür (ilk 258 / son 258)
+  var SRS_SORTED = QUESTIONS.slice().sort(function (a, b) { return a.id - b.id; });
+  var SRS_HALF = Math.ceil(SRS_SORTED.length / 2); // 258
+  document.getElementById("btn-srs-first").addEventListener("click", function () {
+    startSrs(SRS_SORTED.slice(0, SRS_HALF), "İlk Yarı (1–" + SRS_HALF + ")");
+  });
+  document.getElementById("btn-srs-second").addEventListener("click", function () {
+    startSrs(SRS_SORTED.slice(SRS_HALF), "İkinci Yarı (" + (SRS_HALF + 1) + "–" + SRS_SORTED.length + ")");
+  });
+  // Yarı Desteler alt-menü aç/kapa
+  (function () {
+    var sub = document.getElementById("srs-halves-submenu");
+    var tog = document.getElementById("btn-srs-halves-toggle");
+    if (sub && tog) {
+      sub.style.display = "none";
+      tog.addEventListener("click", function () {
+        var open = sub.style.display !== "none";
+        sub.style.display = open ? "none" : "flex";
+        tog.textContent = open ? "🎓 Akıllı Öğrenme · Yarı Desteler ▼" : "🎓 Akıllı Öğrenme · Yarı Desteler ▲";
+      });
+    }
+  })();
   document.getElementById("btn-srs-dash").addEventListener("click", function () {
     srsRenderDash(); srsShowView("dash");
   });
