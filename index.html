@@ -4621,106 +4621,55 @@ const QUESTIONS = [
   }
 
   function renderStudyInfoPanel(q, matchedRules) {
-    // matchedRules already computed in renderStudyQ — reuse it
     if (!matchedRules) {
       var cheatResult = cheatFindRulesForQuestion(q);
       matchedRules = (cheatResult && cheatResult.rules) ? cheatResult.rules : [];
     }
     var html = '';
 
-    // 0. Tetikleyici Analiz — ALWAYS first
+    // 1. Tetikleyici İfadeler
     if (matchedRules.length > 0) {
       html += '<div class="study-info-section" style="background:linear-gradient(135deg,#fffbeb,#fff);">';
       html += '<div class="study-section-title">🎨 Tetikleyici İfadeler</div>';
-      html += '<div style="font-size:12px;color:#6b7280;margin-bottom:10px;">Soruda bu ifadeler cevabı belirliyor (renkler sorudaki vurgularla eşleşir):</div>';
       matchedRules.slice(0, 4).forEach(function(rule, i) {
         var c = TRIGGER_COLORS[i % 4];
-        // Extract the most relevant signal phrases from this rule's sig
         var sigParts = rule.sig.split(/\s*\+\s*/);
-        html += '<div style="margin-bottom:8px;">';
-        html += '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px;">';
+        html += '<div style="margin-bottom:10px;">';
+        html += '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px;">';
         sigParts.forEach(function(part) {
           part = part.trim();
           if (part.length < 2) return;
           html += '<span class="trigger-chip" style="background:' + c.bg + ';color:' + c.color + ';border:1px solid ' + c.border + ';font-size:12px;">' + part + '</span>';
         });
         html += '</div>';
-        html += '<div style="font-size:12.5px;color:#374151;padding-left:4px;">→ <strong>' + rule.ans + '</strong></div>';
+        html += '<div style="font-size:13px;color:#374151;padding-left:2px;">→ <strong>' + rule.ans + '</strong></div>';
         html += '</div>';
       });
       html += '</div>';
     }
 
-    // 1. Soru Ne İstiyor?
+    // 2. Soru Ne İstiyor?
     var qType = (typeof detectQuestionType === 'function') ? detectQuestionType(q.text) : null;
     var summary = (typeof generateTurkishSummary === 'function') ? generateTurkishSummary(q) : '';
     html += '<div class="study-info-section">';
     html += '<div class="study-section-title">🎯 Soru Ne İstiyor?</div>';
     if (qType) html += '<div class="study-type-badge">' + qType.tr + '</div>';
-    if (summary) {
-      html += '<div class="study-summary-text">' + summary + '</div>';
-    } else {
-      html += '<div class="study-summary-text" style="color:#6b7280;font-style:italic;">Soru genel bir seçim sorusu: doğru ürün veya kavramı bul.</div>';
-    }
+    html += '<div class="study-summary-text">' + (summary || '<span style="color:#6b7280;font-style:italic;">Doğru ürün veya kavramı seç.</span>') + '</div>';
     html += '</div>';
 
-    // 2. Cevapta Ne Aramalıyız?
-    var terms = (typeof extractTermsFromQuestion === 'function') ? extractTermsFromQuestion(q.text) : [];
+    // 3. Cevapta Ne Aramalıyız?
     var lookFor = (typeof getLookFor === 'function') ? getLookFor(q) : '';
-    html += '<div class="study-info-section">';
-    html += '<div class="study-section-title">🔍 Cevapta Ne Aramalıyız?</div>';
-    if (terms && terms.length > 0) {
-      html += '<div class="study-terms-list">';
-      terms.slice(0, 6).forEach(function(t) {
-        html += '<div class="study-term-row">';
-        html += '<span class="study-term-en">' + t.en + '</span>';
-        html += '<span class="study-term-tr">→ ' + t.tr + (t.exp ? ' — <em style="color:#6b7280;font-size:12px;">' + t.exp + '</em>' : '') + '</span>';
-        html += '</div>';
-      });
+    var tipContent = '';
+    matchedRules.slice(0, 2).forEach(function(r) {
+      var tipText = r.tip ? r.tip.split('\n\n📌')[0] : '';
+      if (tipText) tipContent += '<div style="border-left:3px solid #4f46e5;padding:8px 12px;margin-bottom:6px;font-size:13px;color:#1e293b;line-height:1.6;background:#fff;border-radius:0 7px 7px 0;">' + tipText + '</div>';
+    });
+    if (lookFor || tipContent) {
+      html += '<div class="study-info-section">';
+      html += '<div class="study-section-title">🔍 Cevapta Ne Aramalıyız?</div>';
+      if (lookFor) html += '<div class="study-lookfor-content" style="margin-bottom:8px;">' + lookFor + '</div>';
+      if (tipContent) html += tipContent;
       html += '</div>';
-    }
-    if (lookFor) {
-      html += '<div class="study-lookfor-content">' + lookFor + '</div>';
-    }
-    if (matchedRules.length > 0) {
-      html += '<div style="margin-top:10px;">';
-      matchedRules.slice(0, 2).forEach(function(r) {
-        var tipText = r.tip ? r.tip.split('\n\n📌')[0] : '';
-        if (tipText) {
-          html += '<div style="background:#fff;border:1px solid #e2e8f0;border-left:3px solid #4f46e5;border-radius:8px;padding:10px 13px;margin-bottom:6px;font-size:13px;color:#1e293b;line-height:1.6;">';
-          html += '<strong style="color:#4f46e5;font-size:11px;text-transform:uppercase;letter-spacing:.05em;">' + r.catName + '</strong><br>' + tipText;
-          html += '</div>';
-        }
-      });
-      html += '</div>';
-    }
-    if (!terms.length && !lookFor && !matchedRules.length) {
-      html += '<div style="color:#6b7280;font-size:13px;font-style:italic;">Cevap seçeneklerini dikkatle karşılaştır; sorudaki anahtar koşulu (maliyet, hız, ölçek, güvenlik) bul.</div>';
-    }
-    html += '</div>';
-
-    // 3. Soruda Nasıl Anlarsın? (Turkish guides from matched rules)
-    var hasGuides = false;
-    if (matchedRules.length > 0) {
-      var guideHtml = '';
-      matchedRules.forEach(function(r) {
-        if (r.tip && r.tip.indexOf('📌 Soruda nasıl anlarsın?') !== -1) {
-          var parts = r.tip.split('\n\n📌 Soruda nasıl anlarsın?');
-          if (parts[1]) {
-            guideHtml += '<div class="study-scenario">';
-            guideHtml += '<div class="scenario-if">📌 <strong>' + r.ans + '</strong> için:</div>';
-            guideHtml += '<div style="font-size:13px;color:#374151;line-height:1.6;margin-top:4px;">' + parts[1].trim() + '</div>';
-            guideHtml += '</div>';
-            hasGuides = true;
-          }
-        }
-      });
-      if (hasGuides) {
-        html += '<div class="study-info-section">';
-        html += '<div class="study-section-title">📌 Soruda Nasıl Anlarsın?</div>';
-        html += guideHtml;
-        html += '</div>';
-      }
     }
 
     // 4. Farklı Senaryolarda Ne Olurdu?
@@ -4729,20 +4678,6 @@ const QUESTIONS = [
       html += '<div class="study-info-section">';
       html += '<div class="study-section-title">🔄 Farklı Senaryolarda Ne Olurdu?</div>';
       html += scenarios;
-      html += '</div>';
-    }
-
-    // 5. Öğren
-    if (q.learn) {
-      html += '<div class="study-info-section">';
-      html += '<div class="study-section-title">📚 Öğren</div>';
-      html += '<div class="study-learn-text">' + q.learn + '</div>';
-      html += '</div>';
-    }
-    if (q.learnEn && q.learnEn !== q.learn) {
-      html += '<div class="study-info-section">';
-      html += '<div class="study-section-title">📘 Learn (EN)</div>';
-      html += '<div class="study-learn-text" style="background:#eff6ff;border-color:#bfdbfe;font-size:13px;">' + q.learnEn + '</div>';
       html += '</div>';
     }
 
