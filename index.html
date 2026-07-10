@@ -1500,9 +1500,10 @@ h1 {
       <div class="srs-stats" id="srs-stats"></div>
       <div class="srs-info">
         <strong>Nasıl çalışır?</strong> Aralıklı tekrar (spaced repetition) öğrenme psikolojisine dayanır:
-        yanlış bildiğin soru <b>15 dakika</b> sonra, doğru bildiğin <b>1 saat</b> sonra, tekrar doğru bildiğin
-        <b>4 saat</b> sonra, sonra <b>12 saat</b> aralığıyla karşına çıkar. İstediğin soruyu
-        <b>✓ Öğrendim</b> ile işaretleyip listeden çıkarabilirsin.
+        yanlış bildiğin soru <b>45 dakika</b> sonra, doğru bildiğin <b>1 saat 30 dk</b> sonra, tekrar doğru bildiğin
+        <b>3 saat</b> sonra, sonra <b>6 saat</b> aralığıyla karşına çıkar. Son aralığı da doğru geçince soru
+        <b>tamamen öğrenilmiş</b> sayılır ve bir daha çıkmaz. İstediğin soruyu <b>✓ Öğrendim</b> ile de
+        anında listeden çıkarabilirsin. Vadesi gelmeyen sorular, sayfayı yenilesen de vakti gelene kadar çıkmaz.
         Tüm ilerlemen tarayıcında <b>IndexedDB</b>'de kalıcı olarak saklanır.
       </div>
       <h3 class="bz11-h">📅 Bugünkü Durum</h3>
@@ -2332,7 +2333,7 @@ const QUESTIONS = [
 
   // ===================== AKILLI ÖĞRENME (SRS) =====================
   // Aralıklar: yanlış → 5 dk; doğru serisi → 1 saat → 1 gün → 3 gün → 7 gün → 14 gün → 30 gün
-  var SRS_STEPS = [15*60e3, 60*60e3, 4*3600e3, 12*3600e3];
+  var SRS_STEPS = [45*60e3, 90*60e3, 3*3600e3, 6*3600e3];
   var srs = { cards: {}, db: null, ready: false, queue: [], qIdx: 0, answeredThis: false };
   // Aktif soru havuzu — Akıllı Öğrenme tüm sorular üzerinde çalışır;
   // "Yarı" destelerinde bu, sorların bir alt kümesine ayarlanır.
@@ -2409,10 +2410,19 @@ const QUESTIONS = [
     c.seen++; c.last = now;
     if (isCorrect) {
       c.correct++;
-      c.step = Math.min(c.step + 1, SRS_STEPS.length - 1);
+      if (c.step >= SRS_STEPS.length - 1) {
+        // Son aralığı (6 saat) da doğru geçti → tamamen öğrenildi, bir daha çıkmaz
+        c.mastered = true;
+        c.step = SRS_STEPS.length - 1;
+        c.due = now + 100 * 365 * 24 * 3600e3; // fiilen sonsuz
+        srsSaveCard(c);
+        srsUpdateHero();
+        return;
+      }
+      c.step = c.step + 1;
     } else {
       c.wrong++; c.lapses++;
-      c.step = 0; // yanlış → 15 dk sonra tekrar
+      c.step = 0; // yanlış → baştan (45 dk sonra tekrar)
     }
     c.due = now + SRS_STEPS[Math.max(c.step, 0)];
     srsSaveCard(c);
@@ -2424,12 +2434,11 @@ const QUESTIONS = [
     srsPool.forEach(function (q) {
       var c = srs.cards[q.id];
       if (!c) return;
-      if (c.mastered) { seen++; learned++; return; } // elle işaretlenen → öğrenilmiş, vadesi yok
+      if (c.mastered) { seen++; learned++; return; } // tamamen öğrenilmiş → vadesi yok, bir daha çıkmaz
       if (c.seen === 0) return;
       seen++;
       totalW += c.wrong; totalC += c.correct;
       if (c.due <= now) due++;
-      if (c.step >= SRS_STEPS.length - 1) learned++; // son aralığa (12 saat) ulaşan = öğrenilmiş
     });
     return { due: due, learned: learned, seen: seen, newCount: srsPool.length - seen, totalW: totalW, totalC: totalC };
   }
@@ -2481,7 +2490,7 @@ const QUESTIONS = [
     document.getElementById("srs-stats").innerHTML =
       "<div class='srs-stat amber'><span class='v'>" + s.due + "</span><span class='l'>Vadesi Gelen</span></div>" +
       "<div class='srs-stat'><span class='v'>" + s.newCount + "</span><span class='l'>Hiç Görülmemiş</span></div>" +
-      "<div class='srs-stat green'><span class='v'>" + s.learned + "</span><span class='l'>Öğrenilen (12s)</span></div>" +
+      "<div class='srs-stat green'><span class='v'>" + s.learned + "</span><span class='l'>Öğrenilen</span></div>" +
       "<div class='srs-stat'><span class='v'>" + s.seen + "</span><span class='l'>Çalışılan Soru</span></div>" +
       "<div class='srs-stat " + (acc >= 70 ? "green" : "red") + "'><span class='v'>%" + acc + "</span><span class='l'>Genel Doğruluk</span></div>";
     // bugünkü liste özeti
@@ -2516,11 +2525,12 @@ const QUESTIONS = [
         fresh.push(q);
       }
     });
-    // önce vadesi gelenler (en çok yanlış yapılan önce), sonra yeni sorulardan 10 tane
+    // Önce vadesi gelenler (en çok yanlış yapılan önce), sonra TÜM yeni sorular (limit yok).
+    // Vadesi gelmeyen (gelecekteki) sorular kuyruğa alınmaz — sayfa yenilense de çıkmaz.
     due.sort(function (a, b) {
       return (srs.cards[b.id].lapses - srs.cards[a.id].lapses);
     });
-    srs.queue = due.concat(shuffleArray(fresh).slice(0, 10));
+    srs.queue = due.concat(shuffleArray(fresh));
     srs.qIdx = 0;
   }
 
@@ -2533,7 +2543,7 @@ const QUESTIONS = [
   function srsStageLabel(qid) {
     var c = srs.cards[qid];
     if (!c || c.seen === 0) return "🆕 Yeni soru";
-    var labels = ["15 dk", "1 saat", "4 saat", "12 saat"];
+    var labels = ["45 dk", "1s 30dk", "3 saat", "6 saat"];
     return "Seviye: " + labels[Math.max(c.step, 0)] + (c.lapses ? " · " + c.lapses + " hata" : "");
   }
 
