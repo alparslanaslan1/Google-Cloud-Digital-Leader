@@ -1194,6 +1194,10 @@ h1 {
         <div class="bolum7-submenu" id="srs-halves-submenu" style="flex-direction:column;">
           <button class="mode-btn" id="btn-srs-first">📗 İlk Yarı (Soru 1–258)</button>
           <button class="mode-btn" id="btn-srs-second">📘 İkinci Yarı (Soru 259–516)</button>
+          <div style="height:1px;background:#dbeafe;margin:4px 0;"></div>
+          <button class="mode-btn" id="btn-srs-exam-all">📝 Sınav: 50 Rastgele (Tümü)</button>
+          <button class="mode-btn" id="btn-srs-exam-first">📝 Sınav: 50 Rastgele (İlk Yarı)</button>
+          <button class="mode-btn" id="btn-srs-exam-second">📝 Sınav: 50 Rastgele (İkinci Yarı)</button>
         </div>
       </div>
       <!-- Pratik Modlar ana toggle -->
@@ -2343,7 +2347,7 @@ const QUESTIONS = [
   // ===================== AKILLI ÖĞRENME (SRS) =====================
   // Aralıklar: yanlış → 5 dk; doğru serisi → 1 saat → 1 gün → 3 gün → 7 gün → 14 gün → 30 gün
   var SRS_STEPS = [45*60e3, 90*60e3, 3*3600e3, 6*3600e3];
-  var srs = { cards: {}, db: null, ready: false, queue: [], qIdx: 0, answeredThis: false };
+  var srs = { cards: {}, db: null, ready: false, queue: [], qIdx: 0, answeredThis: false, isExam: false };
   // Aktif soru havuzu — Akıllı Öğrenme tüm sorular üzerinde çalışır;
   // "Yarı" destelerinde bu, sorların bir alt kümesine ayarlanır.
   var srsPool = QUESTIONS;
@@ -2483,14 +2487,26 @@ const QUESTIONS = [
     return Math.round(h / 24) + " gün";
   }
 
-  function startSrs(pool, label) {
+  function startSrs(pool, label, isExam) {
     srsPool = pool || QUESTIONS;
     srsPoolLabel = label || "";
+    srs.isExam = !!isExam;
     var titleEl = document.getElementById("srs-title");
     if (titleEl) titleEl.textContent = "🎓 Akıllı Öğrenme" + (srsPoolLabel ? " · " + srsPoolLabel : "");
-    srsRenderDash();
-    srsShowView("dash");
     showScreen(screenSrs);
+    if (srs.isExam) {
+      // Sınav: doğrudan çalışmaya başla, 50 sorunun tamamı gelir
+      srsStartStudy();
+    } else {
+      srsRenderDash();
+      srsShowView("dash");
+    }
+  }
+
+  // Belirli bir kapsamdan rastgele N soruyla sınav başlat
+  function startSrsExam(scopePool, n, label) {
+    var picked = shuffleArray(scopePool.slice()).slice(0, n);
+    startSrs(picked, label, true);
   }
 
   function srsRenderDash() {
@@ -2523,6 +2539,12 @@ const QUESTIONS = [
   }
 
   function srsBuildQueue() {
+    // Sınav modu: kapsamdaki 50 sorunun TAMAMI çıkar (vade/öğrenilmiş durumuna bakılmaz)
+    if (srs.isExam) {
+      srs.queue = shuffleArray(srsPool.slice());
+      srs.qIdx = 0;
+      return;
+    }
     var now = Date.now();
     var due = [], fresh = [];
     srsPool.forEach(function (q) {
@@ -4457,6 +4479,16 @@ const QUESTIONS = [
   });
   document.getElementById("btn-srs-second").addEventListener("click", function () {
     startSrs(SRS_SORTED.slice(SRS_HALF), "İkinci Yarı (" + (SRS_HALF + 1) + "–" + SRS_SORTED.length + ")");
+  });
+  // Sınav (exam) — kapsamdan rastgele 50 soru
+  document.getElementById("btn-srs-exam-all").addEventListener("click", function () {
+    startSrsExam(SRS_SORTED, 50, "Sınav · 50 Rastgele (Tümü)");
+  });
+  document.getElementById("btn-srs-exam-first").addEventListener("click", function () {
+    startSrsExam(SRS_SORTED.slice(0, SRS_HALF), 50, "Sınav · 50 Rastgele (İlk Yarı)");
+  });
+  document.getElementById("btn-srs-exam-second").addEventListener("click", function () {
+    startSrsExam(SRS_SORTED.slice(SRS_HALF), 50, "Sınav · 50 Rastgele (İkinci Yarı)");
   });
   // Yarı Desteler alt-menü aç/kapa
   (function () {
