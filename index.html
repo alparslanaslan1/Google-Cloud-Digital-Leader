@@ -1208,6 +1208,19 @@ h1 {
           <button class="mode-btn" id="btn-srs-exam-second">📝 Sınav: 50 Rastgele (İkinci Yarı)</button>
         </div>
       </div>
+      <!-- Akıllı Öğrenme — Benzersiz Kelime Desteleri -->
+      <div class="bolum7-block">
+        <button class="mode-btn bolum7-toggle" id="btn-srs-benzersiz-toggle">🎓 Akıllı Öğrenme · Benzersiz Kelime ▼</button>
+        <div class="bolum7-submenu" id="srs-benzersiz-submenu" style="flex-direction:column;">
+          <div style="font-size:12px;font-weight:700;color:#5b21b6;padding:2px 2px;">🔑 Benzersiz Son Kelime</div>
+          <button class="mode-btn" id="btn-srs-bsk-first">📗 İlk Yarı</button>
+          <button class="mode-btn" id="btn-srs-bsk-second">📘 İkinci Yarı</button>
+          <div style="height:1px;background:#dbeafe;margin:4px 0;"></div>
+          <div style="font-size:12px;font-weight:700;color:#075985;padding:2px 2px;">🔑 Benzersiz Son 2 Kelime</div>
+          <button class="mode-btn" id="btn-srs-bs2-first">📗 İlk Yarı</button>
+          <button class="mode-btn" id="btn-srs-bs2-second">📘 İkinci Yarı</button>
+        </div>
+      </div>
       <!-- Pratik Modlar ana toggle -->
       <div class="bolum7-block">
         <button class="mode-btn bolum7-toggle" id="btn-pratik-toggle">📋 Pratik Modlar ▼</button>
@@ -4499,6 +4512,26 @@ const QUESTIONS = [
   document.getElementById("btn-srs-second").addEventListener("click", function () {
     startSrs(SRS_SORTED.slice(SRS_HALF), "İkinci Yarı (" + (SRS_HALF + 1) + "–" + SRS_SORTED.length + ")");
   });
+  // Benzersiz kelime desteleri (gruba göre filtrele, id sırasında ikiye böl)
+  function srsGroupPool(group) {
+    return SRS_SORTED.filter(function (q) { return (q.groups || []).indexOf(group) !== -1; });
+  }
+  var BSK_POOL = srsGroupPool("benzersiz");        // Benzersiz Son Kelime
+  var BS2_POOL = srsGroupPool("benzersizson2");    // Benzersiz Son 2 Kelime
+  var BSK_HALF = Math.ceil(BSK_POOL.length / 2);
+  var BS2_HALF = Math.ceil(BS2_POOL.length / 2);
+  document.getElementById("btn-srs-bsk-first").addEventListener("click", function () {
+    startSrs(BSK_POOL.slice(0, BSK_HALF), "Benzersiz Son Kelime · İlk Yarı (" + BSK_HALF + ")");
+  });
+  document.getElementById("btn-srs-bsk-second").addEventListener("click", function () {
+    startSrs(BSK_POOL.slice(BSK_HALF), "Benzersiz Son Kelime · İkinci Yarı (" + (BSK_POOL.length - BSK_HALF) + ")");
+  });
+  document.getElementById("btn-srs-bs2-first").addEventListener("click", function () {
+    startSrs(BS2_POOL.slice(0, BS2_HALF), "Benzersiz Son 2 Kelime · İlk Yarı (" + BS2_HALF + ")");
+  });
+  document.getElementById("btn-srs-bs2-second").addEventListener("click", function () {
+    startSrs(BS2_POOL.slice(BS2_HALF), "Benzersiz Son 2 Kelime · İkinci Yarı (" + (BS2_POOL.length - BS2_HALF) + ")");
+  });
   // Sınav (exam) — kapsamdan rastgele 50 soru
   document.getElementById("btn-srs-exam-all").addEventListener("click", function () {
     startSrsExam(SRS_SORTED, 50, "Sınav · 50 Rastgele (Tümü)");
@@ -4519,6 +4552,19 @@ const QUESTIONS = [
         var open = sub.style.display !== "none";
         sub.style.display = open ? "none" : "flex";
         tog.textContent = open ? "🎓 Akıllı Öğrenme · Yarı Desteler ▼" : "🎓 Akıllı Öğrenme · Yarı Desteler ▲";
+      });
+    }
+  })();
+  // Benzersiz Kelime alt-menü aç/kapa
+  (function () {
+    var sub = document.getElementById("srs-benzersiz-submenu");
+    var tog = document.getElementById("btn-srs-benzersiz-toggle");
+    if (sub && tog) {
+      sub.style.display = "none";
+      tog.addEventListener("click", function () {
+        var open = sub.style.display !== "none";
+        sub.style.display = open ? "none" : "flex";
+        tog.textContent = open ? "🎓 Akıllı Öğrenme · Benzersiz Kelime ▼" : "🎓 Akıllı Öğrenme · Benzersiz Kelime ▲";
       });
     }
   })();
