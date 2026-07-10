@@ -1223,6 +1223,15 @@ h1 {
             </div>
           </div>
 
+          <!-- IaaS / PaaS / SaaS Cevaplı Sorular -->
+          <div class="bolum7-block">
+            <button class="mode-btn bolum7-toggle" id="btn-xaas-toggle">IaaS / PaaS / SaaS Soruları ▼</button>
+            <div class="bolum7-submenu" id="xaas-submenu">
+              <button class="mode-btn" data-mode="xaas">Karışık <span class="badge" id="xaas-count">9</span></button>
+              <button class="mode-btn" data-mode="xaas_sirali">Sıralı <span class="badge">9</span></button>
+            </div>
+          </div>
+
           <button class="mode-btn" data-mode="benzersizilk">Benzersiz İlk Kelime <span class="badge" id="benzersizilk-count">47</span></button>
 
           <!-- Benzersiz Son 2 Kelime -->
@@ -3050,6 +3059,15 @@ const QUESTIONS = [
       pool = QUESTIONS.filter(function (q) {
         return q.correct.length > 1;
       }); // id sırasında, karıştırılmaz
+    } else if (mode === "xaas" || mode === "xaas_sirali") {
+      // Cevabı IaaS / PaaS / SaaS olan sorular
+      var xaasList = QUESTIONS.filter(function (q) {
+        return q.correct.some(function (l) {
+          var t = (q.options[l] || "").toLowerCase();
+          return /infrastructure as a service|platform as a service|software as a service|\biaas\b|\bpaas\b|\bsaas\b/.test(t);
+        });
+      });
+      pool = (mode === "xaas") ? shuffleArray(xaasList) : xaasList;
     } else if (mode === "bolum16_karisik") {
       pool = shuffleArray(QUESTIONS.filter(function (q) {
         return BOLUM16_IDS.indexOf(q.id) !== -1;
@@ -4543,6 +4561,13 @@ const QUESTIONS = [
     var open = sub.style.display === "flex";
     sub.style.display = open ? "none" : "flex";
     this.textContent = open ? "Çoklu Cevaplı Sorular ▼" : "Çoklu Cevaplı Sorular ▲";
+  });
+
+  document.getElementById("btn-xaas-toggle").addEventListener("click", function () {
+    var sub = document.getElementById("xaas-submenu");
+    var open = sub.style.display === "flex";
+    sub.style.display = open ? "none" : "flex";
+    this.textContent = open ? "IaaS / PaaS / SaaS Soruları ▼" : "IaaS / PaaS / SaaS Soruları ▲";
   });
 
   // Bölüm 13: Hızlı Öğrenme
