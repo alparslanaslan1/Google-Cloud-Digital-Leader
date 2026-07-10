@@ -1500,8 +1500,9 @@ h1 {
       <div class="srs-stats" id="srs-stats"></div>
       <div class="srs-info">
         <strong>Nasıl çalışır?</strong> Aralıklı tekrar (spaced repetition) öğrenme psikolojisine dayanır:
-        yanlış bildiğin soru <b>5 dakika</b> sonra, doğru bildiğin <b>1 saat</b> sonra, tekrar doğru bildiğin
-        <b>1 gün</b> sonra, sonra <b>3 gün → 1 hafta → 2 hafta → 1 ay</b> aralıklarla karşına çıkar.
+        yanlış bildiğin soru <b>15 dakika</b> sonra, doğru bildiğin <b>1 saat</b> sonra, tekrar doğru bildiğin
+        <b>4 saat</b> sonra, sonra <b>12 saat</b> aralığıyla karşına çıkar. İstediğin soruyu
+        <b>✓ Öğrendim</b> ile işaretleyip listeden çıkarabilirsin.
         Tüm ilerlemen tarayıcında <b>IndexedDB</b>'de kalıcı olarak saklanır.
       </div>
       <h3 class="bz11-h">📅 Bugünkü Durum</h3>
@@ -1519,7 +1520,8 @@ h1 {
         <div id="srs-options" class="options-container"></div>
         <div id="srs-learnbox"></div>
       </div>
-      <div class="bzgame-bar" style="justify-content:center; margin-top:12px;">
+      <div class="bzgame-bar" style="justify-content:center; margin-top:12px; gap:8px;">
+        <button id="btn-srs-mastered" class="action-btn secondary" title="Bu soruyu öğrenilmiş say, artık karşıma çıkmasın">✓ Öğrendim, çıkarma</button>
         <button id="btn-srs-next" class="action-btn" style="display:none;">Sonraki →</button>
       </div>
     </div>
@@ -2330,7 +2332,7 @@ const QUESTIONS = [
 
   // ===================== AKILLI ÖĞRENME (SRS) =====================
   // Aralıklar: yanlış → 5 dk; doğru serisi → 1 saat → 1 gün → 3 gün → 7 gün → 14 gün → 30 gün
-  var SRS_STEPS = [5*60e3, 60*60e3, 24*3600e3, 3*24*3600e3, 7*24*3600e3, 14*24*3600e3, 30*24*3600e3];
+  var SRS_STEPS = [15*60e3, 60*60e3, 4*3600e3, 12*3600e3];
   var srs = { cards: {}, db: null, ready: false, queue: [], qIdx: 0, answeredThis: false };
   // Aktif soru havuzu — Akıllı Öğrenme tüm sorular üzerinde çalışır;
   // "Yarı" destelerinde bu, sorların bir alt kümesine ayarlanır.
@@ -2410,7 +2412,7 @@ const QUESTIONS = [
       c.step = Math.min(c.step + 1, SRS_STEPS.length - 1);
     } else {
       c.wrong++; c.lapses++;
-      c.step = 0; // yanlış → 5 dk sonra tekrar
+      c.step = 0; // yanlış → 15 dk sonra tekrar
     }
     c.due = now + SRS_STEPS[Math.max(c.step, 0)];
     srsSaveCard(c);
@@ -2421,11 +2423,13 @@ const QUESTIONS = [
     var now = Date.now(), due = 0, learned = 0, seen = 0, totalW = 0, totalC = 0;
     srsPool.forEach(function (q) {
       var c = srs.cards[q.id];
-      if (!c || c.seen === 0) return;
+      if (!c) return;
+      if (c.mastered) { seen++; learned++; return; } // elle işaretlenen → öğrenilmiş, vadesi yok
+      if (c.seen === 0) return;
       seen++;
       totalW += c.wrong; totalC += c.correct;
       if (c.due <= now) due++;
-      if (c.step >= 2) learned++; // 1 gün ve üzeri aralığa ulaşan = öğrenilmiş
+      if (c.step >= SRS_STEPS.length - 1) learned++; // son aralığa (12 saat) ulaşan = öğrenilmiş
     });
     return { due: due, learned: learned, seen: seen, newCount: srsPool.length - seen, totalW: totalW, totalC: totalC };
   }
@@ -2477,7 +2481,7 @@ const QUESTIONS = [
     document.getElementById("srs-stats").innerHTML =
       "<div class='srs-stat amber'><span class='v'>" + s.due + "</span><span class='l'>Vadesi Gelen</span></div>" +
       "<div class='srs-stat'><span class='v'>" + s.newCount + "</span><span class='l'>Hiç Görülmemiş</span></div>" +
-      "<div class='srs-stat green'><span class='v'>" + s.learned + "</span><span class='l'>Öğrenilen (1g+)</span></div>" +
+      "<div class='srs-stat green'><span class='v'>" + s.learned + "</span><span class='l'>Öğrenilen (12s)</span></div>" +
       "<div class='srs-stat'><span class='v'>" + s.seen + "</span><span class='l'>Çalışılan Soru</span></div>" +
       "<div class='srs-stat " + (acc >= 70 ? "green" : "red") + "'><span class='v'>%" + acc + "</span><span class='l'>Genel Doğruluk</span></div>";
     // bugünkü liste özeti
@@ -2505,6 +2509,7 @@ const QUESTIONS = [
     var due = [], fresh = [];
     srsPool.forEach(function (q) {
       var c = srs.cards[q.id];
+      if (c && c.mastered) return; // öğrenilmiş işaretli → sıraya girmez
       if (c && c.seen > 0) {
         if (c.due <= now) due.push(q);
       } else {
@@ -2528,7 +2533,7 @@ const QUESTIONS = [
   function srsStageLabel(qid) {
     var c = srs.cards[qid];
     if (!c || c.seen === 0) return "🆕 Yeni soru";
-    var labels = ["5 dk", "1 saat", "1 gün", "3 gün", "1 hafta", "2 hafta", "1 ay"];
+    var labels = ["15 dk", "1 saat", "4 saat", "12 saat"];
     return "Seviye: " + labels[Math.max(c.step, 0)] + (c.lapses ? " · " + c.lapses + " hata" : "");
   }
 
@@ -2554,14 +2559,22 @@ const QUESTIONS = [
     document.getElementById("srs-q-text").textContent = q.text;
     box.innerHTML = "";
     var isMulti = q.correct.length > 1;
-    var letters = Object.keys(q.options);
+    // Şıkları karıştır: gerçek anahtar (realKey) data-attribute'ta saklanır,
+    // ekranda A/B/C/D pozisyon etiketleri yeniden atanır.
+    var shuffled = shuffleArray(Object.keys(q.options).map(function (k) {
+      return { key: k, text: q.options[k] };
+    }));
+    var dispLetters = ["A", "B", "C", "D", "E", "F", "G", "H"];
     var selectedSet = [];
-    letters.forEach(function (L) {
+    shuffled.forEach(function (opt, idx) {
+      var disp = dispLetters[idx];
       var d = document.createElement("div");
       d.className = "option";
-      d.innerHTML = "<span class='option-letter'>" + L + ".</span><span>" + q.options[L] + "</span>";
+      d.dataset.realkey = opt.key;
+      d.innerHTML = "<span class='option-letter'>" + disp + ".</span><span>" + opt.text + "</span>";
       d.addEventListener("click", function () {
         if (srs.answeredThis) return;
+        var L = opt.key;
         if (isMulti) {
           var i = selectedSet.indexOf(L);
           if (i === -1) { selectedSet.push(L); d.style.outline = "2px solid #1a73e8"; }
@@ -2584,7 +2597,7 @@ const QUESTIONS = [
     // stil
     var opts = document.getElementById("srs-options").children;
     Array.prototype.forEach.call(opts, function (d) {
-      var L = d.querySelector(".option-letter").textContent.replace(".", "");
+      var L = d.dataset.realkey;
       d.classList.add("locked");
       if (q.correct.indexOf(L) !== -1) d.classList.add("correct");
       else if (selected.indexOf(L) !== -1) d.classList.add("wrong");
@@ -2603,11 +2616,26 @@ const QUESTIONS = [
     document.getElementById("btn-srs-next").style.display = "inline-block";
   }
 
+  // Bu soruyu elle "öğrenilmiş" işaretle → bir daha sıraya girmez
+  function srsMarkMastered() {
+    if (srs.qIdx >= srs.queue.length) return;
+    var q = srs.queue[srs.qIdx];
+    var c = srsGetCard(q.id);
+    c.mastered = true;
+    c.step = SRS_STEPS.length - 1;
+    c.due = Date.now() + 100 * 365 * 24 * 3600e3; // fiilen sonsuz
+    srsSaveCard(c);
+    // Kalan kuyruktan da bu soruyu çıkar
+    srs.queue = srs.queue.filter(function (x) { return x.id !== q.id; });
+    srsUpdateHero();
+    srsRenderStudyQ(); // aynı index artık sonraki soruyu gösterir
+  }
+
   function srsRenderWeak() {
     var rows = [];
     srsPool.forEach(function (q) {
       var c = srs.cards[q.id];
-      if (c && c.wrong > 0) rows.push({ q: q, c: c });
+      if (c && c.wrong > 0 && !c.mastered) rows.push({ q: q, c: c });
     });
     rows.sort(function (a, b) { return b.c.wrong - a.c.wrong; });
     var el = document.getElementById("srs-weak-list");
@@ -4425,6 +4453,7 @@ const QUESTIONS = [
   document.getElementById("btn-srs-next").addEventListener("click", function () {
     srs.qIdx++; srsRenderStudyQ();
   });
+  document.getElementById("btn-srs-mastered").addEventListener("click", srsMarkMastered);
   document.getElementById("btn-srs-reset").addEventListener("click", function () {
     if (confirm("Tüm Akıllı Öğrenme geçmişini (IndexedDB) silmek istediğine emin misin?")) {
       srsClearAll(); srsRenderDash(); srsShowView("dash");
