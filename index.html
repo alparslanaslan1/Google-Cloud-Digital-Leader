@@ -185,6 +185,14 @@ h1 {
 }
 .srs-pill.green { background: #2e7d32; }
 #screen-srs .srs-pill { background: #e8eaf6; color: #1a237e; }
+.srs-cat-badges { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+.srs-cat-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px;
+  border:1px solid transparent;
+}
+.srs-cat-badge.son1 { background:#ede9fe; color:#5b21b6; border-color:#c4b5fd; }
+.srs-cat-badge.son2 { background:#e0f2fe; color:#075985; border-color:#7dd3fc; }
 .srs-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 14px 0; }
 .srs-stat {
   background: #fff; border: 1px solid #e0e6f5; border-radius: 12px;
@@ -1530,6 +1538,7 @@ h1 {
         <span id="srs-study-stage" class="srs-pill"></span>
       </div>
       <div class="question-card">
+        <div id="srs-cat-badges" class="srs-cat-badges"></div>
         <h2 id="srs-q-text" style="font-size:16px;"></h2>
         <div id="srs-options" class="options-container"></div>
         <div id="srs-learnbox"></div>
@@ -2585,9 +2594,11 @@ const QUESTIONS = [
     lb.innerHTML = "";
     nextBtn.style.display = "none";
     srs.answeredThis = false;
+    var catBadges = document.getElementById("srs-cat-badges");
     if (srs.qIdx >= srs.queue.length) {
       document.getElementById("srs-q-text").textContent = "🏆 Bu oturum bitti!";
       box.innerHTML = "";
+      if (catBadges) catBadges.innerHTML = "";
       document.getElementById("srs-study-progress").textContent = "";
       document.getElementById("srs-study-stage").textContent = "";
       lb.innerHTML = "<div class='srs-info'>Vadesi gelen tüm soruları ve yeni soruları bitirdin. Panele dönüp durumunu görebilirsin.</div>";
@@ -2597,6 +2608,14 @@ const QUESTIONS = [
     var q = srs.queue[srs.qIdx];
     document.getElementById("srs-study-progress").textContent = "Soru " + (srs.qIdx + 1) + " / " + srs.queue.length + " (#" + q.id + ")";
     document.getElementById("srs-study-stage").textContent = srsStageLabel(q.id);
+    // Kategori rozetleri: benzersiz son kelime / benzersiz son 2 kelime
+    if (catBadges) {
+      var g = q.groups || [];
+      var bh = "";
+      if (g.indexOf("benzersiz") !== -1) bh += "<span class='srs-cat-badge son1'>🔑 Benzersiz Son Kelime</span>";
+      if (g.indexOf("benzersizson2") !== -1) bh += "<span class='srs-cat-badge son2'>🔑 Benzersiz Son 2 Kelime</span>";
+      catBadges.innerHTML = bh;
+    }
     document.getElementById("srs-q-text").textContent = q.text;
     box.innerHTML = "";
     var isMulti = q.correct.length > 1;
