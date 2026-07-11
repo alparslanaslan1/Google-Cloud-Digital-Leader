@@ -1221,6 +1221,20 @@ h1 {
           <button class="mode-btn" id="btn-srs-bs2-second">📘 İkinci Yarı</button>
         </div>
       </div>
+      <!-- Kategori Bölümü (karşılıklı dışlayıcı) -->
+      <div class="bolum7-block">
+        <button class="mode-btn bolum7-toggle" id="btn-kategori-toggle">🗂️ Kategoriler (Ayrık) ▼</button>
+        <div class="bolum7-submenu" id="kategori-submenu" style="flex-direction:column;">
+          <div style="font-size:11.5px;color:#6b7280;padding:2px 2px 6px;">Her soru yalnızca üstteki ilk uygun kategoride yer alır.</div>
+          <button class="mode-btn" data-mode="cat:multi">1. Çoklu Cevap <span class="badge" id="cat-multi-count">–</span></button>
+          <button class="mode-btn" data-mode="cat:allnone">2. Tüm Şıklar Doğru/Yanlış <span class="badge" id="cat-allnone-count">–</span></button>
+          <button class="mode-btn" data-mode="cat:xaas_cat">3. IaaS / PaaS / SaaS <span class="badge" id="cat-xaas-count">–</span></button>
+          <button class="mode-btn" data-mode="cat:bson">4. Benzersiz Son <span class="badge" id="cat-bson-count">–</span></button>
+          <button class="mode-btn" data-mode="cat:bson2">5. Benzersiz Son 2 <span class="badge" id="cat-bson2-count">–</span></button>
+          <button class="mode-btn" data-mode="cat:bilk">6. Benzersiz İlk <span class="badge" id="cat-bilk-count">–</span></button>
+          <button class="mode-btn" data-mode="cat:diger">7. Diğerleri <span class="badge" id="cat-diger-count">–</span></button>
+        </div>
+      </div>
       <!-- Pratik Modlar ana toggle -->
       <div class="bolum7-block">
         <button class="mode-btn bolum7-toggle" id="btn-pratik-toggle">📋 Pratik Modlar ▼</button>
@@ -3072,9 +3086,36 @@ const QUESTIONS = [
     });
   }
 
+  // Karşılıklı dışlayıcı kategori — her soru öncelik sırasına göre TEK kategoriye düşer.
+  // 1) çoklu cevap 2) all/none of the above 3) IaaS/PaaS/SaaS
+  // 4) benzersiz son 5) benzersiz son 2 6) benzersiz ilk 7) diğerleri
+  var CAT_ALLNONE_RE = /\b(all of the above|none of the above|all of these|all of the above are correct|both a.{0,5}b)\b/i;
+  var CAT_XAAS_RE = /infrastructure as a service|platform as a service|software as a service|\biaas\b|\bpaas\b|\bsaas\b/;
+  function getExclusiveCategory(q) {
+    if (q.correct.length > 1) return "multi";
+    if (Object.values(q.options).some(function (t) { return CAT_ALLNONE_RE.test(t || ""); })) return "allnone";
+    if (q.correct.some(function (l) { return CAT_XAAS_RE.test((q.options[l] || "").toLowerCase()); })) return "xaas_cat";
+    var g = q.groups || [];
+    if (g.indexOf("benzersiz") !== -1) return "bson";
+    if (g.indexOf("benzersizson2") !== -1) return "bson2";
+    if (g.indexOf("benzersizilk") !== -1) return "bilk";
+    return "diger";
+  }
+  function catPool(catId) {
+    return QUESTIONS.filter(function (q) { return getExclusiveCategory(q) === catId; });
+  }
+
   function getQuestionsForMode(mode) {
     var pool;
     var allAbovePattern = /\b(all of the above|none of the above|all of these|all of the above are correct|both a.{0,5}b)\b/i;
+    // Karşılıklı dışlayıcı kategori modları: cat:<id> (karışık) / cat:<id>:sirali
+    if (mode.indexOf("cat:") === 0) {
+      var parts = mode.split(":");
+      var catId = parts[1];
+      var sirali = parts[2] === "sirali";
+      var list = catPool(catId);
+      return sirali ? list : shuffleArray(list);
+    }
     if (mode === "bolum6") {
       pool = shuffleArray(QUESTIONS.filter(function (q) {
         return Object.values(q.options).some(function (txt) {
@@ -4567,6 +4608,27 @@ const QUESTIONS = [
         tog.textContent = open ? "🎓 Akıllı Öğrenme · Benzersiz Kelime ▼" : "🎓 Akıllı Öğrenme · Benzersiz Kelime ▲";
       });
     }
+  })();
+  // Kategoriler (Ayrık) alt-menü aç/kapa + adet rozetleri
+  (function () {
+    var sub = document.getElementById("kategori-submenu");
+    var tog = document.getElementById("btn-kategori-toggle");
+    if (sub && tog) {
+      sub.style.display = "none";
+      tog.addEventListener("click", function () {
+        var open = sub.style.display !== "none";
+        sub.style.display = open ? "none" : "flex";
+        tog.textContent = open ? "🗂️ Kategoriler (Ayrık) ▼" : "🗂️ Kategoriler (Ayrık) ▲";
+      });
+    }
+    var map = { multi: "cat-multi-count", allnone: "cat-allnone-count", xaas_cat: "cat-xaas-count",
+      bson: "cat-bson-count", bson2: "cat-bson2-count", bilk: "cat-bilk-count", diger: "cat-diger-count" };
+    var tally = { multi: 0, allnone: 0, xaas_cat: 0, bson: 0, bson2: 0, bilk: 0, diger: 0 };
+    QUESTIONS.forEach(function (q) { tally[getExclusiveCategory(q)]++; });
+    Object.keys(map).forEach(function (k) {
+      var el = document.getElementById(map[k]);
+      if (el) el.textContent = tally[k];
+    });
   })();
   document.getElementById("btn-srs-dash").addEventListener("click", function () {
     srsRenderDash(); srsShowView("dash");
