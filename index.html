@@ -2441,7 +2441,7 @@ const QUESTIONS = [
   var SRS_STEPS = [45*60e3, 90*60e3, 3*3600e3, 6*3600e3];
   var SRS_STEPS_CUSTOM = [5*60e3, 20*60e3, 45*60e3]; // Özel Liste destesi için farklı aralıklar
   function activeSrsSteps() { return srs.stepsOverride || SRS_STEPS; }
-  var srs = { cards: {}, db: null, ready: false, queue: [], qIdx: 0, answeredThis: false, isExam: false, sequential: false, stepsOverride: null };
+  var srs = { cards: {}, db: null, ready: false, queue: [], qIdx: 0, answeredThis: false, isExam: false, sequential: false, stepsOverride: null, batchSize: null, batchRemaining: 0 };
   // Aktif soru havuzu — Akıllı Öğrenme tüm sorular üzerinde çalışır;
   // "Yarı" destelerinde bu, sorların bir alt kümesine ayarlanır.
   var srsPool = QUESTIONS;
@@ -2589,6 +2589,7 @@ const QUESTIONS = [
     srs.isExam = !!isExam;
     srs.sequential = !!opts.sequential;
     srs.stepsOverride = opts.steps || null;
+    srs.batchSize = opts.batchSize || null;
     var titleEl = document.getElementById("srs-title");
     if (titleEl) titleEl.textContent = "🎓 Akıllı Öğrenme" + (srsPoolLabel ? " · " + srsPoolLabel : "");
     showScreen(screenSrs);
@@ -2667,6 +2668,15 @@ const QUESTIONS = [
       });
       srs.queue = due.concat(shuffleArray(fresh));
     }
+    // Toplu (batch) sınırı: sadece bu özellik açık destelerde her oturumda
+    // sadece ilk N soru gelir. Bu N soru cevaplanınca vadesi ileri tarihe
+    // atanır ve bir sonraki "▶ Çalış" tıklamasında sıradaki N soru gelir.
+    if (srs.batchSize && srs.queue.length > srs.batchSize) {
+      srs.batchRemaining = srs.queue.length - srs.batchSize;
+      srs.queue = srs.queue.slice(0, srs.batchSize);
+    } else {
+      srs.batchRemaining = 0;
+    }
     srs.qIdx = 0;
   }
 
@@ -2698,7 +2708,12 @@ const QUESTIONS = [
       if (catBadges) catBadges.innerHTML = "";
       document.getElementById("srs-study-progress").textContent = "";
       document.getElementById("srs-study-stage").textContent = "";
-      lb.innerHTML = "<div class='srs-info'>Vadesi gelen tüm soruları ve yeni soruları bitirdin. Panele dönüp durumunu görebilirsin.</div>";
+      if (srs.batchRemaining > 0) {
+        lb.innerHTML = "<div class='srs-info'>Bu turdaki " + srs.batchSize + " soruyu bitirdin. Kalan <b>" +
+          srs.batchRemaining + " soru</b> var — \"▶ Çalış\" ile bir sonraki " + srs.batchSize + " soruya geçebilirsin.</div>";
+      } else {
+        lb.innerHTML = "<div class='srs-info'>Vadesi gelen tüm soruları ve yeni soruları bitirdin. Panele dönüp durumunu görebilirsin.</div>";
+      }
       srsUpdateHero();
       return;
     }
@@ -4662,8 +4677,8 @@ const QUESTIONS = [
   var SRS_CUSTOM_IDS = [269,272,276,277,278,288,289,295,300,301,302,304,308,314,316,317,323,325,326,332,334,337,338,341,351,353,356,363,368,372,374,376,378,382,384,387,391,392,395,396,400,403,404,405,407,409,411,412,416,419,420,421,422,424,426,428,429,430,432,435,436,437,443,448,450,451,454,456,457,459,468,469,471,475,476,482,487,488,492,496,510,511,514,515];
   document.getElementById("btn-srs-custom").addEventListener("click", function () {
     var pool = SRS_SORTED.filter(function (q) { return SRS_CUSTOM_IDS.indexOf(q.id) !== -1; });
-    startSrs(pool, "Özel Liste (" + pool.length + " Yanlış Soru) · Sıralı", false,
-      { sequential: true, steps: SRS_STEPS_CUSTOM });
+    startSrs(pool, "Özel Liste (" + pool.length + " Yanlış Soru) · Sıralı · 10'ar", false,
+      { sequential: true, steps: SRS_STEPS_CUSTOM, batchSize: 10 });
   });
   // Sınav (exam) — kapsamdan rastgele 50 soru
   document.getElementById("btn-srs-exam-all").addEventListener("click", function () {
