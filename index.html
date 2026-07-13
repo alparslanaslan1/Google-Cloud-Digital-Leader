@@ -2439,7 +2439,9 @@ const QUESTIONS = [
   // ===================== AKILLI ÖĞRENME (SRS) =====================
   // Aralıklar: yanlış → 5 dk; doğru serisi → 1 saat → 1 gün → 3 gün → 7 gün → 14 gün → 30 gün
   var SRS_STEPS = [45*60e3, 90*60e3, 3*3600e3, 6*3600e3];
-  var srs = { cards: {}, db: null, ready: false, queue: [], qIdx: 0, answeredThis: false, isExam: false };
+  var SRS_STEPS_CUSTOM = [5*60e3, 20*60e3, 45*60e3]; // Özel Liste destesi için farklı aralıklar
+  function activeSrsSteps() { return srs.stepsOverride || SRS_STEPS; }
+  var srs = { cards: {}, db: null, ready: false, queue: [], qIdx: 0, answeredThis: false, isExam: false, sequential: false, stepsOverride: null };
   // Aktif soru havuzu — Akıllı Öğrenme tüm sorular üzerinde çalışır;
   // "Yarı" destelerinde bu, sorların bir alt kümesine ayarlanır.
   var srsPool = QUESTIONS;
@@ -2510,15 +2512,16 @@ const QUESTIONS = [
   // Her cevap (hangi modda olursa olsun) SRS'e işlenir
   function srsRecord(qid, isCorrect) {
     if (!srs.ready) return;
+    var steps = activeSrsSteps();
     var c = srsGetCard(qid);
     var now = Date.now();
     c.seen++; c.last = now;
     if (isCorrect) {
       c.correct++;
-      if (c.step >= SRS_STEPS.length - 1) {
-        // Son aralığı (6 saat) da doğru geçti → tamamen öğrenildi, bir daha çıkmaz
+      if (c.step >= steps.length - 1) {
+        // Son aralığı da doğru geçti → tamamen öğrenildi, bir daha çıkmaz
         c.mastered = true;
-        c.step = SRS_STEPS.length - 1;
+        c.step = steps.length - 1;
         c.due = now + 100 * 365 * 24 * 3600e3; // fiilen sonsuz
         srsSaveCard(c);
         srsUpdateHero();
@@ -2527,9 +2530,9 @@ const QUESTIONS = [
       c.step = c.step + 1;
     } else {
       c.wrong++; c.lapses++;
-      c.step = 0; // yanlış → baştan (45 dk sonra tekrar)
+      c.step = 0; // yanlış → baştan (ilk aralık)
     }
-    c.due = now + SRS_STEPS[Math.max(c.step, 0)];
+    c.due = now + steps[Math.max(c.step, 0)];
     srsSaveCard(c);
     srsUpdateHero();
   }
@@ -2579,10 +2582,13 @@ const QUESTIONS = [
     return Math.round(h / 24) + " gün";
   }
 
-  function startSrs(pool, label, isExam) {
+  function startSrs(pool, label, isExam, opts) {
+    opts = opts || {};
     srsPool = pool || QUESTIONS;
     srsPoolLabel = label || "";
     srs.isExam = !!isExam;
+    srs.sequential = !!opts.sequential;
+    srs.stepsOverride = opts.steps || null;
     var titleEl = document.getElementById("srs-title");
     if (titleEl) titleEl.textContent = "🎓 Akıllı Öğrenme" + (srsPoolLabel ? " · " + srsPoolLabel : "");
     showScreen(screenSrs);
@@ -2648,12 +2654,19 @@ const QUESTIONS = [
         fresh.push(q);
       }
     });
-    // Önce vadesi gelenler (en çok yanlış yapılan önce), sonra TÜM yeni sorular (limit yok).
-    // Vadesi gelmeyen (gelecekteki) sorular kuyruğa alınmaz — sayfa yenilense de çıkmaz.
-    due.sort(function (a, b) {
-      return (srs.cards[b.id].lapses - srs.cards[a.id].lapses);
-    });
-    srs.queue = due.concat(shuffleArray(fresh));
+    if (srs.sequential) {
+      // Sıralı mod: id sırası korunur, karıştırma yapılmaz
+      due.sort(function (a, b) { return a.id - b.id; });
+      fresh.sort(function (a, b) { return a.id - b.id; });
+      srs.queue = due.concat(fresh);
+    } else {
+      // Önce vadesi gelenler (en çok yanlış yapılan önce), sonra TÜM yeni sorular (limit yok).
+      // Vadesi gelmeyen (gelecekteki) sorular kuyruğa alınmaz — sayfa yenilense de çıkmaz.
+      due.sort(function (a, b) {
+        return (srs.cards[b.id].lapses - srs.cards[a.id].lapses);
+      });
+      srs.queue = due.concat(shuffleArray(fresh));
+    }
     srs.qIdx = 0;
   }
 
@@ -2666,8 +2679,9 @@ const QUESTIONS = [
   function srsStageLabel(qid) {
     var c = srs.cards[qid];
     if (!c || c.seen === 0) return "🆕 Yeni soru";
-    var labels = ["45 dk", "1s 30dk", "3 saat", "6 saat"];
-    return "Seviye: " + labels[Math.max(c.step, 0)] + (c.lapses ? " · " + c.lapses + " hata" : "");
+    var steps = activeSrsSteps();
+    var label = fmtDelta(steps[Math.max(c.step, 0)]);
+    return "Seviye: " + label + (c.lapses ? " · " + c.lapses + " hata" : "");
   }
 
   function srsRenderStudyQ() {
@@ -2751,7 +2765,7 @@ const QUESTIONS = [
     var ansText = q.correct.map(function (l) { return q.options[l]; }).join(" + ");
     var tip = q.learnEn || q.learn || "";
     var c = srs.cards[q.id];
-    var nextIn = fmtDelta(SRS_STEPS[Math.max(c.step, 0)]);
+    var nextIn = fmtDelta(activeSrsSteps()[Math.max(c.step, 0)]);
     lb.innerHTML =
       "<div class='srs-know'><strong>" + (ok ? "✅ Doğru — tekrar: " + nextIn + " sonra" : "❌ Yanlış — bilmen gereken (tekrar: " + nextIn + " sonra)") + "</strong>" +
       "<span class='ka'>" + ansText + "</span>" +
@@ -2765,7 +2779,7 @@ const QUESTIONS = [
     var q = srs.queue[srs.qIdx];
     var c = srsGetCard(q.id);
     c.mastered = true;
-    c.step = SRS_STEPS.length - 1;
+    c.step = activeSrsSteps().length - 1;
     c.due = Date.now() + 100 * 365 * 24 * 3600e3; // fiilen sonsuz
     srsSaveCard(c);
     // Kalan kuyruktan da bu soruyu çıkar
@@ -4648,7 +4662,8 @@ const QUESTIONS = [
   var SRS_CUSTOM_IDS = [269,272,276,277,278,288,289,295,300,301,302,304,308,314,316,317,323,325,326,332,334,337,338,341,351,353,356,363,368,372,374,376,378,382,384,387,391,392,395,396,400,403,404,405,407,409,411,412,416,419,420,421,422,424,426,428,429,430,432,435,436,437,443,448,450,451,454,456,457,459,468,469,471,475,476,482,487,488,492,496,510,511,514,515];
   document.getElementById("btn-srs-custom").addEventListener("click", function () {
     var pool = SRS_SORTED.filter(function (q) { return SRS_CUSTOM_IDS.indexOf(q.id) !== -1; });
-    startSrs(pool, "Özel Liste (" + pool.length + " Yanlış Soru)");
+    startSrs(pool, "Özel Liste (" + pool.length + " Yanlış Soru) · Sıralı", false,
+      { sequential: true, steps: SRS_STEPS_CUSTOM });
   });
   // Sınav (exam) — kapsamdan rastgele 50 soru
   document.getElementById("btn-srs-exam-all").addEventListener("click", function () {
